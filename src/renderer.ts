@@ -9,8 +9,22 @@ export class GoBoardRenderer {
 
 	render(source: string, containerEl: HTMLElement) {
 		const game = this.parseGame(source);
+		
+		// Создаем контейнер для диаграммы и панели инструментов
+		const boardContainer = document.createElement('div');
+		boardContainer.classList.add('go-board-container');
+		
+		// Создаем панель инструментов
+		const toolbar = this.createToolbar(source, containerEl);
+		boardContainer.appendChild(toolbar);
+		
 		const svg = this.generateSVG(game, containerEl);
-		containerEl.appendChild(svg);
+		
+		// Добавляем обработчик клика на диаграмму
+		this.addClickHandler(svg, game);
+		
+		boardContainer.appendChild(svg);
+		containerEl.appendChild(boardContainer);
 	}
 
 	private parseGame(source: string): GoGame {
@@ -181,13 +195,6 @@ export class GoBoardRenderer {
 			textAccent: getColor('--text-accent') || '#007acc'
 		};
 		
-		// Отладочная информация
-		console.log('Theme colors from Obsidian:', themeColors);
-		console.log('Available CSS variables:', {
-			docElement: Array.from(docStyle).filter(prop => prop.startsWith('--')),
-			body: Array.from(bodyStyle).filter(prop => prop.startsWith('--')),
-			container: Array.from(containerStyle).filter(prop => prop.startsWith('--'))
-		});
 		
 		return themeColors;
 	}
@@ -250,6 +257,175 @@ export class GoBoardRenderer {
 
 		return null;
 	}
+
+	private addClickHandler(svg: SVGElement, game: GoGame) {
+		// Добавляем курсор указателя для интерактивности
+		svg.style.cursor = 'pointer';
+		
+		svg.addEventListener('click', (event) => {
+			// Получаем координаты клика относительно SVG
+			const rect = svg.getBoundingClientRect();
+			const x = event.clientX - rect.left;
+			const y = event.clientY - rect.top;
+			
+			// Конвертируем координаты в позицию на доске
+			const size = 400;
+			const cellSize = size / (game.boardSize + 1);
+			const boardX = Math.round((x - cellSize) / cellSize);
+			const boardY = Math.round((y - cellSize) / cellSize);
+			
+			// Проверяем, что клик был внутри доски
+			if (boardX >= 0 && boardX < game.boardSize && boardY >= 0 && boardY < game.boardSize) {
+				// Конвертируем координаты в позицию (например, D4)
+				const position = this.coordsToPosition(boardX, boardY);
+				const moveNumber = this.getMoveAtPosition(game, boardX, boardY);
+				
+				// Создаем сообщение
+				let message = `Позиция: ${position}`;
+				if (moveNumber) {
+					message += `\nХод: ${moveNumber}`;
+					const move = game.moves.find(m => m.moveNumber === moveNumber);
+					if (move) {
+						message += `\nЦвет: ${move.stone.color === 'black' ? 'Черный' : 'Белый'}`;
+					}
+				} else {
+					message += '\nПустая позиция';
+				}
+				
+				// Отображаем сообщение
+				this.showMessage(message);
+			}
+		});
+	}
+
+	private coordsToPosition(x: number, y: number): string {
+		const letter = String.fromCharCode('A'.charCodeAt(0) + x);
+		const number = y + 1;
+		return `${letter}${number}`;
+	}
+
+	private getMoveAtPosition(game: GoGame, x: number, y: number): number | null {
+		for (const move of game.moves) {
+			const pos = this.positionToCoords(move.stone.position, game.boardSize);
+			if (pos && pos.x === x && pos.y === y) {
+				return move.moveNumber;
+			}
+		}
+		return null;
+	}
+
+	private showMessage(message: string) {
+		// Создаем модальное окно для отображения сообщения
+		const modal = document.createElement('div');
+		modal.style.cssText = `
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background: var(--background-primary, #ffffff);
+			border: 2px solid var(--text-accent, #007acc);
+			border-radius: 8px;
+			padding: 20px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+			z-index: 10000;
+			font-family: var(--font-text, Arial, sans-serif);
+			font-size: 14px;
+			color: var(--text-normal, #000000);
+			max-width: 300px;
+			text-align: center;
+			white-space: pre-line;
+		`;
+		
+		modal.textContent = message;
+		
+		// Добавляем кнопку закрытия
+		const closeButton = document.createElement('button');
+		closeButton.textContent = 'Закрыть';
+		closeButton.style.cssText = `
+			margin-top: 10px;
+			padding: 8px 16px;
+			background: var(--interactive-accent, #007acc);
+			color: var(--text-on-accent, #ffffff);
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 12px;
+		`;
+		
+		closeButton.addEventListener('click', () => {
+			if (document.body.contains(modal)) {
+				document.body.removeChild(modal);
+			}
+			if (document.body.contains(overlay)) {
+				document.body.removeChild(overlay);
+			}
+		});
+		
+		modal.appendChild(closeButton);
+		
+		// Добавляем затемнение фона
+		const overlay = document.createElement('div');
+		overlay.style.cssText = `
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			z-index: 9999;
+		`;
+		
+		overlay.addEventListener('click', () => {
+			if (document.body.contains(overlay)) {
+				document.body.removeChild(overlay);
+			}
+			if (document.body.contains(modal)) {
+				document.body.removeChild(modal);
+			}
+		});
+		
+		document.body.appendChild(overlay);
+		document.body.appendChild(modal);
+	}
+
+	private createToolbar(source: string, containerEl: HTMLElement): HTMLElement {
+		return this.createToolbarElement(source, containerEl);
+	}
+
+	private createToolbarElement(source: string, containerEl: HTMLElement): HTMLElement {
+		const toolbar = document.createElement('div');
+		toolbar.classList.add('go-board-toolbar');
+		
+		// Кнопка "Очистить"
+		const clearButton = document.createElement('button');
+		clearButton.textContent = 'Очистить';
+		clearButton.classList.add('go-board-clear-button');
+		clearButton.addEventListener('click', () => {
+			this.clearBoard(source, containerEl);
+		});
+		
+		toolbar.appendChild(clearButton);
+		return toolbar;
+	}
+
+
+	private clearBoard(source: string, containerEl: HTMLElement) {
+		// Находим блок кода, который содержит эту диаграмму
+		const codeBlock = containerEl.closest('pre');
+		if (codeBlock) {
+			// Очищаем содержимое блока кода, оставляя только размер доски
+			const game = this.parseGame(source);
+			const newContent = `size ${game.boardSize}x${game.boardSize}`;
+			
+			// Находим textarea внутри блока кода (если есть)
+			const textarea = codeBlock.querySelector('textarea');
+			if (textarea) {
+				textarea.value = newContent;
+				textarea.dispatchEvent(new Event('input', { bubbles: true }));
+			}
+		}
+	}
+
 
 }
 

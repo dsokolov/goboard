@@ -8,17 +8,22 @@ export default class GoPlugin extends Plugin {
 	renderer: GoBoardRenderer;
 
 	async onload() {
+		console.log('GoBoard: Plugin loading...');
+		
 		await this.loadSettings();
 		
 		this.renderer = new GoBoardRenderer(this.settings);
 		
 		// Регистрируем обработчик для блоков кода с языком 'goboard'
 		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, ctx) => {
+			console.log('GoBoard: Processing goboard code block');
 			this.renderer.render(source, el);
 		});
 
 		// Добавляем вкладку настроек
 		this.addSettingTab(new GoSettingsTab(this.app, this));
+		
+		console.log('GoBoard: Plugin loaded successfully!');
 	}
 
 	async loadSettings() {

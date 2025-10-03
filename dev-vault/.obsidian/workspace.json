@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "test-notes/13x13-game.md",
-                "mode": "source",
+                "file": "test-notes/stone-sizing-test.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "13x13-game"
+              "title": "stone-sizing-test"
             }
           }
         ]
@@ -169,13 +169,13 @@
   "active": "daedf56451e9a828",
   "lastOpenFiles": [
     "test-notes/toolbar-test.md",
+    "test-notes/stone-sizing-test.md",
+    "test-notes/simple-game.md",
+    "test-notes/coordinates-test.md",
+    "test-notes/coordinates-example.md",
+    "test-notes/13x13-game.md",
     "test-notes/complex-game.md",
     "test-notes/simple-toolbar-test.md",
-    "test-notes/coordinates-example.md",
-    "test-notes/stone-sizing-test.md",
-    "test-notes/coordinates-test.md",
-    "test-notes/simple-game.md",
-    "test-notes/13x13-game.md",
     "test-notes/9х9-game.md",
     "test-notes/5x5-game.md"
   ]
