@@ -1,0 +1,13 @@
+/* Стили для рендеринга диаграмм Го */
+.go-board-container {
+	display: flex;
+	justify-content: center;
+	margin: 1rem 0;
+}
+
+.go-board-container svg {
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	background-color: #DCB35C;
+}
+
