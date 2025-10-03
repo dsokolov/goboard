@@ -8,22 +8,20 @@ export default class GoPlugin extends Plugin {
 	renderer: GoBoardRenderer;
 
 	async onload() {
-		console.log('GoBoard: Plugin loading...');
-		
 		await this.loadSettings();
 		
 		this.renderer = new GoBoardRenderer(this.settings);
 		
 		// Регистрируем обработчик для блоков кода с языком 'goboard'
 		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, ctx) => {
-			console.log('GoBoard: Processing goboard code block');
 			this.renderer.render(source, el);
 		});
 
+		// Добавляем слушатель для смены темы
+		this.addThemeChangeListener();
+
 		// Добавляем вкладку настроек
 		this.addSettingTab(new GoSettingsTab(this.app, this));
-		
-		console.log('GoBoard: Plugin loaded successfully!');
 	}
 
 	async loadSettings() {
@@ -34,6 +32,58 @@ export default class GoPlugin extends Plugin {
 		await this.saveData(this.settings);
 		// Обновляем рендерер с новыми настройками
 		this.renderer = new GoBoardRenderer(this.settings);
+	}
+
+	private addThemeChangeListener() {
+		// Слушаем изменения в DOM, которые могут указывать на смену темы
+		const observer = new MutationObserver((mutations) => {
+			let themeChanged = false;
+			
+			for (const mutation of mutations) {
+				if (mutation.type === 'attributes' && 
+					(mutation.attributeName === 'class' || mutation.attributeName === 'data-theme')) {
+					themeChanged = true;
+					break;
+				}
+			}
+			
+			if (themeChanged) {
+				this.rerenderAllDiagrams();
+			}
+		});
+
+		// Наблюдаем за изменениями в body и html элементах
+		observer.observe(document.body, { 
+			attributes: true, 
+			attributeFilter: ['class', 'data-theme'] 
+		});
+		observer.observe(document.documentElement, { 
+			attributes: true, 
+			attributeFilter: ['class', 'data-theme'] 
+		});
+
+		// Также слушаем события изменения темы, если они есть
+		document.addEventListener('theme-change', () => {
+			this.rerenderAllDiagrams();
+		});
+	}
+
+	private rerenderAllDiagrams() {
+		// Находим все контейнеры с диаграммами Го
+		const goBoardContainers = document.querySelectorAll('.go-board-container');
+		
+		goBoardContainers.forEach(container => {
+			const parent = container.parentElement;
+			if (parent) {
+				// Получаем исходный код из data-атрибута
+				const source = container.getAttribute('data-source');
+				if (source) {
+					// Очищаем контейнер и перерисовываем
+					parent.innerHTML = '';
+					this.renderer.render(source, parent);
+				}
+			}
+		});
 	}
 }
 

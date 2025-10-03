@@ -14,6 +14,9 @@ export class GoBoardRenderer {
 		const boardContainer = document.createElement('div');
 		boardContainer.classList.add('go-board-container');
 		
+		// Сохраняем исходный код в data-атрибут для возможности перерисовки
+		boardContainer.setAttribute('data-source', source);
+		
 		// Создаем панель инструментов
 		const toolbar = this.createToolbar(source, containerEl);
 		boardContainer.appendChild(toolbar);
@@ -154,8 +157,14 @@ export class GoBoardRenderer {
 				
 				// Используем цвета темы или настройки
 				if (this.settings.useThemeColors) {
+					// Для чёрных камней используем тёмный цвет, для белых - светлый
+					// В светлой теме: text-normal тёмный, background-primary светлый
+					// В тёмной теме: text-normal светлый, background-primary тёмный
+					// Поэтому нужно инвертировать логику для тёмной темы
+					const isDarkTheme = this.isDarkTheme(containerEl);
 					circle.setAttribute('fill', move.stone.color === 'black' ? 
-						'var(--text-normal)' : 'var(--background-primary)');
+						(isDarkTheme ? 'var(--background-primary)' : 'var(--text-normal)') : 
+						(isDarkTheme ? 'var(--text-normal)' : 'var(--background-primary)'));
 					circle.setAttribute('stroke', 'var(--text-muted)');
 				} else {
 					circle.setAttribute('fill', move.stone.color === 'black' ? 
@@ -168,6 +177,29 @@ export class GoBoardRenderer {
 		}
 
 		return svg;
+	}
+
+	private isDarkTheme(containerEl: HTMLElement): boolean {
+		// Проверяем, является ли текущая тема тёмной
+		const computedStyle = getComputedStyle(containerEl);
+		const backgroundColor = computedStyle.getPropertyValue('--background-primary');
+		
+		// Если background-primary тёмный (низкая яркость), то это тёмная тема
+		// Простая проверка: если цвет содержит много тёмных компонентов
+		const rgb = backgroundColor.match(/\d+/g);
+		if (rgb && rgb.length >= 3) {
+			const r = parseInt(rgb[0]);
+			const g = parseInt(rgb[1]);
+			const b = parseInt(rgb[2]);
+			// Если средняя яркость меньше 128, считаем тему тёмной
+			return (r + g + b) / 3 < 128;
+		}
+		
+		// Fallback: проверяем класс body или html
+		const body = document.body;
+		return body.classList.contains('theme-dark') || 
+			   body.classList.contains('obsidian-theme-dark') ||
+			   document.documentElement.classList.contains('theme-dark');
 	}
 
 	private getThemeColors(containerEl: HTMLElement): ThemeColors {
