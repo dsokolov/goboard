@@ -32,7 +32,8 @@ var import_obsidian = require("obsidian");
 // src/settings.ts
 var DEFAULT_SETTINGS = {
   boardSize: 19,
-  stoneSize: 20,
+  stoneSizeRatio: 0.9,
+  // 40% от размера ячейки
   lineWidth: 1,
   backgroundColor: "#DCB35C",
   lineColor: "#000000",
@@ -54,10 +55,17 @@ var GoBoardRenderer = class {
     const lines = source.trim().split("\n");
     const moves = [];
     let moveNumber = 1;
+    let boardSize = this.settings.boardSize;
     for (const line of lines) {
       const trimmed = line.trim();
       if (!trimmed)
         continue;
+      const sizeMatch = trimmed.match(/^size\s+(\d+)x(\d+)$/i);
+      if (sizeMatch) {
+        const size = parseInt(sizeMatch[1]);
+        boardSize = size;
+        continue;
+      }
       const match = trimmed.match(/^([BW])\s+([A-T]\d+)$/i);
       if (match) {
         const color = match[1].toUpperCase() === "B" ? "black" : "white";
@@ -70,13 +78,13 @@ var GoBoardRenderer = class {
     }
     return {
       moves,
-      boardSize: this.settings.boardSize
+      boardSize
     };
   }
   generateSVG(game) {
     const size = 400;
-    const cellSize = size / (this.settings.boardSize + 1);
-    const stoneRadius = this.settings.stoneSize / 2;
+    const cellSize = size / (game.boardSize + 1);
+    const stoneRadius = cellSize * this.settings.stoneSizeRatio / 2;
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("width", size.toString());
     svg.setAttribute("height", size.toString());
@@ -86,27 +94,27 @@ var GoBoardRenderer = class {
     background.setAttribute("height", size.toString());
     background.setAttribute("fill", this.settings.backgroundColor);
     svg.appendChild(background);
-    for (let i = 1; i <= this.settings.boardSize; i++) {
+    for (let i = 1; i <= game.boardSize; i++) {
       const pos = i * cellSize;
       const vLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
       vLine.setAttribute("x1", pos.toString());
       vLine.setAttribute("y1", cellSize.toString());
       vLine.setAttribute("x2", pos.toString());
-      vLine.setAttribute("y2", (this.settings.boardSize * cellSize).toString());
+      vLine.setAttribute("y2", (game.boardSize * cellSize).toString());
       vLine.setAttribute("stroke", this.settings.lineColor);
       vLine.setAttribute("stroke-width", this.settings.lineWidth.toString());
       svg.appendChild(vLine);
       const hLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
       hLine.setAttribute("x1", cellSize.toString());
       hLine.setAttribute("y1", pos.toString());
-      hLine.setAttribute("x2", (this.settings.boardSize * cellSize).toString());
+      hLine.setAttribute("x2", (game.boardSize * cellSize).toString());
       hLine.setAttribute("y2", pos.toString());
       hLine.setAttribute("stroke", this.settings.lineColor);
       hLine.setAttribute("stroke-width", this.settings.lineWidth.toString());
       svg.appendChild(hLine);
     }
     for (const move of game.moves) {
-      const pos = this.positionToCoords(move.stone.position);
+      const pos = this.positionToCoords(move.stone.position, game.boardSize);
       if (pos) {
         const x = (pos.x + 1) * cellSize;
         const y = (pos.y + 1) * cellSize;
@@ -122,12 +130,12 @@ var GoBoardRenderer = class {
     }
     return svg;
   }
-  positionToCoords(position) {
+  positionToCoords(position, boardSize) {
     const letter = position.charAt(0);
     const number = parseInt(position.slice(1));
     const x = letter.charCodeAt(0) - "A".charCodeAt(0);
     const y = number - 1;
-    if (x >= 0 && x < this.settings.boardSize && y >= 0 && y < this.settings.boardSize) {
+    if (x >= 0 && x < boardSize && y >= 0 && y < boardSize) {
       return { x, y };
     }
     return null;
@@ -139,7 +147,7 @@ var GoPlugin = class extends import_obsidian.Plugin {
   async onload() {
     await this.loadSettings();
     this.renderer = new GoBoardRenderer(this.settings);
-    this.registerMarkdownCodeBlockProcessor("go", (source, el, ctx) => {
+    this.registerMarkdownCodeBlockProcessor("goboard", (source, el, ctx) => {
       this.renderer.render(source, el);
     });
   }

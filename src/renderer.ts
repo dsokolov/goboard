@@ -17,10 +17,19 @@ export class GoBoardRenderer {
 		const lines = source.trim().split('\n');
 		const moves: Move[] = [];
 		let moveNumber = 1;
+		let boardSize = this.settings.boardSize; // размер по умолчанию
 
 		for (const line of lines) {
 			const trimmed = line.trim();
 			if (!trimmed) continue;
+
+			// Проверяем, является ли строка объявлением размера доски
+			const sizeMatch = trimmed.match(/^size\s+(\d+)x(\d+)$/i);
+			if (sizeMatch) {
+				const size = parseInt(sizeMatch[1]);
+				boardSize = size;
+				continue;
+			}
 
 			// Простой парсер для формата "B D4" или "W Q16"
 			const match = trimmed.match(/^([BW])\s+([A-T]\d+)$/i);
@@ -37,14 +46,15 @@ export class GoBoardRenderer {
 
 		return {
 			moves,
-			boardSize: this.settings.boardSize
+			boardSize
 		};
 	}
 
 	private generateSVG(game: GoGame): SVGElement {
 		const size = 400;
-		const cellSize = size / (this.settings.boardSize + 1);
-		const stoneRadius = this.settings.stoneSize / 2;
+		const cellSize = size / (game.boardSize + 1);
+		// Размер камня пропорционален размеру ячейки
+		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
 
 		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 		svg.setAttribute('width', size.toString());
@@ -59,7 +69,7 @@ export class GoBoardRenderer {
 		svg.appendChild(background);
 
 		// Линии доски
-		for (let i = 1; i <= this.settings.boardSize; i++) {
+		for (let i = 1; i <= game.boardSize; i++) {
 			const pos = i * cellSize;
 			
 			// Вертикальные линии
@@ -67,7 +77,7 @@ export class GoBoardRenderer {
 			vLine.setAttribute('x1', pos.toString());
 			vLine.setAttribute('y1', cellSize.toString());
 			vLine.setAttribute('x2', pos.toString());
-			vLine.setAttribute('y2', (this.settings.boardSize * cellSize).toString());
+			vLine.setAttribute('y2', (game.boardSize * cellSize).toString());
 			vLine.setAttribute('stroke', this.settings.lineColor);
 			vLine.setAttribute('stroke-width', this.settings.lineWidth.toString());
 			svg.appendChild(vLine);
@@ -76,7 +86,7 @@ export class GoBoardRenderer {
 			const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 			hLine.setAttribute('x1', cellSize.toString());
 			hLine.setAttribute('y1', pos.toString());
-			hLine.setAttribute('x2', (this.settings.boardSize * cellSize).toString());
+			hLine.setAttribute('x2', (game.boardSize * cellSize).toString());
 			hLine.setAttribute('y2', pos.toString());
 			hLine.setAttribute('stroke', this.settings.lineColor);
 			hLine.setAttribute('stroke-width', this.settings.lineWidth.toString());
@@ -85,7 +95,7 @@ export class GoBoardRenderer {
 
 		// Камни
 		for (const move of game.moves) {
-			const pos = this.positionToCoords(move.stone.position);
+			const pos = this.positionToCoords(move.stone.position, game.boardSize);
 			if (pos) {
 				const x = (pos.x + 1) * cellSize;
 				const y = (pos.y + 1) * cellSize;
@@ -105,7 +115,7 @@ export class GoBoardRenderer {
 		return svg;
 	}
 
-	private positionToCoords(position: string): { x: number; y: number } | null {
+	private positionToCoords(position: string, boardSize: number): { x: number; y: number } | null {
 		// Конвертация позиции типа "D4" в координаты
 		const letter = position.charAt(0);
 		const number = parseInt(position.slice(1));
@@ -113,7 +123,7 @@ export class GoBoardRenderer {
 		const x = letter.charCodeAt(0) - 'A'.charCodeAt(0);
 		const y = number - 1;
 
-		if (x >= 0 && x < this.settings.boardSize && y >= 0 && y < this.settings.boardSize) {
+		if (x >= 0 && x < boardSize && y >= 0 && y < boardSize) {
 			return { x, y };
 		}
 

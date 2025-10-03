@@ -12,8 +12,8 @@ export default class GoPlugin extends Plugin {
 		
 		this.renderer = new GoBoardRenderer(this.settings);
 		
-		// Регистрируем обработчик для блоков кода с языком 'go'
-		this.registerMarkdownCodeBlockProcessor('go', (source, el, ctx) => {
+		// Регистрируем обработчик для блоков кода с языком 'goboard'
+		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, ctx) => {
 			this.renderer.render(source, el);
 		});
 	}
