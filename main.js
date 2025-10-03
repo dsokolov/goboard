@@ -38,7 +38,13 @@ var DEFAULT_SETTINGS = {
   backgroundColor: "#DCB35C",
   lineColor: "#000000",
   blackStoneColor: "#000000",
-  whiteStoneColor: "#FFFFFF"
+  whiteStoneColor: "#FFFFFF",
+  showCoordinates: true,
+  // по умолчанию координаты включены
+  coordinatesColor: "#666666",
+  // серый цвет для координат
+  coordinatesFontSize: 12
+  // размер шрифта координат
 };
 
 // src/renderer.ts
@@ -56,6 +62,7 @@ var GoBoardRenderer = class {
     const moves = [];
     let moveNumber = 1;
     let boardSize = this.settings.boardSize;
+    let showCoordinates = this.settings.showCoordinates;
     for (const line of lines) {
       const trimmed = line.trim();
       if (!trimmed)
@@ -64,6 +71,14 @@ var GoBoardRenderer = class {
       if (sizeMatch) {
         const size = parseInt(sizeMatch[1]);
         boardSize = size;
+        continue;
+      }
+      if (trimmed.toLowerCase() === "coordinates on") {
+        showCoordinates = true;
+        continue;
+      }
+      if (trimmed.toLowerCase() === "coordinates off") {
+        showCoordinates = false;
         continue;
       }
       const match = trimmed.match(/^([BW])\s+([A-T]\d+)$/i);
@@ -78,7 +93,8 @@ var GoBoardRenderer = class {
     }
     return {
       moves,
-      boardSize
+      boardSize,
+      showCoordinates
     };
   }
   generateSVG(game) {
@@ -113,6 +129,9 @@ var GoBoardRenderer = class {
       hLine.setAttribute("stroke-width", this.settings.lineWidth.toString());
       svg.appendChild(hLine);
     }
+    if (game.showCoordinates) {
+      this.addCoordinates(svg, game.boardSize, cellSize);
+    }
     for (const move of game.moves) {
       const pos = this.positionToCoords(move.stone.position, game.boardSize);
       if (pos) {
@@ -129,6 +148,36 @@ var GoBoardRenderer = class {
       }
     }
     return svg;
+  }
+  addCoordinates(svg, boardSize, cellSize) {
+    for (let i = 0; i < boardSize; i++) {
+      const x = (i + 1) * cellSize;
+      const y = cellSize * 0.5;
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", x.toString());
+      text.setAttribute("y", y.toString());
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("dominant-baseline", "middle");
+      text.setAttribute("font-size", this.settings.coordinatesFontSize.toString());
+      text.setAttribute("fill", this.settings.coordinatesColor);
+      text.setAttribute("font-family", "Arial, sans-serif");
+      text.textContent = String.fromCharCode("A".charCodeAt(0) + i);
+      svg.appendChild(text);
+    }
+    for (let i = 0; i < boardSize; i++) {
+      const x = cellSize * 0.5;
+      const y = (i + 1) * cellSize;
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", x.toString());
+      text.setAttribute("y", y.toString());
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("dominant-baseline", "middle");
+      text.setAttribute("font-size", this.settings.coordinatesFontSize.toString());
+      text.setAttribute("fill", this.settings.coordinatesColor);
+      text.setAttribute("font-family", "Arial, sans-serif");
+      text.textContent = (i + 1).toString();
+      svg.appendChild(text);
+    }
   }
   positionToCoords(position, boardSize) {
     const letter = position.charAt(0);

@@ -4,6 +4,7 @@
 
 ```goboard
 size 9x9
+coordinates on
 B D4
 W D6
 B F4

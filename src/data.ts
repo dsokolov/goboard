@@ -11,6 +11,7 @@ export interface Move {
 export interface GoGame {
 	moves: Move[];
 	boardSize: number; // размер доски, может быть любым (9, 13, 19, etc.)
+	showCoordinates?: boolean; // опция для отображения координат
 }
 
 export interface BoardPosition {
@@ -26,5 +27,8 @@ export interface GoPluginSettings {
 	lineColor: string;
 	blackStoneColor: string;
 	whiteStoneColor: string;
+	showCoordinates: boolean; // отображение координат на доске
+	coordinatesColor: string; // цвет координат
+	coordinatesFontSize: number; // размер шрифта координат
 }
 

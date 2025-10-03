@@ -18,6 +18,7 @@ export class GoBoardRenderer {
 		const moves: Move[] = [];
 		let moveNumber = 1;
 		let boardSize = this.settings.boardSize; // размер по умолчанию
+		let showCoordinates = this.settings.showCoordinates; // по умолчанию из настроек
 
 		for (const line of lines) {
 			const trimmed = line.trim();
@@ -28,6 +29,16 @@ export class GoBoardRenderer {
 			if (sizeMatch) {
 				const size = parseInt(sizeMatch[1]);
 				boardSize = size;
+				continue;
+			}
+
+			// Проверяем команды отображения координат
+			if (trimmed.toLowerCase() === 'coordinates on') {
+				showCoordinates = true;
+				continue;
+			}
+			if (trimmed.toLowerCase() === 'coordinates off') {
+				showCoordinates = false;
 				continue;
 			}
 
@@ -46,7 +57,8 @@ export class GoBoardRenderer {
 
 		return {
 			moves,
-			boardSize
+			boardSize,
+			showCoordinates
 		};
 	}
 
@@ -93,6 +105,11 @@ export class GoBoardRenderer {
 			svg.appendChild(hLine);
 		}
 
+		// Координаты (если включены)
+		if (game.showCoordinates) {
+			this.addCoordinates(svg, game.boardSize, cellSize);
+		}
+
 		// Камни
 		for (const move of game.moves) {
 			const pos = this.positionToCoords(move.stone.position, game.boardSize);
@@ -113,6 +130,42 @@ export class GoBoardRenderer {
 		}
 
 		return svg;
+	}
+
+	private addCoordinates(svg: SVGElement, boardSize: number, cellSize: number) {
+		// Буквы по горизонтали (A, B, C, ...)
+		for (let i = 0; i < boardSize; i++) {
+			const x = (i + 1) * cellSize;
+			const y = cellSize * 0.5; // немного выше доски
+			
+			const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+			text.setAttribute('x', x.toString());
+			text.setAttribute('y', y.toString());
+			text.setAttribute('text-anchor', 'middle');
+			text.setAttribute('dominant-baseline', 'middle');
+			text.setAttribute('font-size', this.settings.coordinatesFontSize.toString());
+			text.setAttribute('fill', this.settings.coordinatesColor);
+			text.setAttribute('font-family', 'Arial, sans-serif');
+			text.textContent = String.fromCharCode('A'.charCodeAt(0) + i);
+			svg.appendChild(text);
+		}
+
+		// Цифры по вертикали (1, 2, 3, ...)
+		for (let i = 0; i < boardSize; i++) {
+			const x = cellSize * 0.5; // немного левее доски
+			const y = (i + 1) * cellSize;
+			
+			const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+			text.setAttribute('x', x.toString());
+			text.setAttribute('y', y.toString());
+			text.setAttribute('text-anchor', 'middle');
+			text.setAttribute('dominant-baseline', 'middle');
+			text.setAttribute('font-size', this.settings.coordinatesFontSize.toString());
+			text.setAttribute('fill', this.settings.coordinatesColor);
+			text.setAttribute('font-family', 'Arial, sans-serif');
+			text.textContent = (i + 1).toString();
+			svg.appendChild(text);
+		}
 	}
 
 	private positionToCoords(position: string, boardSize: number): { x: number; y: number } | null {

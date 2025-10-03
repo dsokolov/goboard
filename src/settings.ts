@@ -7,6 +7,8 @@ export const DEFAULT_SETTINGS: GoPluginSettings = {
 	backgroundColor: '#DCB35C',
 	lineColor: '#000000',
 	blackStoneColor: '#000000',
-	whiteStoneColor: '#FFFFFF'
+	whiteStoneColor: '#FFFFFF',
+	showCoordinates: true, // по умолчанию координаты включены
+	coordinatesColor: '#666666', // серый цвет для координат
+	coordinatesFontSize: 12 // размер шрифта координат
 };
-
