@@ -1,16 +1,15 @@
 {
 	"name": "goboard",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Render Go game diagrams from markdown code blocks",
 	"main": "build/main.js",
 	"scripts": {
-		"dev": "node esbuild.config.mjs && npm run copy-plugin",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && npm run copy-plugin",
-		"copy-plugin": "mkdir -p plugin-dist && cp manifest.json plugin-dist/ && cp styles.css plugin-dist/",
+		"dev": "node esbuild.config.mjs",
+		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "Dmitry I. Sokolov",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^16.11.6",

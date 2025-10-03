@@ -1,6 +1,8 @@
 import esbuild from "esbuild";
 import process from "process";
 import builtins from "builtin-modules";
+import fs from "fs";
+import path from "path";
 
 const banner =
 `/*
@@ -10,6 +12,64 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = (process.argv[2] === 'production');
+
+// Функция для обновления manifest.json данными из package.json
+async function updateManifest() {
+	try {
+		// Читаем package.json
+		const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+		
+		// Читаем manifest.json
+		const manifestPath = 'plugin-dist/manifest.json';
+		const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+		
+		// Обновляем версию, описание и автора
+		manifest.version = packageJson.version;
+		manifest.description = packageJson.description;
+		manifest.author = packageJson.author;
+		
+		// Записываем обновленный manifest.json
+		fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '\t'));
+		console.log(`Updated manifest.json: version=${manifest.version}, description="${manifest.description}", author="${manifest.author}"`);
+	} catch (error) {
+		console.error('Error updating manifest.json:', error);
+		process.exit(1);
+	}
+}
+
+// Функция для копирования файлов из plugin-dist в dev-vault/.obsidian/plugins/goboard
+async function copyPluginFiles() {
+	const sourceDir = 'plugin-dist';
+	const targetDir = 'dev-vault/.obsidian/plugins/goboard';
+	
+	try {
+		// Создаем целевую директорию если её нет
+		if (!fs.existsSync(targetDir)) {
+			fs.mkdirSync(targetDir, { recursive: true });
+			console.log(`Created directory: ${targetDir}`);
+		}
+		
+		// Читаем содержимое source директории
+		const files = fs.readdirSync(sourceDir);
+		
+		// Копируем каждый файл
+		for (const file of files) {
+			const sourcePath = path.join(sourceDir, file);
+			const targetPath = path.join(targetDir, file);
+			
+			// Проверяем, что это файл (не директория)
+			if (fs.statSync(sourcePath).isFile()) {
+				fs.copyFileSync(sourcePath, targetPath);
+				console.log(`Copied: ${file} -> ${targetPath}`);
+			}
+		}
+		
+		console.log('Plugin files copied successfully!');
+	} catch (error) {
+		console.error('Error copying plugin files:', error);
+		process.exit(1);
+	}
+}
 
 const context = await esbuild.context({
 	banner: {
@@ -42,6 +102,8 @@ const context = await esbuild.context({
 
 if (prod) {
 	await context.rebuild();
+	await updateManifest();
+	await copyPluginFiles();
 	process.exit(0);
 } else {
 	await context.watch();
