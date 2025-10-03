@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "test-notes/coordinates-test.md",
+                "file": "test-notes/9х9-game.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "coordinates-test"
+              "title": "9х9-game"
             }
           }
         ]
@@ -168,13 +168,13 @@
   },
   "active": "d73bf3dc50dc78d5",
   "lastOpenFiles": [
-    "test-notes/coordinates-example.md",
+    "test-notes/complex-game.md",
     "test-notes/13x13-game.md",
+    "test-notes/coordinates-example.md",
     "test-notes/coordinates-test.md",
+    "test-notes/simple-game.md",
     "test-notes/9х9-game.md",
     "test-notes/stone-sizing-test.md",
-    "test-notes/complex-game.md",
-    "test-notes/5x5-game.md",
-    "test-notes/simple-game.md"
+    "test-notes/5x5-game.md"
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "boardSize": 19,
+  "stoneSizeRatio": 0.9,
+  "lineWidth": 1.5,
+  "backgroundColor": "#DCB35C",
+  "lineColor": "#000000",
+  "blackStoneColor": "#000000",
+  "whiteStoneColor": "#c9c5c5",
+  "showCoordinates": true,
+  "coordinatesColor": "#f50000",
+  "coordinatesFontSize": 16
+}
