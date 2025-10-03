@@ -4,12 +4,18 @@
 
 ```goboard
 size 5x5
-B C3
-W C4
-B D3
+coordinates on
 W D4
-B E3
-W E4
+W B4
+W D3
+W D2
+W B2
+W B3
+W C3
+W A1
+W B1
+W C2
+W D1
 ```
 
 ## Описание

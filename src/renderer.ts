@@ -1,14 +1,32 @@
 import { GoPluginSettings, Stone, Move, GoGame } from './data';
+import { Toolbar } from './toolbar';
+import { App } from 'obsidian';
 
 export class GoBoardRenderer {
 	private settings: GoPluginSettings;
+	private toolbar: Toolbar;
+	private currentGame: GoGame | null = null;
+	private currentContainer: HTMLElement | null = null;
+	private app: App;
 
-	constructor(settings: GoPluginSettings) {
+	constructor(settings: GoPluginSettings, app: App) {
 		this.settings = settings;
+		this.app = app;
+		this.toolbar = new Toolbar(settings);
+		
+		// Устанавливаем callback для изменения типа камня
+		this.toolbar.setStoneTypeChangeCallback((stoneType) => {
+			// Обновляем курсор в зависимости от выбранного типа камня
+			this.updateCursor(stoneType);
+		});
 	}
 
 	render(source: string, containerEl: HTMLElement) {
 		const game = this.parseGame(source);
+		
+		// Сохраняем ссылки на текущую игру и контейнер
+		this.currentGame = game;
+		this.currentContainer = containerEl;
 		
 		// Создаем контейнер для диаграммы и панели инструментов
 		const boardContainer = document.createElement('div');
@@ -18,15 +36,17 @@ export class GoBoardRenderer {
 		boardContainer.setAttribute('data-source', source);
 		
 		// Создаем панель инструментов
-		const toolbar = this.createToolbar(source, containerEl);
-		boardContainer.appendChild(toolbar);
+		const toolbar = this.toolbar.createToolbar(source, containerEl);
 		
 		const svg = this.generateSVG(game, containerEl);
 		
 		// Добавляем обработчик клика на диаграмму
 		this.addClickHandler(svg, game);
 		
+		// Добавляем элементы в стандартном порядке - CSS сам определит правильное размещение
 		boardContainer.appendChild(svg);
+		boardContainer.appendChild(toolbar);
+		
 		containerEl.appendChild(boardContainer);
 	}
 
@@ -179,6 +199,153 @@ export class GoBoardRenderer {
 		return svg;
 	}
 
+	private updateCursor(stoneType: 'black' | 'white' | null) {
+		if (!this.currentContainer) return;
+		
+		const svg = this.currentContainer.querySelector('.go-board-svg') as SVGElement;
+		if (!svg) return;
+		
+		if (stoneType) {
+			svg.style.cursor = 'crosshair';
+		} else {
+			svg.style.cursor = 'default';
+		}
+	}
+
+	private async placeStone(x: number, y: number, color: 'black' | 'white') {
+		if (!this.currentGame || !this.currentContainer) return;
+		
+		// Удаляем существующий камень в этой позиции
+		this.removeStoneAtPosition(x, y);
+		
+		// Добавляем новый камень
+		const position = this.coordsToPosition(x, y);
+		const newMove: Move = {
+			stone: { color, position },
+			moveNumber: this.currentGame.moves.length + 1
+		};
+		
+		this.currentGame.moves.push(newMove);
+		
+		// Обновляем содержимое блока кода
+		await this.updateCodeBlock();
+		
+		// Перерисовываем диаграмму
+		this.rerender();
+	}
+
+	private removeStoneAtPosition(x: number, y: number) {
+		if (!this.currentGame) return;
+		
+		this.currentGame.moves = this.currentGame.moves.filter(move => {
+			const pos = this.positionToCoords(move.stone.position, this.currentGame!.boardSize);
+			return !(pos && pos.x === x && pos.y === y);
+		});
+	}
+
+	private rerender() {
+		if (!this.currentContainer || !this.currentGame) return;
+		
+		const boardContainer = this.currentContainer.querySelector('.go-board-container');
+		if (!boardContainer) return;
+		
+		// Находим SVG и обновляем только его содержимое
+		const svg = boardContainer.querySelector('.go-board-svg') as SVGElement;
+		if (!svg) return;
+		
+		// Очищаем SVG от камней
+		const circles = svg.querySelectorAll('circle');
+		circles.forEach(circle => circle.remove());
+		
+		// Добавляем камни заново
+		const size = 400;
+		const cellSize = size / (this.currentGame.boardSize + 1);
+		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
+		
+		for (const move of this.currentGame.moves) {
+			const pos = this.positionToCoords(move.stone.position, this.currentGame.boardSize);
+			if (pos) {
+				const x = (pos.x + 1) * cellSize;
+				const y = (pos.y + 1) * cellSize;
+
+				const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+				circle.setAttribute('cx', x.toString());
+				circle.setAttribute('cy', y.toString());
+				circle.setAttribute('r', stoneRadius.toString());
+				
+				// Используем цвета темы или настройки
+				if (this.settings.useThemeColors) {
+					const isDarkTheme = this.isDarkTheme(this.currentContainer);
+					circle.setAttribute('fill', move.stone.color === 'black' ? 
+						(isDarkTheme ? 'var(--background-primary)' : 'var(--text-normal)') : 
+						(isDarkTheme ? 'var(--text-normal)' : 'var(--background-primary)'));
+					circle.setAttribute('stroke', 'var(--text-muted)');
+				} else {
+					circle.setAttribute('fill', move.stone.color === 'black' ? 
+						this.settings.blackStoneColor : this.settings.whiteStoneColor);
+					circle.setAttribute('stroke', this.settings.lineColor);
+				}
+				circle.setAttribute('stroke-width', '1');
+				svg.appendChild(circle);
+			}
+		}
+	}
+
+	private async updateCodeBlock() {
+		if (!this.currentGame) return;
+		
+		// Генерируем новое содержимое блока кода
+		const newContent = this.generateCodeContent();
+		
+		try {
+			// Получаем активный файл
+			const activeFile = this.app.workspace.getActiveFile();
+			if (!activeFile) {
+				return;
+			}
+			
+			// Читаем содержимое файла
+			const content = await this.app.vault.read(activeFile);
+			
+			// Ищем блок кода goboard и заменяем его
+			const goboardRegex = /```goboard\n([\s\S]*?)\n```/g;
+			const newCodeBlock = `\`\`\`goboard\n${newContent}\n\`\`\``;
+			
+			if (goboardRegex.test(content)) {
+				// Заменяем найденный блок кода
+				const updatedContent = content.replace(goboardRegex, newCodeBlock);
+				
+				// Сохраняем изменения
+				await this.app.vault.modify(activeFile, updatedContent);
+			}
+		} catch (error) {
+			console.error('Error updating code block:', error);
+		}
+	}
+
+	private generateCodeContent(): string {
+		if (!this.currentGame) return '';
+		
+		const lines: string[] = [];
+		
+		// Добавляем размер доски
+		lines.push(`size ${this.currentGame.boardSize}x${this.currentGame.boardSize}`);
+		
+		// Добавляем команды координат если нужно
+		if (this.currentGame.showCoordinates) {
+			lines.push('coordinates on');
+		}
+		
+		// Добавляем ходы
+		for (const move of this.currentGame.moves) {
+			const color = move.stone.color === 'black' ? 'B' : 'W';
+			lines.push(`${color} ${move.stone.position}`);
+		}
+		
+		return lines.join('\n');
+	}
+
+
 	private isDarkTheme(containerEl: HTMLElement): boolean {
 		// Проверяем, является ли текущая тема тёмной
 		const computedStyle = getComputedStyle(containerEl);
@@ -291,9 +458,6 @@ export class GoBoardRenderer {
 	}
 
 	private addClickHandler(svg: SVGElement, game: GoGame) {
-		// Добавляем курсор указателя для интерактивности
-		svg.style.cursor = 'pointer';
-		
 		svg.addEventListener('click', (event) => {
 			// Получаем координаты клика относительно SVG
 			const rect = svg.getBoundingClientRect();
@@ -308,24 +472,13 @@ export class GoBoardRenderer {
 			
 			// Проверяем, что клик был внутри доски
 			if (boardX >= 0 && boardX < game.boardSize && boardY >= 0 && boardY < game.boardSize) {
-				// Конвертируем координаты в позицию (например, D4)
-				const position = this.coordsToPosition(boardX, boardY);
-				const moveNumber = this.getMoveAtPosition(game, boardX, boardY);
+				// Получаем выбранный тип камня
+				const selectedStoneType = this.toolbar.getSelectedStoneType();
 				
-				// Создаем сообщение
-				let message = `Позиция: ${position}`;
-				if (moveNumber) {
-					message += `\nХод: ${moveNumber}`;
-					const move = game.moves.find(m => m.moveNumber === moveNumber);
-					if (move) {
-						message += `\nЦвет: ${move.stone.color === 'black' ? 'Черный' : 'Белый'}`;
-					}
-				} else {
-					message += '\nПустая позиция';
+				if (selectedStoneType) {
+					// Размещаем камень
+					this.placeStone(boardX, boardY, selectedStoneType);
 				}
-				
-				// Отображаем сообщение
-				this.showMessage(message);
 			}
 		});
 	}
@@ -346,117 +499,7 @@ export class GoBoardRenderer {
 		return null;
 	}
 
-	private showMessage(message: string) {
-		// Создаем модальное окно для отображения сообщения
-		const modal = document.createElement('div');
-		modal.style.cssText = `
-			position: fixed;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			background: var(--background-primary, #ffffff);
-			border: 2px solid var(--text-accent, #007acc);
-			border-radius: 8px;
-			padding: 20px;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-			z-index: 10000;
-			font-family: var(--font-text, Arial, sans-serif);
-			font-size: 14px;
-			color: var(--text-normal, #000000);
-			max-width: 300px;
-			text-align: center;
-			white-space: pre-line;
-		`;
-		
-		modal.textContent = message;
-		
-		// Добавляем кнопку закрытия
-		const closeButton = document.createElement('button');
-		closeButton.textContent = 'Закрыть';
-		closeButton.style.cssText = `
-			margin-top: 10px;
-			padding: 8px 16px;
-			background: var(--interactive-accent, #007acc);
-			color: var(--text-on-accent, #ffffff);
-			border: none;
-			border-radius: 4px;
-			cursor: pointer;
-			font-size: 12px;
-		`;
-		
-		closeButton.addEventListener('click', () => {
-			if (document.body.contains(modal)) {
-				document.body.removeChild(modal);
-			}
-			if (document.body.contains(overlay)) {
-				document.body.removeChild(overlay);
-			}
-		});
-		
-		modal.appendChild(closeButton);
-		
-		// Добавляем затемнение фона
-		const overlay = document.createElement('div');
-		overlay.style.cssText = `
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: rgba(0, 0, 0, 0.5);
-			z-index: 9999;
-		`;
-		
-		overlay.addEventListener('click', () => {
-			if (document.body.contains(overlay)) {
-				document.body.removeChild(overlay);
-			}
-			if (document.body.contains(modal)) {
-				document.body.removeChild(modal);
-			}
-		});
-		
-		document.body.appendChild(overlay);
-		document.body.appendChild(modal);
-	}
 
-	private createToolbar(source: string, containerEl: HTMLElement): HTMLElement {
-		return this.createToolbarElement(source, containerEl);
-	}
-
-	private createToolbarElement(source: string, containerEl: HTMLElement): HTMLElement {
-		const toolbar = document.createElement('div');
-		toolbar.classList.add('go-board-toolbar');
-		
-		// Кнопка "Очистить"
-		const clearButton = document.createElement('button');
-		clearButton.textContent = 'Очистить';
-		clearButton.classList.add('go-board-clear-button');
-		clearButton.addEventListener('click', () => {
-			this.clearBoard(source, containerEl);
-		});
-		
-		toolbar.appendChild(clearButton);
-		return toolbar;
-	}
-
-
-	private clearBoard(source: string, containerEl: HTMLElement) {
-		// Находим блок кода, который содержит эту диаграмму
-		const codeBlock = containerEl.closest('pre');
-		if (codeBlock) {
-			// Очищаем содержимое блока кода, оставляя только размер доски
-			const game = this.parseGame(source);
-			const newContent = `size ${game.boardSize}x${game.boardSize}`;
-			
-			// Находим textarea внутри блока кода (если есть)
-			const textarea = codeBlock.querySelector('textarea');
-			if (textarea) {
-				textarea.value = newContent;
-				textarea.dispatchEvent(new Event('input', { bubbles: true }));
-			}
-		}
-	}
 
 
 }
