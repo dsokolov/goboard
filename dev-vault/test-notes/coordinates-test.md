@@ -8,9 +8,6 @@
 size 9x9
 coordinates on
 B D4
-W D6
-B F4
-W F6
 ```
 
 ## Доска 19x19 с координатами (по умолчанию)
