@@ -30,5 +30,6 @@ export interface GoPluginSettings {
 	showCoordinates: boolean; // отображение координат на доске
 	coordinatesColor: string; // цвет координат
 	coordinatesFontSize: number; // размер шрифта координат
+	useThemeColors: boolean; // использовать цвета из текущей темы Obsidian
 }
 

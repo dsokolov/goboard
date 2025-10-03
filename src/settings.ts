@@ -10,5 +10,6 @@ export const DEFAULT_SETTINGS: GoPluginSettings = {
 	whiteStoneColor: '#FFFFFF',
 	showCoordinates: true, // по умолчанию координаты включены
 	coordinatesColor: '#666666', // серый цвет для координат
-	coordinatesFontSize: 12 // размер шрифта координат
+	coordinatesFontSize: 12, // размер шрифта координат
+	useThemeColors: true // по умолчанию используем цвета темы
 };

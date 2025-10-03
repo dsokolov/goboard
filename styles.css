@@ -6,8 +6,18 @@
 }
 
 .go-board-container svg {
-	border: 1px solid #ccc;
+	border: 1px solid var(--background-modifier-border, #ccc);
 	border-radius: 4px;
-	background-color: #DCB35C;
+	background-color: var(--background-secondary, #DCB35C);
+	box-shadow: 0 2px 8px var(--background-modifier-box-shadow, rgba(0, 0, 0, 0.1));
 }
 
+/* Обеспечиваем наследование CSS переменных для SVG */
+.go-board-container svg,
+.go-board-svg {
+	/* Наследуем CSS переменные от родительского элемента */
+}
+
+.go-board-svg * {
+	/* Наследуем CSS переменные для всех элементов SVG */
+}

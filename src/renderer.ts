@@ -9,7 +9,7 @@ export class GoBoardRenderer {
 
 	render(source: string, containerEl: HTMLElement) {
 		const game = this.parseGame(source);
-		const svg = this.generateSVG(game);
+		const svg = this.generateSVG(game, containerEl);
 		containerEl.appendChild(svg);
 	}
 
@@ -62,22 +62,30 @@ export class GoBoardRenderer {
 		};
 	}
 
-	private generateSVG(game: GoGame): SVGElement {
+	private generateSVG(game: GoGame, containerEl: HTMLElement): SVGElement {
 		const size = 400;
 		const cellSize = size / (game.boardSize + 1);
 		// Размер камня пропорционален размеру ячейки
 		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
 
+		// Получаем цвета из темы Obsidian
+		const themeColors = this.getThemeColors(containerEl);
+
 		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 		svg.setAttribute('width', size.toString());
 		svg.setAttribute('height', size.toString());
 		svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+		svg.classList.add('go-board-svg');
 
-		// Фон доски
+		// Фон доски - используем цвет темы или настройку
 		const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 		background.setAttribute('width', size.toString());
 		background.setAttribute('height', size.toString());
-		background.setAttribute('fill', this.settings.backgroundColor);
+		if (this.settings.useThemeColors) {
+			background.setAttribute('fill', 'var(--background-secondary)');
+		} else {
+			background.setAttribute('fill', this.settings.backgroundColor);
+		}
 		svg.appendChild(background);
 
 		// Линии доски
@@ -90,7 +98,11 @@ export class GoBoardRenderer {
 			vLine.setAttribute('y1', cellSize.toString());
 			vLine.setAttribute('x2', pos.toString());
 			vLine.setAttribute('y2', (game.boardSize * cellSize).toString());
-			vLine.setAttribute('stroke', this.settings.lineColor);
+			if (this.settings.useThemeColors) {
+				vLine.setAttribute('stroke', 'var(--text-muted)');
+			} else {
+				vLine.setAttribute('stroke', this.settings.lineColor);
+			}
 			vLine.setAttribute('stroke-width', this.settings.lineWidth.toString());
 			svg.appendChild(vLine);
 
@@ -100,14 +112,18 @@ export class GoBoardRenderer {
 			hLine.setAttribute('y1', pos.toString());
 			hLine.setAttribute('x2', (game.boardSize * cellSize).toString());
 			hLine.setAttribute('y2', pos.toString());
-			hLine.setAttribute('stroke', this.settings.lineColor);
+			if (this.settings.useThemeColors) {
+				hLine.setAttribute('stroke', 'var(--text-muted)');
+			} else {
+				hLine.setAttribute('stroke', this.settings.lineColor);
+			}
 			hLine.setAttribute('stroke-width', this.settings.lineWidth.toString());
 			svg.appendChild(hLine);
 		}
 
 		// Координаты (если включены)
 		if (game.showCoordinates) {
-			this.addCoordinates(svg, game.boardSize, cellSize);
+			this.addCoordinates(svg, game.boardSize, cellSize, themeColors);
 		}
 
 		// Камни
@@ -121,9 +137,17 @@ export class GoBoardRenderer {
 				circle.setAttribute('cx', x.toString());
 				circle.setAttribute('cy', y.toString());
 				circle.setAttribute('r', stoneRadius.toString());
-				circle.setAttribute('fill', move.stone.color === 'black' ? 
-					this.settings.blackStoneColor : this.settings.whiteStoneColor);
-				circle.setAttribute('stroke', this.settings.lineColor);
+				
+				// Используем цвета темы или настройки
+				if (this.settings.useThemeColors) {
+					circle.setAttribute('fill', move.stone.color === 'black' ? 
+						'var(--text-normal)' : 'var(--background-primary)');
+					circle.setAttribute('stroke', 'var(--text-muted)');
+				} else {
+					circle.setAttribute('fill', move.stone.color === 'black' ? 
+						this.settings.blackStoneColor : this.settings.whiteStoneColor);
+					circle.setAttribute('stroke', this.settings.lineColor);
+				}
 				circle.setAttribute('stroke-width', '1');
 				svg.appendChild(circle);
 			}
@@ -132,7 +156,43 @@ export class GoBoardRenderer {
 		return svg;
 	}
 
-	private addCoordinates(svg: SVGElement, boardSize: number, cellSize: number) {
+	private getThemeColors(containerEl: HTMLElement): ThemeColors {
+		// Пробуем получить стили из разных источников
+		const docStyle = getComputedStyle(document.documentElement);
+		const bodyStyle = getComputedStyle(document.body);
+		const containerStyle = getComputedStyle(containerEl);
+		
+		// Функция для получения значения с fallback
+		const getColor = (varName: string): string => {
+			// Пробуем разные источники
+			let value = docStyle.getPropertyValue(varName).trim();
+			if (!value) value = bodyStyle.getPropertyValue(varName).trim();
+			if (!value) value = containerStyle.getPropertyValue(varName).trim();
+			return value;
+		};
+		
+		const themeColors = {
+			textNormal: getColor('--text-normal') || '#000000',
+			textMuted: getColor('--text-muted') || '#666666',
+			textFaint: getColor('--text-faint') || '#999999',
+			backgroundPrimary: getColor('--background-primary') || '#ffffff',
+			backgroundSecondary: getColor('--background-secondary') || '#f8f8f8',
+			interactiveAccent: getColor('--interactive-accent') || '#007acc',
+			textAccent: getColor('--text-accent') || '#007acc'
+		};
+		
+		// Отладочная информация
+		console.log('Theme colors from Obsidian:', themeColors);
+		console.log('Available CSS variables:', {
+			docElement: Array.from(docStyle).filter(prop => prop.startsWith('--')),
+			body: Array.from(bodyStyle).filter(prop => prop.startsWith('--')),
+			container: Array.from(containerStyle).filter(prop => prop.startsWith('--'))
+		});
+		
+		return themeColors;
+	}
+
+	private addCoordinates(svg: SVGElement, boardSize: number, cellSize: number, themeColors: ThemeColors) {
 		// Буквы по горизонтали (A, B, C, ...)
 		for (let i = 0; i < boardSize; i++) {
 			const x = (i + 1) * cellSize;
@@ -144,7 +204,11 @@ export class GoBoardRenderer {
 			text.setAttribute('text-anchor', 'middle');
 			text.setAttribute('dominant-baseline', 'middle');
 			text.setAttribute('font-size', this.settings.coordinatesFontSize.toString());
-			text.setAttribute('fill', this.settings.coordinatesColor);
+			if (this.settings.useThemeColors) {
+				text.setAttribute('fill', 'var(--text-faint)');
+			} else {
+				text.setAttribute('fill', this.settings.coordinatesColor);
+			}
 			text.setAttribute('font-family', 'Arial, sans-serif');
 			text.textContent = String.fromCharCode('A'.charCodeAt(0) + i);
 			svg.appendChild(text);
@@ -161,7 +225,11 @@ export class GoBoardRenderer {
 			text.setAttribute('text-anchor', 'middle');
 			text.setAttribute('dominant-baseline', 'middle');
 			text.setAttribute('font-size', this.settings.coordinatesFontSize.toString());
-			text.setAttribute('fill', this.settings.coordinatesColor);
+			if (this.settings.useThemeColors) {
+				text.setAttribute('fill', 'var(--text-faint)');
+			} else {
+				text.setAttribute('fill', this.settings.coordinatesColor);
+			}
 			text.setAttribute('font-family', 'Arial, sans-serif');
 			text.textContent = (i + 1).toString();
 			svg.appendChild(text);
@@ -182,5 +250,15 @@ export class GoBoardRenderer {
 
 		return null;
 	}
+}
+
+interface ThemeColors {
+	textNormal: string;
+	textMuted: string;
+	textFaint: string;
+	backgroundPrimary: string;
+	backgroundSecondary: string;
+	interactiveAccent: string;
+	textAccent: string;
 }
 

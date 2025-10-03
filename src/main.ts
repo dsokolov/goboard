@@ -60,6 +60,18 @@ class GoSettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+		// Использование цветов темы
+		new Setting(containerEl)
+			.setName('Use Theme Colors')
+			.setDesc('Use colors from the current Obsidian theme')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.useThemeColors)
+				.onChange(async (value) => {
+					this.plugin.settings.useThemeColors = value;
+					await this.plugin.saveSettings();
+					this.display(); // Обновляем интерфейс для показа/скрытия цветовых настроек
+				}));
+
 		// Размер камней
 		new Setting(containerEl)
 			.setName('Stone Size Ratio')
@@ -86,49 +98,52 @@ class GoSettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-		// Цвет фона
-		new Setting(containerEl)
-			.setName('Background Color')
-			.setDesc('Color of the board background')
-			.addColorPicker(colorPicker => colorPicker
-				.setValue(this.plugin.settings.backgroundColor)
-				.onChange(async (value) => {
-					this.plugin.settings.backgroundColor = value;
-					await this.plugin.saveSettings();
-				}));
+		// Цветовые настройки (только когда useThemeColors = false)
+		if (!this.plugin.settings.useThemeColors) {
+			// Цвет фона
+			new Setting(containerEl)
+				.setName('Background Color')
+				.setDesc('Color of the board background')
+				.addColorPicker(colorPicker => colorPicker
+					.setValue(this.plugin.settings.backgroundColor)
+					.onChange(async (value) => {
+						this.plugin.settings.backgroundColor = value;
+						await this.plugin.saveSettings();
+					}));
 
-		// Цвет линий
-		new Setting(containerEl)
-			.setName('Line Color')
-			.setDesc('Color of the board lines')
-			.addColorPicker(colorPicker => colorPicker
-				.setValue(this.plugin.settings.lineColor)
-				.onChange(async (value) => {
-					this.plugin.settings.lineColor = value;
-					await this.plugin.saveSettings();
-				}));
+			// Цвет линий
+			new Setting(containerEl)
+				.setName('Line Color')
+				.setDesc('Color of the board lines')
+				.addColorPicker(colorPicker => colorPicker
+					.setValue(this.plugin.settings.lineColor)
+					.onChange(async (value) => {
+						this.plugin.settings.lineColor = value;
+						await this.plugin.saveSettings();
+					}));
 
-		// Цвет черных камней
-		new Setting(containerEl)
-			.setName('Black Stone Color')
-			.setDesc('Color of black stones')
-			.addColorPicker(colorPicker => colorPicker
-				.setValue(this.plugin.settings.blackStoneColor)
-				.onChange(async (value) => {
-					this.plugin.settings.blackStoneColor = value;
-					await this.plugin.saveSettings();
-				}));
+			// Цвет черных камней
+			new Setting(containerEl)
+				.setName('Black Stone Color')
+				.setDesc('Color of black stones')
+				.addColorPicker(colorPicker => colorPicker
+					.setValue(this.plugin.settings.blackStoneColor)
+					.onChange(async (value) => {
+						this.plugin.settings.blackStoneColor = value;
+						await this.plugin.saveSettings();
+					}));
 
-		// Цвет белых камней
-		new Setting(containerEl)
-			.setName('White Stone Color')
-			.setDesc('Color of white stones')
-			.addColorPicker(colorPicker => colorPicker
-				.setValue(this.plugin.settings.whiteStoneColor)
-				.onChange(async (value) => {
-					this.plugin.settings.whiteStoneColor = value;
-					await this.plugin.saveSettings();
-				}));
+			// Цвет белых камней
+			new Setting(containerEl)
+				.setName('White Stone Color')
+				.setDesc('Color of white stones')
+				.addColorPicker(colorPicker => colorPicker
+					.setValue(this.plugin.settings.whiteStoneColor)
+					.onChange(async (value) => {
+						this.plugin.settings.whiteStoneColor = value;
+						await this.plugin.saveSettings();
+					}));
+		}
 
 		// Показать координаты
 		new Setting(containerEl)
@@ -141,16 +156,18 @@ class GoSettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-		// Цвет координат
-		new Setting(containerEl)
-			.setName('Coordinates Color')
-			.setDesc('Color of coordinate labels')
-			.addColorPicker(colorPicker => colorPicker
-				.setValue(this.plugin.settings.coordinatesColor)
-				.onChange(async (value) => {
-					this.plugin.settings.coordinatesColor = value;
-					await this.plugin.saveSettings();
-				}));
+		// Цвет координат (только когда useThemeColors = false)
+		if (!this.plugin.settings.useThemeColors) {
+			new Setting(containerEl)
+				.setName('Coordinates Color')
+				.setDesc('Color of coordinate labels')
+				.addColorPicker(colorPicker => colorPicker
+					.setValue(this.plugin.settings.coordinatesColor)
+					.onChange(async (value) => {
+						this.plugin.settings.coordinatesColor = value;
+						await this.plugin.saveSettings();
+					}));
+		}
 
 		// Размер шрифта координат
 		new Setting(containerEl)

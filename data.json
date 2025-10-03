@@ -8,5 +8,6 @@
   "whiteStoneColor": "#c9c5c5",
   "showCoordinates": true,
   "coordinatesColor": "#f50000",
-  "coordinatesFontSize": 16
+  "coordinatesFontSize": 16,
+  "useThemeColors": true
 }
