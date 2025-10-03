@@ -2,10 +2,12 @@ import { Plugin, MarkdownRenderer, Setting, App, PluginSettingTab } from 'obsidi
 import { GoPluginSettings } from './data';
 import { DEFAULT_SETTINGS } from './settings';
 import { GoBoardRenderer } from './renderer';
+import { createThemeChangeListener } from './theme';
 
 export default class GoPlugin extends Plugin {
 	settings: GoPluginSettings;
 	renderer: GoBoardRenderer;
+	private themeChangeListener: { disconnect: () => void } | null = null;
 
 	async onload() {
 		await this.loadSettings();
@@ -34,36 +36,16 @@ export default class GoPlugin extends Plugin {
 		this.renderer = new GoBoardRenderer(this.settings, this.app);
 	}
 
+	onunload() {
+		// Очищаем слушатель изменений темы
+		if (this.themeChangeListener) {
+			this.themeChangeListener.disconnect();
+			this.themeChangeListener = null;
+		}
+	}
+
 	private addThemeChangeListener() {
-		// Слушаем изменения в DOM, которые могут указывать на смену темы
-		const observer = new MutationObserver((mutations) => {
-			let themeChanged = false;
-			
-			for (const mutation of mutations) {
-				if (mutation.type === 'attributes' && 
-					(mutation.attributeName === 'class' || mutation.attributeName === 'data-theme')) {
-					themeChanged = true;
-					break;
-				}
-			}
-			
-			if (themeChanged) {
-				this.rerenderAllDiagrams();
-			}
-		});
-
-		// Наблюдаем за изменениями в body и html элементах
-		observer.observe(document.body, { 
-			attributes: true, 
-			attributeFilter: ['class', 'data-theme'] 
-		});
-		observer.observe(document.documentElement, { 
-			attributes: true, 
-			attributeFilter: ['class', 'data-theme'] 
-		});
-
-		// Также слушаем события изменения темы, если они есть
-		document.addEventListener('theme-change', () => {
+		this.themeChangeListener = createThemeChangeListener(() => {
 			this.rerenderAllDiagrams();
 		});
 	}

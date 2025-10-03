@@ -1,6 +1,7 @@
 import { GoPluginSettings, Stone, Move, GoGame } from './data';
 import { Toolbar } from './toolbar';
 import { App } from 'obsidian';
+import { isDarkTheme, getThemeColors, ThemeColors } from './theme';
 
 export class GoBoardRenderer {
 	private settings: GoPluginSettings;
@@ -106,7 +107,7 @@ export class GoBoardRenderer {
 		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
 
 		// Получаем цвета из темы Obsidian
-		const themeColors = this.getThemeColors(containerEl);
+		const themeColors = getThemeColors(containerEl);
 
 		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 		svg.setAttribute('width', size.toString());
@@ -181,10 +182,10 @@ export class GoBoardRenderer {
 					// В светлой теме: text-normal тёмный, background-primary светлый
 					// В тёмной теме: text-normal светлый, background-primary тёмный
 					// Поэтому нужно инвертировать логику для тёмной темы
-					const isDarkTheme = this.isDarkTheme(containerEl);
+					const isDark = isDarkTheme(containerEl);
 					circle.setAttribute('fill', move.stone.color === 'black' ? 
-						(isDarkTheme ? 'var(--background-primary)' : 'var(--text-normal)') : 
-						(isDarkTheme ? 'var(--text-normal)' : 'var(--background-primary)'));
+						(isDark ? 'var(--background-primary)' : 'var(--text-normal)') : 
+						(isDark ? 'var(--text-normal)' : 'var(--background-primary)'));
 					circle.setAttribute('stroke', 'var(--text-muted)');
 				} else {
 					circle.setAttribute('fill', move.stone.color === 'black' ? 
@@ -275,10 +276,10 @@ export class GoBoardRenderer {
 				
 				// Используем цвета темы или настройки
 				if (this.settings.useThemeColors) {
-					const isDarkTheme = this.isDarkTheme(this.currentContainer);
+					const isDark = isDarkTheme(this.currentContainer);
 					circle.setAttribute('fill', move.stone.color === 'black' ? 
-						(isDarkTheme ? 'var(--background-primary)' : 'var(--text-normal)') : 
-						(isDarkTheme ? 'var(--text-normal)' : 'var(--background-primary)'));
+						(isDark ? 'var(--background-primary)' : 'var(--text-normal)') : 
+						(isDark ? 'var(--text-normal)' : 'var(--background-primary)'));
 					circle.setAttribute('stroke', 'var(--text-muted)');
 				} else {
 					circle.setAttribute('fill', move.stone.color === 'black' ? 
@@ -346,57 +347,7 @@ export class GoBoardRenderer {
 	}
 
 
-	private isDarkTheme(containerEl: HTMLElement): boolean {
-		// Проверяем, является ли текущая тема тёмной
-		const computedStyle = getComputedStyle(containerEl);
-		const backgroundColor = computedStyle.getPropertyValue('--background-primary');
-		
-		// Если background-primary тёмный (низкая яркость), то это тёмная тема
-		// Простая проверка: если цвет содержит много тёмных компонентов
-		const rgb = backgroundColor.match(/\d+/g);
-		if (rgb && rgb.length >= 3) {
-			const r = parseInt(rgb[0]);
-			const g = parseInt(rgb[1]);
-			const b = parseInt(rgb[2]);
-			// Если средняя яркость меньше 128, считаем тему тёмной
-			return (r + g + b) / 3 < 128;
-		}
-		
-		// Fallback: проверяем класс body или html
-		const body = document.body;
-		return body.classList.contains('theme-dark') || 
-			   body.classList.contains('obsidian-theme-dark') ||
-			   document.documentElement.classList.contains('theme-dark');
-	}
 
-	private getThemeColors(containerEl: HTMLElement): ThemeColors {
-		// Пробуем получить стили из разных источников
-		const docStyle = getComputedStyle(document.documentElement);
-		const bodyStyle = getComputedStyle(document.body);
-		const containerStyle = getComputedStyle(containerEl);
-		
-		// Функция для получения значения с fallback
-		const getColor = (varName: string): string => {
-			// Пробуем разные источники
-			let value = docStyle.getPropertyValue(varName).trim();
-			if (!value) value = bodyStyle.getPropertyValue(varName).trim();
-			if (!value) value = containerStyle.getPropertyValue(varName).trim();
-			return value;
-		};
-		
-		const themeColors = {
-			textNormal: getColor('--text-normal') || '#000000',
-			textMuted: getColor('--text-muted') || '#666666',
-			textFaint: getColor('--text-faint') || '#999999',
-			backgroundPrimary: getColor('--background-primary') || '#ffffff',
-			backgroundSecondary: getColor('--background-secondary') || '#f8f8f8',
-			interactiveAccent: getColor('--interactive-accent') || '#007acc',
-			textAccent: getColor('--text-accent') || '#007acc'
-		};
-		
-		
-		return themeColors;
-	}
 
 	private addCoordinates(svg: SVGElement, boardSize: number, cellSize: number, themeColors: ThemeColors) {
 		// Буквы по горизонтали (A, B, C, ...)
@@ -504,13 +455,4 @@ export class GoBoardRenderer {
 
 }
 
-interface ThemeColors {
-	textNormal: string;
-	textMuted: string;
-	textFaint: string;
-	backgroundPrimary: string;
-	backgroundSecondary: string;
-	interactiveAccent: string;
-	textAccent: string;
-}
 
