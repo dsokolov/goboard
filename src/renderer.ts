@@ -250,6 +250,7 @@ export class GoBoardRenderer {
 
 		return null;
 	}
+
 }
 
 interface ThemeColors {

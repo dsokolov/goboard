@@ -22,7 +22,7 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : 'inline',
 	treeShaking: true,
-	outfile: 'build/main.js',
+	outfile: 'plugin-dist/main.js',
 	external: [
 		'obsidian',
 		'electron',
