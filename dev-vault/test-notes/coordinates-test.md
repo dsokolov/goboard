@@ -8,36 +8,40 @@
 size 9x9
 coordinates on
 B D4
+B F4
+B G8
+W E8
 ```
 
 ## Доска 19x19 с координатами (по умолчанию)
 
 ```goboard
-size 19x19
+size 9x9
+coordinates on
 B D4
-W D16
-B Q4
-W Q16
+B F4
+B G8
+W E8
 ```
 
 ## Доска 9x9 без координат
 
 ```goboard
 size 9x9
-coordinates off
+coordinates on
 B D4
-W D6
 B F4
-W F6
+B G8
+W E8
 ```
 
 ## Доска 5x5 с координатами
 
 ```goboard
-size 5x5
+size 9x9
 coordinates on
-B C3
-W C4
-B D3
-W D4
+B D4
+B F4
+B G8
+W E8
 ```
