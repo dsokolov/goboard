@@ -4,6 +4,26 @@ import { App } from 'obsidian';
 import { isDarkTheme, getThemeColors, ThemeColors } from './theme';
 import { GoGameParser } from './parser';
 
+// Интерфейсы для лучшей типизации
+interface BoardDimensions {
+	boardSize: number;
+	cellSize: number;
+	stoneRadius: number;
+	padding: number;
+	totalSize: number;
+}
+
+interface BoardPosition {
+	x: number;
+	y: number;
+}
+
+interface StoneStyle {
+	fill: string;
+	stroke: string;
+	strokeWidth: string;
+}
+
 export class GoBoardRenderer {
 	private settings: GoPluginSettings | null = null;
 	private toolbar: Toolbar | null = null;
@@ -11,6 +31,7 @@ export class GoBoardRenderer {
 	private currentGame: GoGame | null = null;
 	private currentContainer: HTMLElement | null = null;
 	private app: App;
+	private cachedDimensions: BoardDimensions | null = null;
 
 	constructor(app: App) {
 		this.app = app;
@@ -21,6 +42,9 @@ export class GoBoardRenderer {
 		this.parser = new GoGameParser(settings);
 		this.toolbar = new Toolbar(settings);
 		
+		// Очищаем кэш размеров при изменении настроек
+		this.cachedDimensions = null;
+		
 		// Устанавливаем callback для изменения типа камня
 		this.toolbar.setStoneTypeChangeCallback((stoneType) => {
 			// Обновляем курсор в зависимости от выбранного типа камня
@@ -28,37 +52,245 @@ export class GoBoardRenderer {
 		});
 	}
 
-	render(source: string, containerEl: HTMLElement) {
+	/**
+	 * Вычисляет размеры доски и элементов
+	 */
+	private calculateBoardDimensions(game: GoGame): BoardDimensions {
+		if (!this.settings) {
+			throw new Error('Settings not initialized');
+		}
+
+		// Используем кэшированные размеры если они есть и настройки не изменились
+		if (this.cachedDimensions && this.cachedDimensions.boardSize === this.getOptimalBoardSize(game)) {
+			return this.cachedDimensions;
+		}
+
+		const boardSize = this.getOptimalBoardSize(game);
+		const cellSize = boardSize / (game.boardSize + 1);
+		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
+		const padding = cellSize;
+		const totalSize = boardSize + padding * 2;
+
+		const dimensions = {
+			boardSize,
+			cellSize,
+			stoneRadius,
+			padding,
+			totalSize
+		};
+
+		// Кэшируем размеры
+		this.cachedDimensions = dimensions;
+		return dimensions;
+	}
+
+	/**
+	 * Вычисляет оптимальный размер доски в зависимости от размера доски
+	 */
+	private getOptimalBoardSize(game: GoGame): number {
+		// Получаем доступную ширину контейнера
+		const containerWidth = this.getContainerWidth();
+		
+		// Максимальная ширина доски (80% от доступной ширины, но не более 600px)
+		const maxBoardWidth = Math.min(containerWidth * 0.8, 600);
+		
+		// Базовые размеры для разных размеров досок
+		const baseSizes = {
+			9: Math.min(300, maxBoardWidth),   // 9x9 - компактная доска
+			13: Math.min(400, maxBoardWidth),  // 13x13 - средняя доска  
+			19: Math.min(500, maxBoardWidth)   // 19x19 - большая доска
+		};
+
+		// Получаем базовый размер для данного размера доски
+		let baseSize = baseSizes[game.boardSize as keyof typeof baseSizes] || Math.min(400, maxBoardWidth);
+		
+		// Для досок больше 19x19 используем пропорциональное уменьшение
+		if (game.boardSize > 19) {
+			baseSize = Math.max(300, Math.min(maxBoardWidth, 600 - (game.boardSize - 19) * 10));
+		}
+		
+		// Для досок меньше 9x9 используем пропорциональное увеличение
+		if (game.boardSize < 9) {
+			baseSize = Math.min(maxBoardWidth, 200 + (9 - game.boardSize) * 20);
+		}
+
+		// Ограничиваем размеры: минимум 200px, максимум 600px
+		return Math.max(200, Math.min(600, baseSize));
+	}
+
+	/**
+	 * Получает ширину контейнера для адаптивного размера
+	 */
+	private getContainerWidth(): number {
+		if (this.currentContainer) {
+			return this.currentContainer.clientWidth || 800; // fallback к 800px
+		}
+		return 800; // fallback к 800px если контейнер не найден
+	}
+
+	/**
+	 * Получает стиль камня в зависимости от цвета и настроек
+	 */
+	private getStoneStyle(stoneColor: 'black' | 'white', containerEl: HTMLElement): StoneStyle {
+		if (!this.settings) {
+			throw new Error('Settings not initialized');
+		}
+
+		if (this.settings.useThemeColors) {
+			const isDark = isDarkTheme(containerEl);
+			const fill = stoneColor === 'black' ? 
+				(isDark ? 'var(--background-primary)' : 'var(--text-normal)') : 
+				(isDark ? 'var(--text-normal)' : 'var(--background-primary)');
+			
+			return {
+				fill,
+				stroke: 'var(--text-muted)',
+				strokeWidth: '1'
+			};
+		} else {
+			return {
+				fill: stoneColor === 'black' ? 
+					this.settings.blackStoneColor : this.settings.whiteStoneColor,
+				stroke: this.settings.lineColor,
+				strokeWidth: '1'
+			};
+		}
+	}
+
+	/**
+	 * Создает фон доски
+	 */
+	private createBoardBackground(svg: SVGElement, dimensions: BoardDimensions): void {
+		if (!this.settings) return;
+
+		const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+		background.setAttribute('x', dimensions.padding.toString());
+		background.setAttribute('y', dimensions.padding.toString());
+		background.setAttribute('width', dimensions.boardSize.toString());
+		background.setAttribute('height', dimensions.boardSize.toString());
+		
+		if (this.settings.useThemeColors) {
+			background.setAttribute('fill', 'var(--background-secondary)');
+		} else {
+			background.setAttribute('fill', this.settings.backgroundColor);
+		}
+		
+		svg.appendChild(background);
+	}
+
+	/**
+	 * Создает линии доски
+	 */
+	private createBoardLines(svg: SVGElement, game: GoGame, dimensions: BoardDimensions): void {
+		if (!this.settings) return;
+
+		const lineColor = this.settings.useThemeColors ? 'var(--text-muted)' : this.settings.lineColor;
+		const strokeWidth = this.settings.lineWidth.toString();
+
+		for (let i = 1; i <= game.boardSize; i++) {
+			const pos = dimensions.padding + i * dimensions.cellSize;
+			
+			// Вертикальные линии
+			const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+			vLine.setAttribute('x1', pos.toString());
+			vLine.setAttribute('y1', (dimensions.padding + dimensions.cellSize).toString());
+			vLine.setAttribute('x2', pos.toString());
+			vLine.setAttribute('y2', (dimensions.padding + game.boardSize * dimensions.cellSize).toString());
+			vLine.setAttribute('stroke', lineColor);
+			vLine.setAttribute('stroke-width', strokeWidth);
+			svg.appendChild(vLine);
+
+			// Горизонтальные линии
+			const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+			hLine.setAttribute('x1', (dimensions.padding + dimensions.cellSize).toString());
+			hLine.setAttribute('y1', pos.toString());
+			hLine.setAttribute('x2', (dimensions.padding + game.boardSize * dimensions.cellSize).toString());
+			hLine.setAttribute('y2', pos.toString());
+			hLine.setAttribute('stroke', lineColor);
+			hLine.setAttribute('stroke-width', strokeWidth);
+			svg.appendChild(hLine);
+		}
+	}
+
+	/**
+	 * Создает камень на доске
+	 */
+	private createStone(svg: SVGElement, position: BoardPosition, stoneColor: 'black' | 'white', 
+						dimensions: BoardDimensions, containerEl: HTMLElement): void {
+		try {
+			const x = dimensions.padding + (position.x + 1) * dimensions.cellSize;
+			const y = dimensions.padding + (position.y + 1) * dimensions.cellSize;
+
+			const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+			circle.setAttribute('cx', x.toString());
+			circle.setAttribute('cy', y.toString());
+			circle.setAttribute('r', dimensions.stoneRadius.toString());
+			
+			const style = this.getStoneStyle(stoneColor, containerEl);
+			circle.setAttribute('fill', style.fill);
+			circle.setAttribute('stroke', style.stroke);
+			circle.setAttribute('stroke-width', style.strokeWidth);
+			
+			svg.appendChild(circle);
+		} catch (error) {
+			console.error('Error creating stone:', error);
+		}
+	}
+
+	render(source: string, containerEl: HTMLElement): void {
+		this.validateRendererState();
+		
+		try {
+			const game = this.parser!.parseGame(source);
+			this.currentGame = game;
+			this.currentContainer = containerEl;
+			
+			const boardContainer = this.createBoardContainer(source);
+			const toolbar = this.toolbar!.createToolbar(source, containerEl);
+			const svg = this.generateSVG(game, containerEl);
+			
+			this.addClickHandler(svg, game);
+			
+			boardContainer.appendChild(svg);
+			boardContainer.appendChild(toolbar);
+			containerEl.appendChild(boardContainer);
+		} catch (error) {
+			console.error('Error rendering Go board:', error);
+			this.showErrorMessage(containerEl, 'Failed to render Go board');
+		}
+	}
+
+	/**
+	 * Валидирует состояние рендерера
+	 */
+	private validateRendererState(): void {
 		if (!this.parser || !this.toolbar || !this.settings) {
 			throw new Error('Renderer not initialized. Call updateSettings() first.');
 		}
-		
-		const game = this.parser.parseGame(source);
-		
-		// Сохраняем ссылки на текущую игру и контейнер
-		this.currentGame = game;
-		this.currentContainer = containerEl;
-		
-		// Создаем контейнер для диаграммы и панели инструментов
+	}
+
+	/**
+	 * Создает контейнер для доски
+	 */
+	private createBoardContainer(source: string): HTMLElement {
 		const boardContainer = document.createElement('div');
 		boardContainer.classList.add('go-board-container');
-		
-		// Сохраняем исходный код в data-атрибут для возможности перерисовки
 		boardContainer.setAttribute('data-source', source);
-		
-		// Создаем панель инструментов
-		const toolbar = this.toolbar.createToolbar(source, containerEl);
-		
-		const svg = this.generateSVG(game, containerEl);
-		
-		// Добавляем обработчик клика на диаграмму
-		this.addClickHandler(svg, game);
-		
-		// Добавляем элементы в стандартном порядке - CSS сам определит правильное размещение
-		boardContainer.appendChild(svg);
-		boardContainer.appendChild(toolbar);
-		
-		containerEl.appendChild(boardContainer);
+		return boardContainer;
+	}
+
+	/**
+	 * Показывает сообщение об ошибке
+	 */
+	private showErrorMessage(containerEl: HTMLElement, message: string): void {
+		const errorDiv = document.createElement('div');
+		errorDiv.classList.add('go-board-error');
+		errorDiv.textContent = message;
+		errorDiv.style.color = 'var(--text-error)';
+		errorDiv.style.padding = '10px';
+		errorDiv.style.border = '1px solid var(--text-error)';
+		errorDiv.style.borderRadius = '4px';
+		containerEl.appendChild(errorDiv);
 	}
 
 
@@ -67,105 +299,29 @@ export class GoBoardRenderer {
 			throw new Error('Settings not initialized');
 		}
 		
-		const boardSize = 400;
-		const cellSize = boardSize / (game.boardSize + 1);
-		// Размер камня пропорционален размеру ячейки
-		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
-
-		// Получаем цвета из темы Obsidian
+		const dimensions = this.calculateBoardDimensions(game);
 		const themeColors = getThemeColors(containerEl);
-
-		// Увеличиваем размер SVG для координат
-		const padding = cellSize; // отступ для координат
-		const totalSize = boardSize + padding * 2;
 		
 		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-		svg.setAttribute('width', totalSize.toString());
-		svg.setAttribute('height', totalSize.toString());
-		svg.setAttribute('viewBox', `0 0 ${totalSize} ${totalSize}`);
+		svg.setAttribute('width', dimensions.totalSize.toString());
+		svg.setAttribute('height', dimensions.totalSize.toString());
+		svg.setAttribute('viewBox', `0 0 ${dimensions.totalSize} ${dimensions.totalSize}`);
 		svg.classList.add('go-board-svg');
 
-		// Фон доски - используем цвет темы или настройку
-		const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-		background.setAttribute('x', padding.toString());
-		background.setAttribute('y', padding.toString());
-		background.setAttribute('width', boardSize.toString());
-		background.setAttribute('height', boardSize.toString());
-		if (this.settings.useThemeColors) {
-			background.setAttribute('fill', 'var(--background-secondary)');
-		} else {
-			background.setAttribute('fill', this.settings.backgroundColor);
-		}
-		svg.appendChild(background);
-
-		// Линии доски
-		for (let i = 1; i <= game.boardSize; i++) {
-			const pos = padding + i * cellSize;
-			
-			// Вертикальные линии
-			const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-			vLine.setAttribute('x1', pos.toString());
-			vLine.setAttribute('y1', (padding + cellSize).toString());
-			vLine.setAttribute('x2', pos.toString());
-			vLine.setAttribute('y2', (padding + game.boardSize * cellSize).toString());
-			if (this.settings.useThemeColors) {
-				vLine.setAttribute('stroke', 'var(--text-muted)');
-			} else {
-				vLine.setAttribute('stroke', this.settings.lineColor);
-			}
-			vLine.setAttribute('stroke-width', this.settings.lineWidth.toString());
-			svg.appendChild(vLine);
-
-			// Горизонтальные линии
-			const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-			hLine.setAttribute('x1', (padding + cellSize).toString());
-			hLine.setAttribute('y1', pos.toString());
-			hLine.setAttribute('x2', (padding + game.boardSize * cellSize).toString());
-			hLine.setAttribute('y2', pos.toString());
-			if (this.settings.useThemeColors) {
-				hLine.setAttribute('stroke', 'var(--text-muted)');
-			} else {
-				hLine.setAttribute('stroke', this.settings.lineColor);
-			}
-			hLine.setAttribute('stroke-width', this.settings.lineWidth.toString());
-			svg.appendChild(hLine);
-		}
+		// Создаем элементы доски
+		this.createBoardBackground(svg, dimensions);
+		this.createBoardLines(svg, game, dimensions);
 
 		// Координаты (если включены)
 		if (game.showCoordinates) {
-			this.addCoordinates(svg, game.boardSize, cellSize, themeColors, padding);
+			this.addCoordinates(svg, game.boardSize, dimensions.cellSize, themeColors, dimensions.padding);
 		}
 
 		// Камни
 		for (const move of game.moves) {
-			const pos = this.parser.positionToCoords(move.stone.position, game.boardSize);
+			const pos = this.parser!.positionToCoords(move.stone.position, game.boardSize);
 			if (pos) {
-				const x = padding + (pos.x + 1) * cellSize;
-				const y = padding + (pos.y + 1) * cellSize;
-
-				const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-				circle.setAttribute('cx', x.toString());
-				circle.setAttribute('cy', y.toString());
-				circle.setAttribute('r', stoneRadius.toString());
-				
-				// Используем цвета темы или настройки
-				if (this.settings.useThemeColors) {
-					// Для чёрных камней используем тёмный цвет, для белых - светлый
-					// В светлой теме: text-normal тёмный, background-primary светлый
-					// В тёмной теме: text-normal светлый, background-primary тёмный
-					// Поэтому нужно инвертировать логику для тёмной темы
-					const isDark = isDarkTheme(containerEl);
-					circle.setAttribute('fill', move.stone.color === 'black' ? 
-						(isDark ? 'var(--background-primary)' : 'var(--text-normal)') : 
-						(isDark ? 'var(--text-normal)' : 'var(--background-primary)'));
-					circle.setAttribute('stroke', 'var(--text-muted)');
-				} else {
-					circle.setAttribute('fill', move.stone.color === 'black' ? 
-						this.settings.blackStoneColor : this.settings.whiteStoneColor);
-					circle.setAttribute('stroke', this.settings.lineColor);
-				}
-				circle.setAttribute('stroke-width', '1');
-				svg.appendChild(circle);
+				this.createStone(svg, pos, move.stone.color, dimensions, containerEl);
 			}
 		}
 
@@ -185,26 +341,37 @@ export class GoBoardRenderer {
 		}
 	}
 
-	private async placeStone(x: number, y: number, color: 'black' | 'white') {
-		if (!this.currentGame || !this.currentContainer || !this.parser) return;
+	private async placeStone(x: number, y: number, color: 'black' | 'white'): Promise<void> {
+		if (!this.validateGameState()) return;
 		
-		// Удаляем существующий камень в этой позиции
-		this.removeStoneAtPosition(x, y);
-		
-		// Добавляем новый камень
-		const position = this.parser.coordsToPosition(x, y);
-		const newMove: Move = {
-			stone: { color, position },
-			moveNumber: this.currentGame.moves.length + 1
-		};
-		
-		this.currentGame.moves.push(newMove);
-		
-		// Обновляем содержимое блока кода
-		await this.updateCodeBlock();
-		
-		// Перерисовываем диаграмму
-		this.rerender();
+		try {
+			// Удаляем существующий камень в этой позиции
+			this.removeStoneAtPosition(x, y);
+			
+			// Добавляем новый камень
+			const position = this.parser!.coordsToPosition(x, y);
+			const newMove: Move = {
+				stone: { color, position },
+				moveNumber: this.currentGame!.moves.length + 1
+			};
+			
+			this.currentGame!.moves.push(newMove);
+			
+			// Обновляем содержимое блока кода
+			await this.updateCodeBlock();
+			
+			// Перерисовываем диаграмму
+			this.rerender();
+		} catch (error) {
+			console.error('Error placing stone:', error);
+		}
+	}
+
+	/**
+	 * Валидирует состояние игры
+	 */
+	private validateGameState(): boolean {
+		return !!(this.currentGame && this.currentContainer && this.parser);
 	}
 
 	private removeStoneAtPosition(x: number, y: number) {
@@ -216,84 +383,75 @@ export class GoBoardRenderer {
 		});
 	}
 
-	private rerender() {
-		if (!this.currentContainer || !this.currentGame || !this.settings || !this.parser) return;
-		
-		const boardContainer = this.currentContainer.querySelector('.go-board-container');
-		if (!boardContainer) return;
-		
-		// Находим SVG и обновляем только его содержимое
-		const svg = boardContainer.querySelector('.go-board-svg') as SVGElement;
-		if (!svg) return;
-		
-		// Очищаем SVG от камней
-		const circles = svg.querySelectorAll('circle');
-		circles.forEach(circle => circle.remove());
-		
-		// Добавляем камни заново
-		const size = 400;
-		const cellSize = size / (this.currentGame.boardSize + 1);
-		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
-		
-		for (const move of this.currentGame.moves) {
-			const pos = this.parser.positionToCoords(move.stone.position, this.currentGame.boardSize);
-			if (pos) {
-				const x = (pos.x + 1) * cellSize;
-				const y = (pos.y + 1) * cellSize;
-
-				const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-				circle.setAttribute('cx', x.toString());
-				circle.setAttribute('cy', y.toString());
-				circle.setAttribute('r', stoneRadius.toString());
-				
-				// Используем цвета темы или настройки
-				if (this.settings.useThemeColors) {
-					const isDark = isDarkTheme(this.currentContainer);
-					circle.setAttribute('fill', move.stone.color === 'black' ? 
-						(isDark ? 'var(--background-primary)' : 'var(--text-normal)') : 
-						(isDark ? 'var(--text-normal)' : 'var(--background-primary)'));
-					circle.setAttribute('stroke', 'var(--text-muted)');
-				} else {
-					circle.setAttribute('fill', move.stone.color === 'black' ? 
-						this.settings.blackStoneColor : this.settings.whiteStoneColor);
-					circle.setAttribute('stroke', this.settings.lineColor);
-				}
-				circle.setAttribute('stroke-width', '1');
-				svg.appendChild(circle);
-			}
-		}
-	}
-
-	private async updateCodeBlock() {
-		if (!this.currentGame || !this.parser) return;
-		
-		// Генерируем новое содержимое блока кода
-		const newContent = this.parser.generateCodeContent(this.currentGame);
+	private rerender(): void {
+		if (!this.validateGameState()) return;
 		
 		try {
-			// Получаем активный файл
-			const activeFile = this.app.workspace.getActiveFile();
-			if (!activeFile) {
+			const boardContainer = this.currentContainer!.querySelector('.go-board-container');
+			if (!boardContainer) {
+				console.warn('Board container not found for rerender');
 				return;
 			}
 			
-			// Читаем содержимое файла
+			const svg = boardContainer.querySelector('.go-board-svg') as SVGElement;
+			if (!svg) {
+				console.warn('SVG element not found for rerender');
+				return;
+			}
+			
+			// Очищаем SVG от камней
+			const circles = svg.querySelectorAll('circle');
+			circles.forEach(circle => circle.remove());
+			
+			// Добавляем камни заново
+			const dimensions = this.calculateBoardDimensions(this.currentGame!);
+			
+			for (const move of this.currentGame!.moves) {
+				const pos = this.parser!.positionToCoords(move.stone.position, this.currentGame!.boardSize);
+				if (pos) {
+					this.createStone(svg, pos, move.stone.color, dimensions, this.currentContainer!);
+				}
+			}
+		} catch (error) {
+			console.error('Error during rerender:', error);
+		}
+	}
+
+	private async updateCodeBlock(): Promise<void> {
+		if (!this.validateGameState()) return;
+		
+		try {
+			const newContent = this.parser!.generateCodeContent(this.currentGame!);
+			const activeFile = this.app.workspace.getActiveFile();
+			
+			if (!activeFile) {
+				console.warn('No active file to update');
+				return;
+			}
+			
 			const content = await this.app.vault.read(activeFile);
+			const updatedContent = this.replaceGoboardBlock(content, newContent);
 			
-			// Ищем блок кода goboard и заменяем его
-			const goboardRegex = /```goboard\n([\s\S]*?)\n```/g;
-			const newCodeBlock = `\`\`\`goboard\n${newContent}\n\`\`\``;
-			
-			if (goboardRegex.test(content)) {
-				// Заменяем найденный блок кода
-				const updatedContent = content.replace(goboardRegex, newCodeBlock);
-				
-				// Сохраняем изменения
+			if (updatedContent !== content) {
 				await this.app.vault.modify(activeFile, updatedContent);
 			}
 		} catch (error) {
 			console.error('Error updating code block:', error);
 		}
+	}
+
+	/**
+	 * Заменяет блок кода goboard в содержимом файла
+	 */
+	private replaceGoboardBlock(content: string, newContent: string): string {
+		const goboardRegex = /```goboard\n([\s\S]*?)\n```/g;
+		const newCodeBlock = `\`\`\`goboard\n${newContent}\n\`\`\``;
+		
+		if (goboardRegex.test(content)) {
+			return content.replace(goboardRegex, newCodeBlock);
+		}
+		
+		return content;
 	}
 
 
@@ -347,32 +505,42 @@ export class GoBoardRenderer {
 	}
 
 
-	private addClickHandler(svg: SVGElement, game: GoGame) {
+	private addClickHandler(svg: SVGElement, game: GoGame): void {
 		svg.addEventListener('click', (event) => {
 			if (!this.toolbar) return;
 			
-			// Получаем координаты клика относительно SVG
-			const rect = svg.getBoundingClientRect();
-			const x = event.clientX - rect.left;
-			const y = event.clientY - rect.top;
-			
-			// Конвертируем координаты в позицию на доске
-			const size = 400;
-			const cellSize = size / (game.boardSize + 1);
-			const boardX = Math.round((x - cellSize) / cellSize);
-			const boardY = Math.round((y - cellSize) / cellSize);
-			
-			// Проверяем, что клик был внутри доски
-			if (boardX >= 0 && boardX < game.boardSize && boardY >= 0 && boardY < game.boardSize) {
-				// Получаем выбранный тип камня
-				const selectedStoneType = this.toolbar.getSelectedStoneType();
+			try {
+				const boardPosition = this.getBoardPositionFromClick(event, svg, game);
+				if (!boardPosition) return;
 				
+				const selectedStoneType = this.toolbar.getSelectedStoneType();
 				if (selectedStoneType) {
-					// Размещаем камень
-					this.placeStone(boardX, boardY, selectedStoneType);
+					this.placeStone(boardPosition.x, boardPosition.y, selectedStoneType);
 				}
+			} catch (error) {
+				console.error('Error handling click:', error);
 			}
 		});
+	}
+
+	/**
+	 * Получает позицию на доске из координат клика
+	 */
+	private getBoardPositionFromClick(event: MouseEvent, svg: SVGElement, game: GoGame): BoardPosition | null {
+		const rect = svg.getBoundingClientRect();
+		const x = event.clientX - rect.left;
+		const y = event.clientY - rect.top;
+		
+		const dimensions = this.calculateBoardDimensions(game);
+		const boardX = Math.round((x - dimensions.padding) / dimensions.cellSize) - 1;
+		const boardY = Math.round((y - dimensions.padding) / dimensions.cellSize) - 1;
+		
+		// Проверяем, что клик был внутри доски
+		if (boardX >= 0 && boardX < game.boardSize && boardY >= 0 && boardY < game.boardSize) {
+			return { x: boardX, y: boardY };
+		}
+		
+		return null;
 	}
 
 

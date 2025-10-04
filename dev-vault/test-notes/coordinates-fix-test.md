@@ -8,31 +8,32 @@
 size 9x9
 coordinates on
 B A1
-W A9
-B I1
-W I9
 ```
 
 ## Доска 5x5 с координатами
 
 ```goboard
-size 5x5
+size 19x19
 coordinates on
 B A1
-W A5
-B E1
-W E5
+W A19
+B S1
+W S19
+B J10
+W J9
 ```
 
 ## Доска 13x13 с координатами
 
 ```goboard
-size 13x13
+size 19x19
 coordinates on
 B A1
-W A13
-B M1
-W M13
+W A19
+B S1
+W S19
+B J10
+W J9
 ```
 
 ## Доска 19x19 с координатами
@@ -44,6 +45,8 @@ B A1
 W A19
 B S1
 W S19
+B J10
+W J9
 ```
 
 ## Ожидаемый результат
