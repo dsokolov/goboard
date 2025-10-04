@@ -8,9 +8,14 @@ export interface Move {
 	moveNumber: number;
 }
 
+export interface BoardSize {
+	width: number;
+	height: number;
+}
+
 export interface GoGame {
 	moves: Move[];
-	boardSize: number; // размер доски, может быть любым (9, 13, 19, etc.)
+	boardSize: BoardSize; // размер доски, может быть любым (9, 13, 19, etc.)
 	showCoordinates?: boolean; // опция для отображения координат
 }
 
@@ -20,7 +25,7 @@ export interface BoardPosition {
 }
 
 export interface GoPluginSettings {
-	boardSize: number;
+	boardSize: BoardSize;
 	stoneSizeRatio: number; // коэффициент размера камня относительно ячейки (0.0-1.0)
 	lineWidth: number;
 	backgroundColor: string;

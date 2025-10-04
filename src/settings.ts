@@ -1,7 +1,7 @@
 import { GoPluginSettings } from './data';
 
 export const DEFAULT_SETTINGS: GoPluginSettings = {
-	boardSize: 19,
+	boardSize: { width: 19, height: 19 },
 	stoneSizeRatio: 0.9, // 40% от размера ячейки
 	lineWidth: 1,
 	backgroundColor: '#DCB35C',

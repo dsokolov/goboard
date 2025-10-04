@@ -24,9 +24,10 @@ export class GoSettingsTab extends PluginSettingTab {
 				.addOption('9', '9x9')
 				.addOption('13', '13x13')
 				.addOption('19', '19x19')
-				.setValue(this.plugin.settings.boardSize.toString())
+				.setValue(this.plugin.settings.boardSize.width.toString())
 				.onChange(async (value) => {
-					this.plugin.settings.boardSize = parseInt(value);
+					const size = parseInt(value);
+					this.plugin.settings.boardSize = { width: size, height: size };
 					await this.plugin.saveSettings();
 				}));
 
