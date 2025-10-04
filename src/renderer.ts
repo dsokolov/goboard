@@ -216,10 +216,10 @@ export class GoBoardRenderer {
 	 * Создает камень на доске
 	 */
 	private createStone(svg: SVGElement, position: BoardPosition, stoneColor: 'black' | 'white', 
-						dimensions: BoardDimensions, containerEl: HTMLElement): void {
+						dimensions: BoardDimensions, containerEl: HTMLElement, boardSize: number): void {
 		try {
 			const x = dimensions.padding + (position.x + 1) * dimensions.cellSize;
-			const y = dimensions.padding + (position.y + 1) * dimensions.cellSize;
+			const y = dimensions.padding + (boardSize - position.y) * dimensions.cellSize;
 
 			const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 			circle.setAttribute('cx', x.toString());
@@ -319,7 +319,7 @@ export class GoBoardRenderer {
 		for (const move of game.moves) {
 			const pos = this.parser!.positionToCoords(move.stone.position, game.boardSize);
 			if (pos) {
-				this.createStone(svg, pos, move.stone.color, dimensions, containerEl);
+				this.createStone(svg, pos, move.stone.color, dimensions, containerEl, game.boardSize);
 			}
 		}
 
@@ -392,7 +392,7 @@ export class GoBoardRenderer {
 			for (const move of game.moves) {
 				const pos = this.parser.positionToCoords(move.stone.position, game.boardSize);
 				if (pos) {
-					this.createStone(svg, pos, move.stone.color, dimensions, boardContainer);
+					this.createStone(svg, pos, move.stone.color, dimensions, boardContainer, game.boardSize);
 				}
 			}
 		} catch (error) {
