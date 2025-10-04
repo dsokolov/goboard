@@ -2,10 +2,12 @@ import { GoPluginSettings, Stone, Move, GoGame } from './data';
 import { Toolbar } from './toolbar';
 import { App } from 'obsidian';
 import { isDarkTheme, getThemeColors, ThemeColors } from './theme';
+import { GoGameParser } from './parser';
 
 export class GoBoardRenderer {
 	private settings: GoPluginSettings;
 	private toolbar: Toolbar;
+	private parser: GoGameParser;
 	private currentGame: GoGame | null = null;
 	private currentContainer: HTMLElement | null = null;
 	private app: App;
@@ -13,6 +15,7 @@ export class GoBoardRenderer {
 	constructor(settings: GoPluginSettings, app: App) {
 		this.settings = settings;
 		this.app = app;
+		this.parser = new GoGameParser(settings);
 		this.toolbar = new Toolbar(settings);
 		
 		// Устанавливаем callback для изменения типа камня
@@ -23,7 +26,7 @@ export class GoBoardRenderer {
 	}
 
 	render(source: string, containerEl: HTMLElement) {
-		const game = this.parseGame(source);
+		const game = this.parser.parseGame(source);
 		
 		// Сохраняем ссылки на текущую игру и контейнер
 		this.currentGame = game;
@@ -51,54 +54,6 @@ export class GoBoardRenderer {
 		containerEl.appendChild(boardContainer);
 	}
 
-	private parseGame(source: string): GoGame {
-		const lines = source.trim().split('\n');
-		const moves: Move[] = [];
-		let moveNumber = 1;
-		let boardSize = this.settings.boardSize; // размер по умолчанию
-		let showCoordinates = this.settings.showCoordinates; // по умолчанию из настроек
-
-		for (const line of lines) {
-			const trimmed = line.trim();
-			if (!trimmed) continue;
-
-			// Проверяем, является ли строка объявлением размера доски
-			const sizeMatch = trimmed.match(/^size\s+(\d+)x(\d+)$/i);
-			if (sizeMatch) {
-				const size = parseInt(sizeMatch[1]);
-				boardSize = size;
-				continue;
-			}
-
-			// Проверяем команды отображения координат
-			if (trimmed.toLowerCase() === 'coordinates on') {
-				showCoordinates = true;
-				continue;
-			}
-			if (trimmed.toLowerCase() === 'coordinates off') {
-				showCoordinates = false;
-				continue;
-			}
-
-			// Простой парсер для формата "B D4" или "W Q16"
-			const match = trimmed.match(/^([BW])\s+([A-T]\d+)$/i);
-			if (match) {
-				const color = match[1].toUpperCase() === 'B' ? 'black' : 'white';
-				const position = match[2].toUpperCase();
-				
-				moves.push({
-					stone: { color, position },
-					moveNumber: moveNumber++
-				});
-			}
-		}
-
-		return {
-			moves,
-			boardSize,
-			showCoordinates
-		};
-	}
 
 	private generateSVG(game: GoGame, containerEl: HTMLElement): SVGElement {
 		const size = 400;
@@ -166,7 +121,7 @@ export class GoBoardRenderer {
 
 		// Камни
 		for (const move of game.moves) {
-			const pos = this.positionToCoords(move.stone.position, game.boardSize);
+			const pos = this.parser.positionToCoords(move.stone.position, game.boardSize);
 			if (pos) {
 				const x = (pos.x + 1) * cellSize;
 				const y = (pos.y + 1) * cellSize;
@@ -220,7 +175,7 @@ export class GoBoardRenderer {
 		this.removeStoneAtPosition(x, y);
 		
 		// Добавляем новый камень
-		const position = this.coordsToPosition(x, y);
+		const position = this.parser.coordsToPosition(x, y);
 		const newMove: Move = {
 			stone: { color, position },
 			moveNumber: this.currentGame.moves.length + 1
@@ -239,7 +194,7 @@ export class GoBoardRenderer {
 		if (!this.currentGame) return;
 		
 		this.currentGame.moves = this.currentGame.moves.filter(move => {
-			const pos = this.positionToCoords(move.stone.position, this.currentGame!.boardSize);
+			const pos = this.parser.positionToCoords(move.stone.position, this.currentGame!.boardSize);
 			return !(pos && pos.x === x && pos.y === y);
 		});
 	}
@@ -264,7 +219,7 @@ export class GoBoardRenderer {
 		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
 		
 		for (const move of this.currentGame.moves) {
-			const pos = this.positionToCoords(move.stone.position, this.currentGame.boardSize);
+			const pos = this.parser.positionToCoords(move.stone.position, this.currentGame.boardSize);
 			if (pos) {
 				const x = (pos.x + 1) * cellSize;
 				const y = (pos.y + 1) * cellSize;
@@ -296,7 +251,7 @@ export class GoBoardRenderer {
 		if (!this.currentGame) return;
 		
 		// Генерируем новое содержимое блока кода
-		const newContent = this.generateCodeContent();
+		const newContent = this.parser.generateCodeContent(this.currentGame);
 		
 		try {
 			// Получаем активный файл
@@ -324,27 +279,6 @@ export class GoBoardRenderer {
 		}
 	}
 
-	private generateCodeContent(): string {
-		if (!this.currentGame) return '';
-		
-		const lines: string[] = [];
-		
-		// Добавляем размер доски
-		lines.push(`size ${this.currentGame.boardSize}x${this.currentGame.boardSize}`);
-		
-		// Добавляем команды координат если нужно
-		if (this.currentGame.showCoordinates) {
-			lines.push('coordinates on');
-		}
-		
-		// Добавляем ходы
-		for (const move of this.currentGame.moves) {
-			const color = move.stone.color === 'black' ? 'B' : 'W';
-			lines.push(`${color} ${move.stone.position}`);
-		}
-		
-		return lines.join('\n');
-	}
 
 
 
@@ -393,20 +327,6 @@ export class GoBoardRenderer {
 		}
 	}
 
-	private positionToCoords(position: string, boardSize: number): { x: number; y: number } | null {
-		// Конвертация позиции типа "D4" в координаты
-		const letter = position.charAt(0);
-		const number = parseInt(position.slice(1));
-
-		const x = letter.charCodeAt(0) - 'A'.charCodeAt(0);
-		const y = number - 1;
-
-		if (x >= 0 && x < boardSize && y >= 0 && y < boardSize) {
-			return { x, y };
-		}
-
-		return null;
-	}
 
 	private addClickHandler(svg: SVGElement, game: GoGame) {
 		svg.addEventListener('click', (event) => {
@@ -434,15 +354,10 @@ export class GoBoardRenderer {
 		});
 	}
 
-	private coordsToPosition(x: number, y: number): string {
-		const letter = String.fromCharCode('A'.charCodeAt(0) + x);
-		const number = y + 1;
-		return `${letter}${number}`;
-	}
 
 	private getMoveAtPosition(game: GoGame, x: number, y: number): number | null {
 		for (const move of game.moves) {
-			const pos = this.positionToCoords(move.stone.position, game.boardSize);
+			const pos = this.parser.positionToCoords(move.stone.position, game.boardSize);
 			if (pos && pos.x === x && pos.y === y) {
 				return move.moveNumber;
 			}
