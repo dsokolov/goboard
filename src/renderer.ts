@@ -5,16 +5,19 @@ import { isDarkTheme, getThemeColors, ThemeColors } from './theme';
 import { GoGameParser } from './parser';
 
 export class GoBoardRenderer {
-	private settings: GoPluginSettings;
-	private toolbar: Toolbar;
-	private parser: GoGameParser;
+	private settings: GoPluginSettings | null = null;
+	private toolbar: Toolbar | null = null;
+	private parser: GoGameParser | null = null;
 	private currentGame: GoGame | null = null;
 	private currentContainer: HTMLElement | null = null;
 	private app: App;
 
-	constructor(settings: GoPluginSettings, app: App) {
-		this.settings = settings;
+	constructor(app: App) {
 		this.app = app;
+	}
+
+	updateSettings(settings: GoPluginSettings) {
+		this.settings = settings;
 		this.parser = new GoGameParser(settings);
 		this.toolbar = new Toolbar(settings);
 		
@@ -26,6 +29,10 @@ export class GoBoardRenderer {
 	}
 
 	render(source: string, containerEl: HTMLElement) {
+		if (!this.parser || !this.toolbar || !this.settings) {
+			throw new Error('Renderer not initialized. Call updateSettings() first.');
+		}
+		
 		const game = this.parser.parseGame(source);
 		
 		// Сохраняем ссылки на текущую игру и контейнер
@@ -56,6 +63,10 @@ export class GoBoardRenderer {
 
 
 	private generateSVG(game: GoGame, containerEl: HTMLElement): SVGElement {
+		if (!this.settings) {
+			throw new Error('Settings not initialized');
+		}
+		
 		const size = 400;
 		const cellSize = size / (game.boardSize + 1);
 		// Размер камня пропорционален размеру ячейки
@@ -169,7 +180,7 @@ export class GoBoardRenderer {
 	}
 
 	private async placeStone(x: number, y: number, color: 'black' | 'white') {
-		if (!this.currentGame || !this.currentContainer) return;
+		if (!this.currentGame || !this.currentContainer || !this.parser) return;
 		
 		// Удаляем существующий камень в этой позиции
 		this.removeStoneAtPosition(x, y);
@@ -191,16 +202,16 @@ export class GoBoardRenderer {
 	}
 
 	private removeStoneAtPosition(x: number, y: number) {
-		if (!this.currentGame) return;
+		if (!this.currentGame || !this.parser) return;
 		
 		this.currentGame.moves = this.currentGame.moves.filter(move => {
-			const pos = this.parser.positionToCoords(move.stone.position, this.currentGame!.boardSize);
+			const pos = this.parser!.positionToCoords(move.stone.position, this.currentGame!.boardSize);
 			return !(pos && pos.x === x && pos.y === y);
 		});
 	}
 
 	private rerender() {
-		if (!this.currentContainer || !this.currentGame) return;
+		if (!this.currentContainer || !this.currentGame || !this.settings || !this.parser) return;
 		
 		const boardContainer = this.currentContainer.querySelector('.go-board-container');
 		if (!boardContainer) return;
@@ -248,7 +259,7 @@ export class GoBoardRenderer {
 	}
 
 	private async updateCodeBlock() {
-		if (!this.currentGame) return;
+		if (!this.currentGame || !this.parser) return;
 		
 		// Генерируем новое содержимое блока кода
 		const newContent = this.parser.generateCodeContent(this.currentGame);
@@ -284,6 +295,8 @@ export class GoBoardRenderer {
 
 
 	private addCoordinates(svg: SVGElement, boardSize: number, cellSize: number, themeColors: ThemeColors) {
+		if (!this.settings) return;
+		
 		// Буквы по горизонтали (A, B, C, ...)
 		for (let i = 0; i < boardSize; i++) {
 			const x = (i + 1) * cellSize;
@@ -330,6 +343,8 @@ export class GoBoardRenderer {
 
 	private addClickHandler(svg: SVGElement, game: GoGame) {
 		svg.addEventListener('click', (event) => {
+			if (!this.toolbar) return;
+			
 			// Получаем координаты клика относительно SVG
 			const rect = svg.getBoundingClientRect();
 			const x = event.clientX - rect.left;
@@ -356,6 +371,8 @@ export class GoBoardRenderer {
 
 
 	private getMoveAtPosition(game: GoGame, x: number, y: number): number | null {
+		if (!this.parser) return null;
+		
 		for (const move of game.moves) {
 			const pos = this.parser.positionToCoords(move.stone.position, game.boardSize);
 			if (pos && pos.x === x && pos.y === y) {

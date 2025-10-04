@@ -13,7 +13,8 @@ export default class GoBoardPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		
-		this.renderer = new GoBoardRenderer(this.settings, this.app);
+		this.renderer = new GoBoardRenderer(this.app);
+		this.renderer.updateSettings(this.settings);
 		
 		// Регистрируем обработчик для блоков кода с языком 'goboard'
 		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, ctx) => {
@@ -33,8 +34,8 @@ export default class GoBoardPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-		// Обновляем рендерер с новыми настройками
-		this.renderer = new GoBoardRenderer(this.settings, this.app);
+		// Обновляем настройки рендерера
+		this.renderer.updateSettings(this.settings);
 		// Перерисовываем все диаграммы с новыми настройками
 		this.rerenderAllDiagrams();
 	}
