@@ -124,4 +124,31 @@ export class ElementFactory {
 
 		return coordinates;
 	}
+
+	/**
+	 * Создает хоси (звёзды) на доске
+	 */
+	createHoshi(positions: BoardPosition[], dimensions: BoardDimensions, settings: GoPluginSettings): SVGElement[] {
+		const hoshiElements: SVGElement[] = [];
+		const color = this.colorService.getHoshiColor(settings);
+		const size = settings.hoshiSize;
+
+		for (const position of positions) {
+			const x = dimensions.padding + (position.x + 1) * dimensions.cellSize;
+			const y = dimensions.padding + (position.y + 1) * dimensions.cellSize;
+
+			const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+			circle.setAttribute('cx', x.toString());
+			circle.setAttribute('cy', y.toString());
+			circle.setAttribute('r', (size / 2).toString());
+			circle.setAttribute('fill', color);
+			circle.setAttribute('stroke', color);
+			circle.setAttribute('stroke-width', '1');
+			circle.setAttribute('class', 'hoshi-point');
+
+			hoshiElements.push(circle);
+		}
+
+		return hoshiElements;
+	}
 }

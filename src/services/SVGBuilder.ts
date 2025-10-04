@@ -1,5 +1,5 @@
 import { GoGame, Move, BoardPosition, GoPluginSettings } from '../data';
-import { BoardDimensions } from './BoardCalculationService';
+import { BoardDimensions, BoardCalculationService } from './BoardCalculationService';
 import { ElementFactory } from './ElementFactory';
 import { GoGameParser } from '../parser';
 
@@ -7,10 +7,12 @@ export class SVGBuilder {
 	private svg: SVGElement;
 	private elementFactory: ElementFactory;
 	private parser: GoGameParser;
+	private boardCalculationService: BoardCalculationService;
 
 	constructor(elementFactory: ElementFactory, parser: GoGameParser) {
 		this.elementFactory = elementFactory;
 		this.parser = parser;
+		this.boardCalculationService = new BoardCalculationService();
 	}
 
 	/**
@@ -70,6 +72,21 @@ export class SVGBuilder {
 	}
 
 	/**
+	 * Добавляет хоси на доску
+	 */
+	addHoshi(game: GoGame, dimensions: BoardDimensions, settings: GoPluginSettings): SVGBuilder {
+		// Используем настройку из игры, если она есть, иначе из глобальных настроек
+		const showHoshi = game.showHoshi !== undefined ? game.showHoshi : settings.showHoshi;
+		
+		if (showHoshi) {
+			const hoshiPositions = this.boardCalculationService.getHoshiPositions(game.boardSize.width);
+			const hoshiElements = this.elementFactory.createHoshi(hoshiPositions, dimensions, settings);
+			hoshiElements.forEach(hoshi => this.svg.appendChild(hoshi));
+		}
+		return this;
+	}
+
+	/**
 	 * Создает полную доску с игрой
 	 */
 	createBoard(game: GoGame, dimensions: BoardDimensions, containerEl: HTMLElement, settings: GoPluginSettings): SVGBuilder {
@@ -77,6 +94,7 @@ export class SVGBuilder {
 			.addBoardBackground(dimensions, settings)
 			.addBoardLines(game, dimensions, settings)
 			.addCoordinates(game.boardSize.width, dimensions.cellSize, dimensions.padding, settings)
+			.addHoshi(game, dimensions, settings)
 			.addStones(game.moves, dimensions, containerEl, game.boardSize.width, settings);
 		return this;
 	}

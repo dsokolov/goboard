@@ -17,6 +17,7 @@ export interface GoGame {
 	moves: Move[];
 	boardSize: BoardSize; // размер доски, может быть любым (9, 13, 19, etc.)
 	showCoordinates?: boolean; // опция для отображения координат
+	showHoshi?: boolean; // опция для отображения хоси
 }
 
 export interface BoardPosition {
@@ -35,6 +36,9 @@ export interface GoPluginSettings {
 	showCoordinates: boolean; // отображение координат на доске
 	coordinatesColor: string; // цвет координат
 	coordinatesFontSize: number; // размер шрифта координат
+	showHoshi: boolean; // отображение хоси (звёзд) на доске
+	hoshiColor: string; // цвет хоси
+	hoshiSize: number; // размер хоси
 	useThemeColors: boolean; // использовать цвета из текущей темы Obsidian
 }
 

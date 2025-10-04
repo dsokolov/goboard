@@ -127,6 +127,17 @@ export class GoSettingsTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
+		// Показать хоси
+		new Setting(containerEl)
+			.setName('Show Hoshi (Star Points)')
+			.setDesc('Display hoshi (star points) on the board')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showHoshi)
+				.onChange(async (value) => {
+					this.plugin.settings.showHoshi = value;
+					await this.plugin.saveSettings();
+				}));
+
 		// Цвет координат (только когда useThemeColors = false)
 		if (!this.plugin.settings.useThemeColors) {
 			new Setting(containerEl)
@@ -136,6 +147,17 @@ export class GoSettingsTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.coordinatesColor)
 					.onChange(async (value) => {
 						this.plugin.settings.coordinatesColor = value;
+						await this.plugin.saveSettings();
+					}));
+
+			// Цвет хоси
+			new Setting(containerEl)
+				.setName('Hoshi Color')
+				.setDesc('Color of hoshi (star points)')
+				.addColorPicker(colorPicker => colorPicker
+					.setValue(this.plugin.settings.hoshiColor)
+					.onChange(async (value) => {
+						this.plugin.settings.hoshiColor = value;
 						await this.plugin.saveSettings();
 					}));
 		}
@@ -150,6 +172,19 @@ export class GoSettingsTab extends PluginSettingTab {
 				.setDynamicTooltip()
 				.onChange(async (value) => {
 					this.plugin.settings.coordinatesFontSize = value;
+					await this.plugin.saveSettings();
+				}));
+
+		// Размер хоси
+		new Setting(containerEl)
+			.setName('Hoshi Size')
+			.setDesc('Size of hoshi (star points) in pixels')
+			.addSlider(slider => slider
+				.setLimits(1, 8, 1)
+				.setValue(this.plugin.settings.hoshiSize)
+				.setDynamicTooltip()
+				.onChange(async (value) => {
+					this.plugin.settings.hoshiSize = value;
 					await this.plugin.saveSettings();
 				}));
 

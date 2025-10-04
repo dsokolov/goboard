@@ -11,5 +11,8 @@ export const DEFAULT_SETTINGS: GoPluginSettings = {
 	showCoordinates: true, // по умолчанию координаты включены
 	coordinatesColor: '#666666', // серый цвет для координат
 	coordinatesFontSize: 12, // размер шрифта координат
+	showHoshi: true, // по умолчанию хоси включены
+	hoshiColor: '#000000', // черный цвет для хоси
+	hoshiSize: 6, // размер хоси в пикселях (увеличили для видимости)
 	useThemeColors: true // по умолчанию используем цвета темы
 };

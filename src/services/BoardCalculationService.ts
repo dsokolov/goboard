@@ -1,4 +1,4 @@
-import { GoGame, GoPluginSettings } from '../data';
+import { GoGame, GoPluginSettings, BoardPosition } from '../data';
 
 export interface BoardDimensions {
 	boardSize: number;
@@ -90,5 +90,55 @@ export class BoardCalculationService {
 	 */
 	clearCache(): void {
 		this.cachedDimensions = null;
+	}
+
+	/**
+	 * Вычисляет позиции хоси (звёзд) для доски заданного размера
+	 */
+	getHoshiPositions(boardSize: number): BoardPosition[] {
+		const positions: BoardPosition[] = [];
+		
+		// Для стандартной доски 19x19
+		if (boardSize === 19) {
+			// Угловые хоси (4-4 точки)
+			positions.push({ x: 3, y: 3 }, { x: 15, y: 3 }, { x: 3, y: 15 }, { x: 15, y: 15 });
+			// Боковые хоси (4-10 и 10-4 точки)
+			positions.push({ x: 9, y: 3 }, { x: 9, y: 15 }, { x: 3, y: 9 }, { x: 15, y: 9 });
+			// Центральный хоси (10-10 точка)
+			positions.push({ x: 9, y: 9 });
+		}
+		// Для доски 13x13
+		else if (boardSize === 13) {
+			// Угловые хоси (3-3 точки)
+			positions.push({ x: 3, y: 3 }, { x: 9, y: 3 }, { x: 3, y: 9 }, { x: 9, y: 9 });
+			// Центральный хоси (6-6 точка)
+			positions.push({ x: 6, y: 6 });
+		}
+		// Для доски 9x9
+		else if (boardSize === 9) {
+			// Угловые хоси (2-2 точки)
+			positions.push({ x: 2, y: 2 }, { x: 6, y: 2 }, { x: 2, y: 6 }, { x: 6, y: 6 });
+			// Центральный хоси (4-4 точка)
+			positions.push({ x: 4, y: 4 });
+		}
+		// Для других размеров досок - упрощенная схема
+		else {
+			// Угловые хоси
+			const cornerOffset = Math.floor(boardSize / 6);
+			positions.push(
+				{ x: cornerOffset, y: cornerOffset },
+				{ x: boardSize - 1 - cornerOffset, y: cornerOffset },
+				{ x: cornerOffset, y: boardSize - 1 - cornerOffset },
+				{ x: boardSize - 1 - cornerOffset, y: boardSize - 1 - cornerOffset }
+			);
+			
+			// Центральный хоси (если доска достаточно большая)
+			if (boardSize >= 7) {
+				const center = Math.floor(boardSize / 2);
+				positions.push({ x: center, y: center });
+			}
+		}
+		
+		return positions;
 	}
 }

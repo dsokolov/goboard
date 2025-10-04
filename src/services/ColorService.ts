@@ -77,4 +77,14 @@ export class ColorService {
 	isDarkTheme(containerEl: HTMLElement): boolean {
 		return isDarkTheme(containerEl);
 	}
+
+	/**
+	 * Получает цвет хоси
+	 */
+	getHoshiColor(settings: GoPluginSettings): string {
+		if (settings.useThemeColors) {
+			return 'var(--text-muted)';
+		}
+		return settings.hoshiColor;
+	}
 }

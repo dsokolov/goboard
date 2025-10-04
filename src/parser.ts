@@ -10,6 +10,7 @@ export class GoGameParser {
 		let moveNumber = 1;
 		let boardSize = defaultBoardSize; // размер по умолчанию
 		let showCoordinates = defaultShowCoordinates; // по умолчанию из параметров
+		let showHoshi = true; // по умолчанию хоси включены
 
 		for (const line of lines) {
 			const trimmed = line.trim();
@@ -34,6 +35,16 @@ export class GoGameParser {
 				continue;
 			}
 
+			// Проверяем команды отображения хоси
+			if (trimmed.toLowerCase() === 'hoshi on') {
+				showHoshi = true;
+				continue;
+			}
+			if (trimmed.toLowerCase() === 'hoshi off') {
+				showHoshi = false;
+				continue;
+			}
+
 			// Простой парсер для формата "B D4" или "W Q16"
 			const match = trimmed.match(/^([BW])\s+([A-T]\d+)$/i);
 			if (match) {
@@ -50,7 +61,8 @@ export class GoGameParser {
 		return {
 			moves,
 			boardSize,
-			showCoordinates
+			showCoordinates,
+			showHoshi
 		};
 	}
 
