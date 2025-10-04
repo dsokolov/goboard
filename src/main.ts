@@ -34,6 +34,8 @@ export default class GoPlugin extends Plugin {
 		await this.saveData(this.settings);
 		// Обновляем рендерер с новыми настройками
 		this.renderer = new GoBoardRenderer(this.settings, this.app);
+		// Перерисовываем все диаграммы с новыми настройками
+		this.rerenderAllDiagrams();
 	}
 
 	onunload() {
