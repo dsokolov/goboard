@@ -1,18 +1,15 @@
-import { GoGame, Move, GoPluginSettings } from './data';
+import { GoGame, Move, BoardSize } from './data';
 
 export class GoGameParser {
-	private settings: GoPluginSettings;
-
-	constructor(settings: GoPluginSettings) {
-		this.settings = settings;
+	constructor() {
 	}
 
-	parseGame(source: string): GoGame {
+	parseGame(source: string, defaultBoardSize: BoardSize, defaultShowCoordinates: boolean): GoGame {
 		const lines = source.trim().split('\n');
 		const moves: Move[] = [];
 		let moveNumber = 1;
-		let boardSize = this.settings.boardSize; // размер по умолчанию
-		let showCoordinates = this.settings.showCoordinates; // по умолчанию из настроек
+		let boardSize = defaultBoardSize; // размер по умолчанию
+		let showCoordinates = defaultShowCoordinates; // по умолчанию из параметров
 
 		for (const line of lines) {
 			const trimmed = line.trim();
@@ -21,8 +18,9 @@ export class GoGameParser {
 			// Проверяем, является ли строка объявлением размера доски
 			const sizeMatch = trimmed.match(/^size\s+(\d+)x(\d+)$/i);
 			if (sizeMatch) {
-				const size = parseInt(sizeMatch[1]);
-				boardSize = size;
+				const height = parseInt(sizeMatch[1]);
+				const width = parseInt(sizeMatch[2]);
+				boardSize = { width, height };
 				continue;
 			}
 
@@ -81,7 +79,7 @@ export class GoGameParser {
 		const lines: string[] = [];
 		
 		// Добавляем размер доски
-		lines.push(`size ${game.boardSize}x${game.boardSize}`);
+		lines.push(`size ${game.boardSize.width}x${game.boardSize.height}`);
 		
 		// Добавляем команды координат если нужно
 		if (game.showCoordinates) {

@@ -16,7 +16,7 @@ export default class GoBoardPlugin extends Plugin {
 		await this.loadSettings();
 		
 		this.renderer = new GoBoardRenderer(this.app);
-		this.parser = new GoGameParser(this.settings);
+		this.parser = new GoGameParser();
 		
 		this.renderer.updateSettings(this.settings);
 		

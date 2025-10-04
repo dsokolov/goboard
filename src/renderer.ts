@@ -37,7 +37,7 @@ export class GoBoardRenderer {
 
 	updateSettings(settings: GoPluginSettings) {
 		this.settings = settings;
-		this.parser = new GoGameParser(settings);
+		this.parser = new GoGameParser();
 		this.toolbar = new Toolbar(settings);
 		
 		// Очищаем кэш размеров при изменении настроек
@@ -66,7 +66,7 @@ export class GoBoardRenderer {
 		}
 
 		const boardSize = optimalBoardSize;
-		const cellSize = boardSize / (game.boardSize + 1);
+		const cellSize = boardSize / (game.boardSize.width + 1);
 		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
 		const padding = cellSize;
 		const totalSize = boardSize + padding * 2;
@@ -102,16 +102,16 @@ export class GoBoardRenderer {
 		};
 
 		// Получаем базовый размер для данного размера доски
-		let baseSize = baseSizes[game.boardSize as keyof typeof baseSizes] || Math.min(400, maxBoardWidth);
+		let baseSize = baseSizes[game.boardSize.width as keyof typeof baseSizes] || Math.min(400, maxBoardWidth);
 		
 		// Для досок больше 19x19 используем пропорциональное уменьшение
-		if (game.boardSize > 19) {
-			baseSize = Math.max(300, Math.min(maxBoardWidth, 600 - (game.boardSize - 19) * 10));
+		if (game.boardSize.width > 19) {
+			baseSize = Math.max(300, Math.min(maxBoardWidth, 600 - (game.boardSize.width - 19) * 10));
 		}
 		
 		// Для досок меньше 9x9 используем пропорциональное увеличение
-		if (game.boardSize < 9) {
-			baseSize = Math.min(maxBoardWidth, 200 + (9 - game.boardSize) * 20);
+		if (game.boardSize.width < 9) {
+			baseSize = Math.min(maxBoardWidth, 200 + (9 - game.boardSize.width) * 20);
 		}
 
 		// Ограничиваем размеры: минимум 200px, максимум 600px
@@ -187,7 +187,7 @@ export class GoBoardRenderer {
 		const lineColor = this.settings.useThemeColors ? 'var(--text-muted)' : this.settings.lineColor;
 		const strokeWidth = this.settings.lineWidth.toString();
 
-		for (let i = 1; i <= game.boardSize; i++) {
+		for (let i = 1; i <= game.boardSize.width; i++) {
 			const pos = dimensions.padding + i * dimensions.cellSize;
 			
 			// Вертикальные линии
@@ -195,7 +195,7 @@ export class GoBoardRenderer {
 			vLine.setAttribute('x1', pos.toString());
 			vLine.setAttribute('y1', (dimensions.padding + dimensions.cellSize).toString());
 			vLine.setAttribute('x2', pos.toString());
-			vLine.setAttribute('y2', (dimensions.padding + game.boardSize * dimensions.cellSize).toString());
+			vLine.setAttribute('y2', (dimensions.padding + game.boardSize.width * dimensions.cellSize).toString());
 			vLine.setAttribute('stroke', lineColor);
 			vLine.setAttribute('stroke-width', strokeWidth);
 			svg.appendChild(vLine);
@@ -204,7 +204,7 @@ export class GoBoardRenderer {
 			const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 			hLine.setAttribute('x1', (dimensions.padding + dimensions.cellSize).toString());
 			hLine.setAttribute('y1', pos.toString());
-			hLine.setAttribute('x2', (dimensions.padding + game.boardSize * dimensions.cellSize).toString());
+			hLine.setAttribute('x2', (dimensions.padding + game.boardSize.width * dimensions.cellSize).toString());
 			hLine.setAttribute('y2', pos.toString());
 			hLine.setAttribute('stroke', lineColor);
 			hLine.setAttribute('stroke-width', strokeWidth);
@@ -241,7 +241,7 @@ export class GoBoardRenderer {
 		this.validateRendererState();
 		
 		try {
-			const game = this.parser!.parseGame(source);
+			const game = this.parser!.parseGame(source, this.settings!.boardSize, this.settings!.showCoordinates);
 			
 			const boardContainer = this.createBoardContainer(source);
 			const toolbar = this.toolbar!.createToolbar(source, containerEl);
@@ -312,14 +312,14 @@ export class GoBoardRenderer {
 
 		// Координаты (если включены)
 		if (game.showCoordinates) {
-			this.addCoordinates(svg, game.boardSize, dimensions.cellSize, themeColors, dimensions.padding);
+			this.addCoordinates(svg, game.boardSize.width, dimensions.cellSize, themeColors, dimensions.padding);
 		}
 
 		// Камни
 		for (const move of game.moves) {
-			const pos = this.parser!.positionToCoords(move.stone.position, game.boardSize);
+			const pos = this.parser!.positionToCoords(move.stone.position, game.boardSize.width);
 			if (pos) {
-				this.createStone(svg, pos, move.stone.color, dimensions, containerEl, game.boardSize);
+				this.createStone(svg, pos, move.stone.color, dimensions, containerEl, game.boardSize.width);
 			}
 		}
 
@@ -367,7 +367,7 @@ export class GoBoardRenderer {
 		if (!this.parser) return;
 		
 		game.moves = game.moves.filter(move => {
-			const pos = this.parser!.positionToCoords(move.stone.position, game.boardSize);
+			const pos = this.parser!.positionToCoords(move.stone.position, game.boardSize.width);
 			return !(pos && pos.x === x && pos.y === y);
 		});
 	}
@@ -390,9 +390,9 @@ export class GoBoardRenderer {
 		const dimensions = this.calculateBoardDimensions(game, boardContainer);
 			
 			for (const move of game.moves) {
-				const pos = this.parser.positionToCoords(move.stone.position, game.boardSize);
+				const pos = this.parser.positionToCoords(move.stone.position, game.boardSize.width);
 				if (pos) {
-					this.createStone(svg, pos, move.stone.color, dimensions, boardContainer, game.boardSize);
+					this.createStone(svg, pos, move.stone.color, dimensions, boardContainer, game.boardSize.width);
 				}
 			}
 		} catch (error) {
@@ -518,10 +518,10 @@ export class GoBoardRenderer {
 		
 		const dimensions = this.calculateBoardDimensions(game, boardContainer);
 		const boardX = Math.round((x - dimensions.padding) / dimensions.cellSize) - 1;
-		const boardY = game.boardSize - Math.round((y - dimensions.padding) / dimensions.cellSize);
+		const boardY = game.boardSize.width - Math.round((y - dimensions.padding) / dimensions.cellSize);
 		
 		// Проверяем, что клик был внутри доски
-		if (boardX >= 0 && boardX < game.boardSize && boardY >= 0 && boardY < game.boardSize) {
+		if (boardX >= 0 && boardX < game.boardSize.width && boardY >= 0 && boardY < game.boardSize.width) {
 			return { x: boardX, y: boardY };
 		}
 		
@@ -532,7 +532,7 @@ export class GoBoardRenderer {
 		if (!this.parser) return null;
 		
 		for (const move of game.moves) {
-			const pos = this.parser.positionToCoords(move.stone.position, game.boardSize);
+			const pos = this.parser.positionToCoords(move.stone.position, game.boardSize.width);
 			if (pos && pos.x === x && pos.y === y) {
 				return move.moveNumber;
 			}
