@@ -1,4 +1,5 @@
 import { GoPluginSettings } from './data';
+import { isDarkTheme } from './theme';
 
 export class Toolbar {
 	private settings: GoPluginSettings;
@@ -29,7 +30,7 @@ export class Toolbar {
 		
 		// Кнопка "Чёрный камень"
 		const blackButton = document.createElement('button');
-		blackButton.innerHTML = '●';
+		blackButton.innerHTML = this.createStoneSVG('black', containerEl, false);
 		blackButton.classList.add('go-board-stone-button', 'go-board-black-stone-button');
 		blackButton.title = 'Чёрный камень';
 		blackButton.addEventListener('click', () => {
@@ -38,7 +39,7 @@ export class Toolbar {
 		
 		// Кнопка "Белый камень"
 		const whiteButton = document.createElement('button');
-		whiteButton.innerHTML = '●';
+		whiteButton.innerHTML = this.createStoneSVG('white', containerEl, false);
 		whiteButton.classList.add('go-board-stone-button', 'go-board-white-stone-button');
 		whiteButton.title = 'Белый камень';
 		whiteButton.addEventListener('click', () => {
@@ -76,16 +77,76 @@ export class Toolbar {
 		const blackButton = toolbar.querySelector('.go-board-black-stone-button');
 		const whiteButton = toolbar.querySelector('.go-board-white-stone-button');
 		
-		// Сбрасываем все активные состояния
-		blackButton?.classList.remove('active');
-		whiteButton?.classList.remove('active');
+		// Сбрасываем все состояния
+		blackButton?.classList.remove('active', 'inactive');
+		whiteButton?.classList.remove('active', 'inactive');
 		
-		// Активируем выбранную кнопку
+		// Активируем выбранную кнопку и обновляем SVG
 		if (this.selectedStoneType === 'black') {
 			blackButton?.classList.add('active');
+			whiteButton?.classList.add('inactive');
+			blackButton!.innerHTML = this.createStoneSVG('black', this.currentContainer, true);
+			whiteButton!.innerHTML = this.createStoneSVG('white', this.currentContainer, false);
 		} else if (this.selectedStoneType === 'white') {
 			whiteButton?.classList.add('active');
+			blackButton?.classList.add('inactive');
+			whiteButton!.innerHTML = this.createStoneSVG('white', this.currentContainer, true);
+			blackButton!.innerHTML = this.createStoneSVG('black', this.currentContainer, false);
+		} else {
+			// Обе кнопки неактивны
+			blackButton?.classList.add('inactive');
+			whiteButton?.classList.add('inactive');
+			blackButton!.innerHTML = this.createStoneSVG('black', this.currentContainer, false);
+			whiteButton!.innerHTML = this.createStoneSVG('white', this.currentContainer, false);
 		}
+	}
+
+	/**
+	 * Создает SVG камень для кнопки
+	 */
+	private createStoneSVG(stoneColor: 'black' | 'white', containerEl: HTMLElement, isActive: boolean = false): string {
+		const isDark = isDarkTheme(containerEl);
+		
+		let fill: string;
+		let stroke: string;
+		
+		// Для неактивных кнопок используем правильные цвета камней
+		if (!isActive) {
+			if (this.settings.useThemeColors) {
+				// Для неактивных кнопок используем правильные цвета камней, но с приглушенной обводкой
+				fill = stoneColor === 'black' ? 
+					(isDark ? 'var(--background-primary)' : 'var(--text-normal)') : 
+					(isDark ? 'var(--text-normal)' : 'var(--background-primary)');
+				stroke = 'var(--text-muted, #999999)';
+			} else {
+				fill = stoneColor === 'black' ? this.settings.blackStoneColor : this.settings.whiteStoneColor;
+				stroke = '#999999';
+			}
+		} else {
+			if (this.settings.useThemeColors) {
+				fill = stoneColor === 'black' ? 
+					(isDark ? 'var(--background-primary)' : 'var(--text-normal)') : 
+					(isDark ? 'var(--text-normal)' : 'var(--background-primary)');
+				stroke = 'var(--text-muted)';
+			} else {
+				fill = stoneColor === 'black' ? 
+					this.settings.blackStoneColor : this.settings.whiteStoneColor;
+				stroke = this.settings.lineColor;
+			}
+		}
+		
+		// Создаем SVG камень размером подходящим для кнопки
+		const size = 20; // размер камня в пикселях (уменьшен для меньших кнопок)
+		const radius = size / 2;
+		
+		return `
+			<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" style="background: transparent;">
+				<circle cx="${radius}" cy="${radius}" r="${radius - 1}" 
+					fill="${fill}" 
+					stroke="${stroke}" 
+					stroke-width="1"/>
+			</svg>
+		`;
 	}
 
 }

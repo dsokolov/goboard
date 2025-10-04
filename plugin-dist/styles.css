@@ -9,8 +9,8 @@
 
 .go-board-toolbar {
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
+	flex-direction: row;
+	justify-content: center;
 	align-items: center;
 	padding: 0.5rem;
 	background: var(--background-secondary, #f8f8f8);
@@ -36,41 +36,38 @@
 
 /* Стили для кнопок камней */
 .go-board-stone-button {
-	padding: 0.5rem;
-	background: var(--background-primary, #ffffff);
-	border: 2px solid var(--background-modifier-border, #ccc);
-	border-radius: 50%;
+	padding: 0.4rem;
+	background: var(--background-secondary, #f8f8f8) !important;
+	border: 2px solid var(--background-modifier-border, #ccc) !important;
+	border-radius: 4px;
 	cursor: pointer;
-	font-size: 1.5rem;
-	width: 3rem;
-	height: 3rem;
+	width: 2.5rem;
+	height: 2.5rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	transition: all 0.2s ease;
 	margin: 0.25rem;
+	position: relative;
 }
 
-.go-board-black-stone-button {
-	color: var(--text-normal, #000000);
-}
-
-.go-board-white-stone-button {
-	color: var(--text-normal, #000000);
-	background: var(--background-primary, #ffffff);
-	border-color: var(--text-normal, #000000);
-}
 
 .go-board-stone-button:hover {
 	transform: scale(1.1);
 	box-shadow: 0 2px 8px var(--background-modifier-box-shadow, rgba(0, 0, 0, 0.2));
 }
 
+.go-board-stone-button.inactive {
+	background: var(--background-secondary, #f8f8f8) !important;
+	border-color: var(--background-modifier-border, #ccc) !important;
+}
+
 .go-board-stone-button.active {
-	background: var(--interactive-accent, #007acc);
-	color: var(--text-on-accent, #ffffff);
-	border-color: var(--interactive-accent, #007acc);
-	box-shadow: 0 0 0 2px var(--interactive-accent-hover, #005a9e);
+	background: var(--interactive-accent, #007acc) !important;
+	border-color: var(--interactive-accent, #007acc) !important;
+	box-shadow: 0 0 0 3px var(--interactive-accent-hover, #005a9e);
+	transform: scale(1.05);
+	opacity: 1;
 }
 
 
