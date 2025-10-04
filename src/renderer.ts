@@ -518,7 +518,7 @@ export class GoBoardRenderer {
 		
 		const dimensions = this.calculateBoardDimensions(game, boardContainer);
 		const boardX = Math.round((x - dimensions.padding) / dimensions.cellSize) - 1;
-		const boardY = Math.round((y - dimensions.padding) / dimensions.cellSize) - 1;
+		const boardY = game.boardSize - Math.round((y - dimensions.padding) / dimensions.cellSize);
 		
 		// Проверяем, что клик был внутри доски
 		if (boardX >= 0 && boardX < game.boardSize && boardY >= 0 && boardY < game.boardSize) {
