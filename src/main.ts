@@ -2,18 +2,22 @@ import { Plugin, MarkdownRenderer, Setting, App, PluginSettingTab } from 'obsidi
 import { GoPluginSettings } from './data';
 import { DEFAULT_SETTINGS } from './settings';
 import { GoBoardRenderer } from './renderer';
+import { GoGameParser } from './parser';
 import { createThemeChangeListener } from './theme';
 import { GoSettingsTab } from './settings-tab';
 
 export default class GoBoardPlugin extends Plugin {
-	settings: GoPluginSettings;
-	renderer: GoBoardRenderer;
+	public settings: GoPluginSettings;
+	private renderer: GoBoardRenderer;
+	private parser: GoGameParser | null = null;
 	private themeChangeListener: { disconnect: () => void } | null = null;
 
 	async onload() {
 		await this.loadSettings();
 		
 		this.renderer = new GoBoardRenderer(this.app);
+		this.parser = new GoGameParser(this.settings);
+		
 		this.renderer.updateSettings(this.settings);
 		
 		// Регистрируем обработчик для блоков кода с языком 'goboard'
@@ -28,6 +32,14 @@ export default class GoBoardPlugin extends Plugin {
 		this.addSettingTab(new GoSettingsTab(this.app, this));
 	}
 
+	onunload() {
+		// Очищаем слушатель изменений темы
+		if (this.themeChangeListener) {
+			this.themeChangeListener.disconnect();
+			this.themeChangeListener = null;
+		}
+	}
+
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
@@ -38,14 +50,6 @@ export default class GoBoardPlugin extends Plugin {
 		this.renderer.updateSettings(this.settings);
 		// Перерисовываем все диаграммы с новыми настройками
 		this.rerenderAllDiagrams();
-	}
-
-	onunload() {
-		// Очищаем слушатель изменений темы
-		if (this.themeChangeListener) {
-			this.themeChangeListener.disconnect();
-			this.themeChangeListener = null;
-		}
 	}
 
 	private addThemeChangeListener() {

@@ -67,24 +67,30 @@ export class GoBoardRenderer {
 			throw new Error('Settings not initialized');
 		}
 		
-		const size = 400;
-		const cellSize = size / (game.boardSize + 1);
+		const boardSize = 400;
+		const cellSize = boardSize / (game.boardSize + 1);
 		// Размер камня пропорционален размеру ячейки
 		const stoneRadius = (cellSize * this.settings.stoneSizeRatio) / 2;
 
 		// Получаем цвета из темы Obsidian
 		const themeColors = getThemeColors(containerEl);
 
+		// Увеличиваем размер SVG для координат
+		const padding = cellSize; // отступ для координат
+		const totalSize = boardSize + padding * 2;
+		
 		const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-		svg.setAttribute('width', size.toString());
-		svg.setAttribute('height', size.toString());
-		svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
+		svg.setAttribute('width', totalSize.toString());
+		svg.setAttribute('height', totalSize.toString());
+		svg.setAttribute('viewBox', `0 0 ${totalSize} ${totalSize}`);
 		svg.classList.add('go-board-svg');
 
 		// Фон доски - используем цвет темы или настройку
 		const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-		background.setAttribute('width', size.toString());
-		background.setAttribute('height', size.toString());
+		background.setAttribute('x', padding.toString());
+		background.setAttribute('y', padding.toString());
+		background.setAttribute('width', boardSize.toString());
+		background.setAttribute('height', boardSize.toString());
 		if (this.settings.useThemeColors) {
 			background.setAttribute('fill', 'var(--background-secondary)');
 		} else {
@@ -94,14 +100,14 @@ export class GoBoardRenderer {
 
 		// Линии доски
 		for (let i = 1; i <= game.boardSize; i++) {
-			const pos = i * cellSize;
+			const pos = padding + i * cellSize;
 			
 			// Вертикальные линии
 			const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 			vLine.setAttribute('x1', pos.toString());
-			vLine.setAttribute('y1', cellSize.toString());
+			vLine.setAttribute('y1', (padding + cellSize).toString());
 			vLine.setAttribute('x2', pos.toString());
-			vLine.setAttribute('y2', (game.boardSize * cellSize).toString());
+			vLine.setAttribute('y2', (padding + game.boardSize * cellSize).toString());
 			if (this.settings.useThemeColors) {
 				vLine.setAttribute('stroke', 'var(--text-muted)');
 			} else {
@@ -112,9 +118,9 @@ export class GoBoardRenderer {
 
 			// Горизонтальные линии
 			const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-			hLine.setAttribute('x1', cellSize.toString());
+			hLine.setAttribute('x1', (padding + cellSize).toString());
 			hLine.setAttribute('y1', pos.toString());
-			hLine.setAttribute('x2', (game.boardSize * cellSize).toString());
+			hLine.setAttribute('x2', (padding + game.boardSize * cellSize).toString());
 			hLine.setAttribute('y2', pos.toString());
 			if (this.settings.useThemeColors) {
 				hLine.setAttribute('stroke', 'var(--text-muted)');
@@ -127,15 +133,15 @@ export class GoBoardRenderer {
 
 		// Координаты (если включены)
 		if (game.showCoordinates) {
-			this.addCoordinates(svg, game.boardSize, cellSize, themeColors);
+			this.addCoordinates(svg, game.boardSize, cellSize, themeColors, padding);
 		}
 
 		// Камни
 		for (const move of game.moves) {
 			const pos = this.parser.positionToCoords(move.stone.position, game.boardSize);
 			if (pos) {
-				const x = (pos.x + 1) * cellSize;
-				const y = (pos.y + 1) * cellSize;
+				const x = padding + (pos.x + 1) * cellSize;
+				const y = padding + (pos.y + 1) * cellSize;
 
 				const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 				circle.setAttribute('cx', x.toString());
@@ -294,13 +300,13 @@ export class GoBoardRenderer {
 
 
 
-	private addCoordinates(svg: SVGElement, boardSize: number, cellSize: number, themeColors: ThemeColors) {
+	private addCoordinates(svg: SVGElement, boardSize: number, cellSize: number, themeColors: ThemeColors, padding: number) {
 		if (!this.settings) return;
 		
-		// Буквы по горизонтали (A, B, C, ...)
+		// Буквы по горизонтали (A, B, C, ...) - снизу доски
 		for (let i = 0; i < boardSize; i++) {
-			const x = (i + 1) * cellSize;
-			const y = cellSize * 0.5; // немного выше доски
+			const x = padding + (i + 1) * cellSize;
+			const y = padding + (boardSize + 1) * cellSize + cellSize * 0.2; // уменьшенный отступ снизу
 			
 			const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 			text.setAttribute('x', x.toString());
@@ -318,10 +324,10 @@ export class GoBoardRenderer {
 			svg.appendChild(text);
 		}
 
-		// Цифры по вертикали (1, 2, 3, ...)
+		// Цифры по вертикали (1, 2, 3, ...) - слева от доски, снизу вверх
 		for (let i = 0; i < boardSize; i++) {
-			const x = cellSize * 0.5; // немного левее доски
-			const y = (i + 1) * cellSize;
+			const x = padding + cellSize * 0.2; // увеличенный отступ слева
+			const y = padding + (boardSize - i) * cellSize; // снизу вверх (1 внизу, 9 вверху)
 			
 			const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
 			text.setAttribute('x', x.toString());
