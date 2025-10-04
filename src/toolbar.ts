@@ -3,17 +3,19 @@ import { GoPluginSettings } from './data';
 export class Toolbar {
 	private settings: GoPluginSettings;
 	private selectedStoneType: 'black' | 'white' | null = null;
-	private onStoneTypeChange: ((stoneType: 'black' | 'white' | null) => void) | null = null;
+	private onStoneTypeChange: ((stoneType: 'black' | 'white' | null, container: HTMLElement) => void) | null = null;
+	private currentContainer: HTMLElement | null = null;
 
 	constructor(settings: GoPluginSettings) {
 		this.settings = settings;
 	}
 
 	createToolbar(source: string, containerEl: HTMLElement): HTMLElement {
+		this.currentContainer = containerEl;
 		return this.createToolbarElement(source, containerEl);
 	}
 
-	setStoneTypeChangeCallback(callback: (stoneType: 'black' | 'white' | null) => void) {
+	setStoneTypeChangeCallback(callback: (stoneType: 'black' | 'white' | null, container: HTMLElement) => void) {
 		this.onStoneTypeChange = callback;
 	}
 
@@ -60,13 +62,15 @@ export class Toolbar {
 		this.updateButtonStates();
 		
 		// Уведомляем о изменении
-		if (this.onStoneTypeChange) {
-			this.onStoneTypeChange(this.selectedStoneType);
+		if (this.onStoneTypeChange && this.currentContainer) {
+			this.onStoneTypeChange(this.selectedStoneType, this.currentContainer);
 		}
 	}
 
 	private updateButtonStates() {
-		const toolbar = document.querySelector('.go-board-toolbar');
+		if (!this.currentContainer) return;
+		
+		const toolbar = this.currentContainer.querySelector('.go-board-toolbar');
 		if (!toolbar) return;
 		
 		const blackButton = toolbar.querySelector('.go-board-black-stone-button');
