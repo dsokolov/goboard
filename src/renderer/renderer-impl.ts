@@ -7,7 +7,7 @@ export class RendererImpl implements Renderer {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         const totalWidth = params.width;
         const totalHeight = params.height;
-        const padding = params.margin ?? 20; // symmetric padding on all sides, default 20
+        const padding = params.margin
         svg.setAttribute('width', totalWidth.toString());
         svg.setAttribute('height', totalHeight.toString());
         svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
@@ -49,7 +49,7 @@ export class RendererImpl implements Renderer {
             for (let x = 0; x < boardSize; x++) {
                 const point = source.points[y][x];
                 if (point.content !== PointContent.Empty) {
-                    const circle = this.renderStone(padding, stepX, stepY, x, y, point.content);
+                    const circle = this.renderStone(padding, stepX, stepY, x, y, point.content, params.stoneSize);
                     svg.appendChild(circle);
                 }
             }
@@ -64,14 +64,17 @@ export class RendererImpl implements Renderer {
         stepY: number,
         x: number,
         y: number,
-        cell: PointContent
+        cell: PointContent,
+        stoneSizeFraction: number
     ) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = padding + x * stepX;
         const cy = padding + y * stepY;
         circle.setAttribute('cx', cx.toString());
         circle.setAttribute('cy', cy.toString());
-        circle.setAttribute('r', '8');
+        const diameter = Math.min(stepX, stepY) * Math.max(0, Math.min(1, stoneSizeFraction));
+        const radius = diameter / 2;
+        circle.setAttribute('r', radius.toString());
 
         if (cell === PointContent.Black) {
             circle.setAttribute('fill', '#000000');
