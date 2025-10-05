@@ -1,4 +1,4 @@
-import { Board, Cell, RenderParams } from "./data";
+import { Board, PointContent, RenderParams } from "./data";
 import { Renderer } from "./renderer";
 
 export class RendererImpl implements Renderer {
@@ -18,7 +18,7 @@ export class RendererImpl implements Renderer {
         svg.appendChild(background);
 
         // Добавляем линии доски
-        const boardSize = source.cells.length;
+        const boardSize = source.points.length;
         const innerWidth = totalWidth - 2 * padding;
         const innerHeight = totalHeight - 2 * padding;
         const stepX = boardSize > 1 ? innerWidth / (boardSize - 1) : 0;
@@ -33,12 +33,23 @@ export class RendererImpl implements Renderer {
             svg.appendChild(hLine);
         }
 
+        // Хоси (звездные точки)
+        for (let y = 0; y < boardSize; y++) {
+            for (let x = 0; x < boardSize; x++) {
+                const point = source.points[y][x];
+                if (point.hasHoshi) {
+                    const hoshi = this.renderHoshi(padding, stepX, stepY, x, y);
+                    svg.appendChild(hoshi);
+                }
+            }
+        }
+
         // Добавляем камни
         for (let y = 0; y < boardSize; y++) {
             for (let x = 0; x < boardSize; x++) {
-                const cell = source.cells[y][x];
-                if (cell !== Cell.Empty) {
-                    const circle = this.renderStone(padding, stepX, stepY, x, y, cell);
+                const point = source.points[y][x];
+                if (point.content !== PointContent.Empty) {
+                    const circle = this.renderStone(padding, stepX, stepY, x, y, point.content);
                     svg.appendChild(circle);
                 }
             }
@@ -53,7 +64,7 @@ export class RendererImpl implements Renderer {
         stepY: number,
         x: number,
         y: number,
-        cell: Cell
+        cell: PointContent
     ) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = padding + x * stepX;
@@ -62,15 +73,33 @@ export class RendererImpl implements Renderer {
         circle.setAttribute('cy', cy.toString());
         circle.setAttribute('r', '8');
 
-        if (cell === Cell.Black) {
+        if (cell === PointContent.Black) {
             circle.setAttribute('fill', '#000000');
             circle.setAttribute('stroke', '#000000');
-        } else if (cell === Cell.White) {
+        } else if (cell === PointContent.White) {
             circle.setAttribute('fill', '#FFFFFF');
             circle.setAttribute('stroke', '#000000');
         }
         circle.setAttribute('stroke-width', '1');
         return circle;
+    }
+
+    private renderHoshi(
+        padding: number,
+        stepX: number,
+        stepY: number,
+        x: number,
+        y: number,
+    ) {
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const cx = padding + x * stepX;
+        const cy = padding + y * stepY;
+        const radius = Math.max(2, Math.min(stepX, stepY) * 0.06);
+        dot.setAttribute('cx', cx.toString());
+        dot.setAttribute('cy', cy.toString());
+        dot.setAttribute('r', radius.toString());
+        dot.setAttribute('fill', '#000000');
+        return dot;
     }
 
     private renderHorizontalLines(padding: number, totalWidth: number, yPos: number) {
