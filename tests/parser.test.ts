@@ -18,7 +18,7 @@ describe('Parser', () => {
     });
 
     it('Only board size 19x19 should return ParseSuccess', () => {
-      const source = testDataLoader.loadTestData('board-size-19x19.txt');
+      const source = testDataLoader.loadTestData('empty-board-19x19.txt');
       const result = parser.parse(source);
 
       expect(result).toBeInstanceOf(ParseSuccess);
@@ -27,7 +27,7 @@ describe('Parser', () => {
     });
 
     it('Only board size 13x13 should return ParseSuccess', () => {
-        const source = testDataLoader.loadTestData('board-size-13x13.txt');
+        const source = testDataLoader.loadTestData('empty-board-13x13.txt');
         const result = parser.parse(source);
   
         expect(result).toBeInstanceOf(ParseSuccess);
@@ -36,7 +36,7 @@ describe('Parser', () => {
       });
 
       it('Only board size 9x9 should return ParseSuccess', () => {
-        const source = testDataLoader.loadTestData('board-size-9x9.txt');
+        const source = testDataLoader.loadTestData('empty-board-9x9.txt');
         const result = parser.parse(source);
   
         expect(result).toBeInstanceOf(ParseSuccess);
@@ -45,7 +45,7 @@ describe('Parser', () => {
       });
 
       it('Only board size 5x5 should return ParseSuccess', () => {
-        const source = testDataLoader.loadTestData('board-size-5x5.txt');
+        const source = testDataLoader.loadTestData('empty-board-5x5.txt');
         const result = parser.parse(source);
   
         expect(result).toBeInstanceOf(ParseSuccess);
@@ -64,7 +64,7 @@ describe('Parser', () => {
 
   describe('parse moves', () => {
     it('9x9 BA1', () => {
-      const source = testDataLoader.loadTestData('moves-BA1.txt');
+      const source = testDataLoader.loadTestData('moves-2.txt');
       const result = parser.parse(source);
   
       expect(result).toBeInstanceOf(ParseSuccess);
@@ -77,8 +77,8 @@ describe('Parser', () => {
         ]
       );
     });
-    it('9x9 WJ9', () => {
-      const source = testDataLoader.loadTestData('moves-WJ9.txt');
+    it('9x9 WI9', () => {
+      const source = testDataLoader.loadTestData('moves-1.txt');
       const result = parser.parse(source);
   
       expect(result).toBeInstanceOf(ParseSuccess);
@@ -92,7 +92,7 @@ describe('Parser', () => {
       );
     });
     it('9x9 BA1 WA2 BA3', () => {
-      const source = testDataLoader.loadTestData('moves-BA1-WA2-BA3.txt');
+      const source = testDataLoader.loadTestData('moves-3.txt');
       const result = parser.parse(source);
   
       expect(result).toBeInstanceOf(ParseSuccess);
