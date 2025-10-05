@@ -161,10 +161,11 @@ export class RendererImpl implements Renderer {
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', (padding - stepY * 0.5).toString());
             text.setAttribute('y', yPos.toString());
-            text.setAttribute('fill', color);
             text.setAttribute('font-size', fontSize.toString());
             text.setAttribute('text-anchor', 'end');
             text.setAttribute('dominant-baseline', 'middle');
+            text.setAttribute('font-family', 'Arial, sans-serif');
+            text.setAttribute('style', `fill: ${color} !important;`);
             text.textContent = label;
             svg.appendChild(text);
         }
@@ -178,10 +179,11 @@ export class RendererImpl implements Renderer {
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', xPos.toString());
             text.setAttribute('y', (totalHeight - padding + stepX * 0.5).toString());
-            text.setAttribute('fill', color);
             text.setAttribute('font-size', fontSize.toString());
             text.setAttribute('text-anchor', 'middle');
             text.setAttribute('dominant-baseline', 'hanging');
+            text.setAttribute('font-family', 'Arial, sans-serif');
+            text.setAttribute('style', `fill: ${color} !important;`);
             text.textContent = label;
             svg.appendChild(text);
         }

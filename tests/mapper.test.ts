@@ -201,6 +201,7 @@ describe('Mapper', () => {
         Color.Black, 
         [new IntervalPosition(new SinglePosition(1, 2), new SinglePosition(3, 4))]
       );
+
       const parseSuccess = new ParseSuccess([instruction], new BoardSize(9, 9));
       const board = mapper.map(parseSuccess);
 
