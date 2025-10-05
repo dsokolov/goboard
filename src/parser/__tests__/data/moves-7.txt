@@ -1,0 +1,5 @@
+size 9x9
+B A1, A3-A5
+W A2
+B C1-E3, F1-F9
+W D1, D2, D3
