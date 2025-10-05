@@ -4,7 +4,7 @@ import * as path from 'path';
 export class TestDataLoader {
   private dataDir: string;
 
-  constructor(dataDir: string = path.join(__dirname, 'data')) {
+  constructor(dataDir: string = path.join(__dirname, 'test-data')) {
     this.dataDir = dataDir;
   }
 
