@@ -1,5 +1,5 @@
-import { Parser, createParser } from '../parser';
-import { Instruction, Position, Color, BoardSize, ParseError, ParseSuccess, SinglePosition, IntervalPosition } from '../data';
+import { Parser, createParser } from '../src/parser/parser';
+import { Instruction, Color, ParseError, ParseSuccess, SinglePosition, IntervalPosition } from '../src/parser/data';
 import { testDataLoader } from './test-data-loader';
 
 describe('Parser', () => {
