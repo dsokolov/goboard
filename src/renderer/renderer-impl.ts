@@ -14,7 +14,7 @@ export class RendererImpl implements Renderer {
         svg.classList.add('go-board-svg');
 
         // Фон доски должен покрывать всю область SVG, чтобы поля были того же цвета
-        const background = this.renderBackground(totalWidth, totalHeight);
+        const background = this.renderBackground(totalWidth, totalHeight, params.boardColor);
         svg.appendChild(background);
 
         // Добавляем линии доски
@@ -27,9 +27,9 @@ export class RendererImpl implements Renderer {
         for (let i = 0; i < boardSize; i++) {
             const xPos = padding + i * stepX;
             const yPos = padding + i * stepY;
-            const vLine = this.renderVerticalLines(padding, totalHeight, xPos);
+            const vLine = this.renderVerticalLines(padding, totalHeight, xPos, params.lineColor);
             svg.appendChild(vLine);
-            const hLine = this.renderHorizontalLines(padding, totalWidth, yPos);
+            const hLine = this.renderHorizontalLines(padding, totalWidth, yPos, params.lineColor);
             svg.appendChild(hLine);
         }
 
@@ -38,7 +38,7 @@ export class RendererImpl implements Renderer {
             for (let x = 0; x < boardSize; x++) {
                 const point = source.points[y][x];
                 if (point.hasHoshi) {
-                    const hoshi = this.renderHoshi(padding, stepX, stepY, x, y);
+                    const hoshi = this.renderHoshi(padding, stepX, stepY, x, y, params.lineColor);
                     svg.appendChild(hoshi);
                 }
             }
@@ -49,7 +49,13 @@ export class RendererImpl implements Renderer {
             for (let x = 0; x < boardSize; x++) {
                 const point = source.points[y][x];
                 if (point.content !== PointContent.Empty) {
-                    const circle = this.renderStone(padding, stepX, stepY, x, y, point.content, params.stoneSize);
+                    const circle = this.renderStone(
+                        padding, stepX, stepY, x, y, point.content,
+                        params.stoneSize,
+                        params.blackStoneColor,
+                        params.whiteStoneColor,
+                        params.lineColor
+                    );
                     svg.appendChild(circle);
                 }
             }
@@ -65,23 +71,26 @@ export class RendererImpl implements Renderer {
         x: number,
         y: number,
         cell: PointContent,
-        stoneSizeFraction: number
+        stoneSizeFraction: number,
+        blackColor: string,
+        whiteColor: string,
+        strokeColor: string
     ) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = padding + x * stepX;
         const cy = padding + y * stepY;
         circle.setAttribute('cx', cx.toString());
         circle.setAttribute('cy', cy.toString());
-        const diameter = Math.min(stepX, stepY) * Math.max(0, Math.min(1, stoneSizeFraction));
+        const diameter = Math.min(stepX, stepY) * stoneSizeFraction;
         const radius = diameter / 2;
         circle.setAttribute('r', radius.toString());
 
         if (cell === PointContent.Black) {
-            circle.setAttribute('fill', '#000000');
-            circle.setAttribute('stroke', '#000000');
+            circle.setAttribute('fill', blackColor);
+            circle.setAttribute('stroke', strokeColor);
         } else if (cell === PointContent.White) {
-            circle.setAttribute('fill', '#FFFFFF');
-            circle.setAttribute('stroke', '#000000');
+            circle.setAttribute('fill', whiteColor);
+            circle.setAttribute('stroke', strokeColor);
         }
         circle.setAttribute('stroke-width', '1');
         return circle;
@@ -93,6 +102,7 @@ export class RendererImpl implements Renderer {
         stepY: number,
         x: number,
         y: number,
+        lineColor: string,
     ) {
         const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = padding + x * stepX;
@@ -101,39 +111,39 @@ export class RendererImpl implements Renderer {
         dot.setAttribute('cx', cx.toString());
         dot.setAttribute('cy', cy.toString());
         dot.setAttribute('r', radius.toString());
-        dot.setAttribute('fill', '#000000');
+        dot.setAttribute('fill', lineColor);
         return dot;
     }
 
-    private renderHorizontalLines(padding: number, totalWidth: number, yPos: number) {
+    private renderHorizontalLines(padding: number, totalWidth: number, yPos: number, lineColor: string) {
         const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         hLine.setAttribute('x1', padding.toString());
         hLine.setAttribute('y1', yPos.toString());
         hLine.setAttribute('x2', (totalWidth - padding).toString());
         hLine.setAttribute('y2', yPos.toString());
-        hLine.setAttribute('stroke', '#000000');
+        hLine.setAttribute('stroke', lineColor);
         hLine.setAttribute('stroke-width', '1');
         return hLine;
     }
 
-    private renderVerticalLines(padding: number, totalHeight: number, xPos: number) {
+    private renderVerticalLines(padding: number, totalHeight: number, xPos: number, lineColor: string) {
         const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         vLine.setAttribute('x1', xPos.toString());
         vLine.setAttribute('y1', padding.toString());
         vLine.setAttribute('x2', xPos.toString());
         vLine.setAttribute('y2', (totalHeight - padding).toString());
-        vLine.setAttribute('stroke', '#000000');
+        vLine.setAttribute('stroke', lineColor);
         vLine.setAttribute('stroke-width', '1');
         return vLine;
     }
 
-    private renderBackground(totalWidth: number, totalHeight: number) {
+    private renderBackground(totalWidth: number, totalHeight: number, boardColor: string) {
         const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         background.setAttribute('x', '0');
         background.setAttribute('y', '0');
         background.setAttribute('width', totalWidth.toString());
         background.setAttribute('height', totalHeight.toString());
-        background.setAttribute('fill', '#DCB35C');
+        background.setAttribute('fill', boardColor);
         return background;
     }
 }
