@@ -1,7 +1,7 @@
-import { Board } from "./data";
+import { Board, RenderParams } from "./data";
 
 export interface Renderer {
-    parse(source: Board): SVGElement;
+    render(source: Board, params: RenderParams): SVGElement;
 }
 
 export function createRenderer(): Renderer {

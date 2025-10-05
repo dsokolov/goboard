@@ -1,11 +1,12 @@
-import { Board, Cell } from "./data";
+import { Board, Cell, RenderParams } from "./data";
 import { Renderer } from "./renderer";
 
 export class RendererImpl implements Renderer {
-    parse(source: Board): SVGElement {
+
+    render(source: Board, params: RenderParams): SVGElement {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        svg.setAttribute('width', '120');
-        svg.setAttribute('height', '120');
+        svg.setAttribute('width', params.width.toString());
+        svg.setAttribute('height',params.height.toString());
         svg.setAttribute('viewBox', '0 0 120 120');
         svg.classList.add('go-board-svg');
 

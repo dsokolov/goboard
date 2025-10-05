@@ -2,8 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { createParser, Parser } from '../src/parser/parser';
 import { createMapper, Mapper } from '../src/mapper/mapper';
-import { createRenderer } from '../src/renderer/renderer';
+import { createRenderer, Renderer} from '../src/renderer/renderer';
 import { ParseError } from '../src/parser/data';
+import { RenderParams } from '../src/renderer/data';
 
 /**
  * Скрипт для обновления бейзлайна рендерера
@@ -17,7 +18,7 @@ import { ParseError } from '../src/parser/data';
 describe('Update Renderer Baseline', () => {
     let parser: Parser;
     let mapper: Mapper;
-    let renderer: any;
+    let renderer: Renderer;
 
     beforeEach(() => {
         parser = createParser();
@@ -65,7 +66,7 @@ function getTxtFiles(dir: string): string[] {
 /**
  * Обрабатывает один txt файл
  */
-async function processFile(txtFilePath: string, parser: Parser, mapper: Mapper, renderer: any): Promise<void> {
+async function processFile(txtFilePath: string, parser: Parser, mapper: Mapper, renderer: Renderer): Promise<void> {
     const fileName = path.basename(txtFilePath);
     const svgFilePath = txtFilePath.replace('.txt', '.svg');
     
@@ -88,11 +89,11 @@ async function processFile(txtFilePath: string, parser: Parser, mapper: Mapper, 
         console.log(`  ✓ Маппинг успешен (доска ${board.cells.length}x${board.cells[0]?.length || 0})`);
 
         // Шаг 4: Рендеринг
-        const svgContent = generateSVG(board);
+        const svgContent = renderer.render(board, new RenderParams(120, 120));
         console.log(`  ✓ Рендеринг успешен`);
 
         // Шаг 5: Сохранение SVG
-        fs.writeFileSync(svgFilePath, svgContent, 'utf-8');
+        fs.writeFileSync(svgFilePath, new XMLSerializer().serializeToString(svgContent), 'utf-8');
         console.log(`  ✓ SVG сохранен: ${path.basename(svgFilePath)}`);
 
     } catch (error) {
@@ -101,55 +102,4 @@ async function processFile(txtFilePath: string, parser: Parser, mapper: Mapper, 
     }
     
     console.log(''); // Пустая строка для разделения
-}
-
-/**
- * Генерирует SVG строку для доски
- */
-function generateSVG(board: any): string {
-    const boardSize = board.cells.length;
-    const cellSize = 20;
-    const padding = 20;
-    const totalSize = padding * 2 + (boardSize - 1) * cellSize;
-    
-    let svg = `<svg width="${totalSize}" height="${totalSize}" viewBox="0 0 ${totalSize} ${totalSize}" xmlns="http://www.w3.org/2000/svg">`;
-    
-    // Фон доски
-    svg += `<rect x="${padding}" y="${padding}" width="${totalSize - padding * 2}" height="${totalSize - padding * 2}" fill="#DCB35C"/>`;
-    
-    // Линии доски
-    for (let i = 0; i < boardSize; i++) {
-        const pos = padding + i * cellSize;
-        
-        // Вертикальные линии
-        svg += `<line x1="${pos}" y1="${padding}" x2="${pos}" y2="${totalSize - padding}" stroke="#000000" stroke-width="1"/>`;
-        
-        // Горизонтальные линии
-        svg += `<line x1="${padding}" y1="${pos}" x2="${totalSize - padding}" y2="${pos}" stroke="#000000" stroke-width="1"/>`;
-    }
-    
-    // Камни
-    for (let y = 0; y < boardSize; y++) {
-        for (let x = 0; x < boardSize; x++) {
-            const cell = board.cells[y][x];
-            if (cell !== 'empty') {
-                const cx = padding + x * cellSize;
-                const cy = padding + y * cellSize;
-                const r = 8;
-                
-                let fill = '#000000';
-                let stroke = '#000000';
-                
-                if (cell === 'white') {
-                    fill = '#FFFFFF';
-                    stroke = '#000000';
-                }
-                
-                svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="1"/>`;
-            }
-        }
-    }
-    
-    svg += '</svg>';
-    return svg;
 }
