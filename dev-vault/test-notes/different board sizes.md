@@ -9,15 +9,11 @@ B A1
 size 13x13
 coordinates on
 hoshi on
-B J4
-B J7
-W J10
-B H11
+B A1
 ```
 
 ```goboard
 size 19x19
 hoshi on
-B D4
-W C6
+B A1
 ```

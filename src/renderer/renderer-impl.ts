@@ -7,7 +7,8 @@ export class RendererImpl implements Renderer {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         const totalWidth = params.width;
         const totalHeight = params.height;
-        const padding = params.margin
+        // Base padding on all sides
+        const basePadding = params.margin;
         svg.setAttribute('width', totalWidth.toString());
         svg.setAttribute('height', totalHeight.toString());
         svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
@@ -19,17 +20,41 @@ export class RendererImpl implements Renderer {
 
         // Добавляем линии доски
         const boardSize = source.points.length;
-        const innerWidth = totalWidth - 2 * padding;
-        const innerHeight = totalHeight - 2 * padding;
+
+        // Preliminary step assuming symmetric base padding to estimate sizes
+        const prelimInnerWidth = totalWidth - 2 * basePadding;
+        const prelimInnerHeight = totalHeight - 2 * basePadding;
+        const prelimStepX = boardSize > 1 ? prelimInnerWidth / (boardSize - 1) : 0;
+        const prelimStepY = boardSize > 1 ? prelimInnerHeight / (boardSize - 1) : 0;
+
+        // Estimate coordinate font sizes
+        const estNumFont = Math.max(8, prelimStepY * 0.4);
+        const estLetFont = Math.max(8, prelimStepX * 0.4);
+
+        // Desired extra space from grid to label: one step plus small extra
+        const smallExtra = Math.max(6, Math.round(Math.min(prelimStepX, prelimStepY) * 0.1));
+        const desiredLeftGap = prelimStepX + smallExtra; // horizontal gap from first vertical line to numbers
+        const desiredBottomGap = prelimStepY + smallExtra; // vertical gap from bottom horizontal line to letters
+
+        // Compute directional paddings to fit labels fully (account for label width/height via font size)
+        const paddingLeft = basePadding + (source.showCoordinates ? Math.ceil(Math.max(estNumFont + 4, desiredLeftGap + 4)) : 0);
+        const paddingBottom = basePadding + (source.showCoordinates ? Math.ceil(Math.max(estLetFont + 4, desiredBottomGap + 4)) : 0);
+        // Make top and right paddings equal to bottom/left for visual symmetry
+        const paddingRight = paddingLeft;
+        const paddingTop = paddingBottom;
+
+        // Final steps with asymmetric paddings
+        const innerWidth = totalWidth - paddingLeft - paddingRight;
+        const innerHeight = totalHeight - paddingTop - paddingBottom;
         const stepX = boardSize > 1 ? innerWidth / (boardSize - 1) : 0;
         const stepY = boardSize > 1 ? innerHeight / (boardSize - 1) : 0;
 
         for (let i = 0; i < boardSize; i++) {
-            const xPos = padding + i * stepX;
-            const yPos = padding + i * stepY;
-            const vLine = this.renderVerticalLines(padding, totalHeight, xPos, params.lineColor);
+            const xPos = paddingLeft + i * stepX;
+            const yPos = paddingTop + i * stepY;
+            const vLine = this.renderVerticalLines(paddingTop, totalHeight - paddingBottom, xPos, params.lineColor);
             svg.appendChild(vLine);
-            const hLine = this.renderHorizontalLines(padding, totalWidth, yPos, params.lineColor);
+            const hLine = this.renderHorizontalLines(paddingLeft, totalWidth - paddingRight, yPos, params.lineColor);
             svg.appendChild(hLine);
         }
 
@@ -38,7 +63,7 @@ export class RendererImpl implements Renderer {
             for (let x = 0; x < boardSize; x++) {
                 const point = source.points[y][x];
                 if (point.hasHoshi) {
-                    const hoshi = this.renderHoshi(padding, stepX, stepY, x, y, params.lineColor);
+                    const hoshi = this.renderHoshi(paddingLeft, paddingTop, stepX, stepY, x, y, params.lineColor);
                     svg.appendChild(hoshi);
                 }
             }
@@ -50,7 +75,7 @@ export class RendererImpl implements Renderer {
                 const point = source.points[y][x];
                 if (point.content !== PointContent.Empty) {
                     const circle = this.renderStone(
-                        padding, stepX, stepY, x, y, point.content,
+                        paddingLeft, paddingTop, stepX, stepY, x, y, point.content,
                         params.stoneSize,
                         params.blackStoneColor,
                         params.whiteStoneColor,
@@ -63,15 +88,17 @@ export class RendererImpl implements Renderer {
 
         // Координаты: цифры слева, буквы снизу
         if (source.showCoordinates) {
-            this.renderLeftNumbers(svg, padding, stepY, boardSize, params.lineColor);
-            this.renderBottomLetters(svg, padding, stepX, boardSize, params.lineColor, totalHeight);
+            // Use the final step sizes to position labels exactly one grid step away
+            this.renderLeftNumbers(svg, paddingLeft, stepX, stepY, boardSize, params.lineColor, paddingTop);
+            this.renderBottomLetters(svg, paddingLeft, stepY, stepX, boardSize, params.lineColor, totalHeight, paddingBottom);
         }
 
         return svg;
     }
 
     private renderStone(
-        padding: number,
+        paddingLeft: number,
+        paddingTop: number,
         stepX: number,
         stepY: number,
         x: number,
@@ -83,8 +110,8 @@ export class RendererImpl implements Renderer {
         strokeColor: string
     ) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        const cx = padding + x * stepX;
-        const cy = padding + y * stepY;
+        const cx = paddingLeft + x * stepX;
+        const cy = paddingTop + y * stepY;
         circle.setAttribute('cx', cx.toString());
         circle.setAttribute('cy', cy.toString());
         const diameter = Math.min(stepX, stepY) * stoneSizeFraction;
@@ -103,7 +130,8 @@ export class RendererImpl implements Renderer {
     }
 
     private renderHoshi(
-        padding: number,
+        paddingLeft: number,
+        paddingTop: number,
         stepX: number,
         stepY: number,
         x: number,
@@ -111,8 +139,8 @@ export class RendererImpl implements Renderer {
         lineColor: string,
     ) {
         const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        const cx = padding + x * stepX;
-        const cy = padding + y * stepY;
+        const cx = paddingLeft + x * stepX;
+        const cy = paddingTop + y * stepY;
         const radius = Math.max(2, Math.min(stepX, stepY) * 0.06);
         dot.setAttribute('cx', cx.toString());
         dot.setAttribute('cy', cy.toString());
@@ -121,23 +149,23 @@ export class RendererImpl implements Renderer {
         return dot;
     }
 
-    private renderHorizontalLines(padding: number, totalWidth: number, yPos: number, lineColor: string) {
+    private renderHorizontalLines(xStart: number, xEnd: number, yPos: number, lineColor: string) {
         const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        hLine.setAttribute('x1', padding.toString());
+        hLine.setAttribute('x1', xStart.toString());
         hLine.setAttribute('y1', yPos.toString());
-        hLine.setAttribute('x2', (totalWidth - padding).toString());
+        hLine.setAttribute('x2', xEnd.toString());
         hLine.setAttribute('y2', yPos.toString());
         hLine.setAttribute('stroke', lineColor);
         hLine.setAttribute('stroke-width', '1');
         return hLine;
     }
 
-    private renderVerticalLines(padding: number, totalHeight: number, xPos: number, lineColor: string) {
+    private renderVerticalLines(yStart: number, yEnd: number, xPos: number, lineColor: string) {
         const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         vLine.setAttribute('x1', xPos.toString());
-        vLine.setAttribute('y1', padding.toString());
+        vLine.setAttribute('y1', yStart.toString());
         vLine.setAttribute('x2', xPos.toString());
-        vLine.setAttribute('y2', (totalHeight - padding).toString());
+        vLine.setAttribute('y2', yEnd.toString());
         vLine.setAttribute('stroke', lineColor);
         vLine.setAttribute('stroke-width', '1');
         return vLine;
@@ -153,13 +181,15 @@ export class RendererImpl implements Renderer {
         return background;
     }
 
-    private renderLeftNumbers(svg: SVGElement, padding: number, stepY: number, boardSize: number, color: string) {
+    private renderLeftNumbers(svg: SVGElement, paddingLeft: number, stepX: number, stepY: number, boardSize: number, color: string, paddingTop: number) {
         const fontSize = Math.max(8, stepY * 0.4);
         for (let i = 0; i < boardSize; i++) {
-            const yPos = padding + i * stepY;
+            const yPos = paddingTop + i * stepY;
             const label = (i + 1).toString();
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', (padding - stepY * 0.5).toString());
+            // Place numbers slightly less than one step away from the first vertical line
+            const gap = stepX * 0.75 + Math.max(4, fontSize * 0.15);
+            text.setAttribute('x', (paddingLeft - gap).toString());
             text.setAttribute('y', yPos.toString());
             text.setAttribute('font-size', fontSize.toString());
             text.setAttribute('text-anchor', 'end');
@@ -171,14 +201,16 @@ export class RendererImpl implements Renderer {
         }
     }
 
-    private renderBottomLetters(svg: SVGElement, padding: number, stepX: number, boardSize: number, color: string, totalHeight: number) {
+    private renderBottomLetters(svg: SVGElement, paddingLeft: number, stepY: number, stepX: number, boardSize: number, color: string, totalHeight: number, paddingBottom: number) {
         const fontSize = Math.max(8, stepX * 0.4);
         for (let i = 0; i < boardSize; i++) {
-            const xPos = padding + i * stepX;
+            const xPos = paddingLeft + i * stepX;
             const label = String.fromCharCode('A'.charCodeAt(0) + i);
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', xPos.toString());
-            text.setAttribute('y', (totalHeight - padding + stepX * 0.5).toString());
+            // Place letters slightly less than one step away from the bottom horizontal line
+            const gap = stepY * 0.75 + Math.max(4, fontSize * 0.15);
+            text.setAttribute('y', (totalHeight - paddingBottom + gap).toString());
             text.setAttribute('font-size', fontSize.toString());
             text.setAttribute('text-anchor', 'middle');
             text.setAttribute('dominant-baseline', 'hanging');
