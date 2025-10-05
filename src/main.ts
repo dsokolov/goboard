@@ -1,80 +1,32 @@
-import { Plugin, MarkdownRenderer, Setting, App, PluginSettingTab } from 'obsidian';
-import { GoPluginSettings } from './data';
-import { DEFAULT_SETTINGS } from './settings';
-import { GoBoardRenderer } from './renderer';
-import { GoGameParser } from './parser';
-import { createThemeChangeListener } from './theme';
-import { GoSettingsTab } from './settings-tab';
+import { Plugin } from 'obsidian';
+import { createRenderer } from './renderer/renderer';
+import { RenderParams } from './renderer/data';
+import { createParser } from './parser/parser';
+import { createMapper } from './mapper/mapper';
+import { ParseSuccess } from './parser/data';
 
 export default class GoBoardPlugin extends Plugin {
-	public settings: GoPluginSettings;
-	private renderer: GoBoardRenderer;
-	private parser: GoGameParser | null = null;
-	private themeChangeListener: { disconnect: () => void } | null = null;
+
+	private parser = createParser();
+	private mapper = createMapper();
+	private renderer = createRenderer();
 
 	async onload() {
-		await this.loadSettings();
-		
-		this.renderer = new GoBoardRenderer(this.app);
-		this.parser = new GoGameParser();
-		
-		this.renderer.updateSettings(this.settings);
-		
-		// Регистрируем обработчик для блоков кода с языком 'goboard'
+
 		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, ctx) => {
-			this.renderer.render(source, el);
-		});
 
-		// Добавляем слушатель для смены темы
-		this.addThemeChangeListener();
+			const parseResult = this.parser.parse(source);
+			if (parseResult instanceof ParseSuccess) {
+				const board = this.mapper.map(parseResult);
+				const renderParams = new RenderParams();
+				const svg = this.renderer.render(board, renderParams);
 
-		// Добавляем вкладку настроек
-		this.addSettingTab(new GoSettingsTab(this.app, this));
-	}
-
-	onunload() {
-		// Очищаем слушатель изменений темы
-		if (this.themeChangeListener) {
-			this.themeChangeListener.disconnect();
-			this.themeChangeListener = null;
-		}
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
-		// Обновляем настройки рендерера
-		this.renderer.updateSettings(this.settings);
-		// Перерисовываем все диаграммы с новыми настройками
-		this.rerenderAllDiagrams();
-	}
-
-	private addThemeChangeListener() {
-		this.themeChangeListener = createThemeChangeListener(() => {
-			this.rerenderAllDiagrams();
-		});
-	}
-
-	private rerenderAllDiagrams() {
-		// Находим все контейнеры с диаграммами Го
-		const goBoardContainers = document.querySelectorAll('.go-board-container');
-		
-		goBoardContainers.forEach(container => {
-			const parent = container.parentElement;
-			if (parent) {
-				// Получаем исходный код из data-атрибута
-				const source = container.getAttribute('data-source');
-				if (source) {
-					// Очищаем контейнер и перерисовываем
-					parent.innerHTML = '';
-					this.renderer.render(source, parent);
-				}
+				const boardContainer = document.createElement('div');
+				boardContainer.classList.add('go-board-container');
+				boardContainer.setAttribute('data-source', source);
+				boardContainer.appendChild(svg);
+				el.appendChild(boardContainer);
 			}
 		});
 	}
 }
-
-

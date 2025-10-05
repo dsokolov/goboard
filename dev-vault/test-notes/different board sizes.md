@@ -18,4 +18,6 @@ B H11
 ```goboard
 size 19x19
 hoshi on
+B D4
+W C6
 ```
