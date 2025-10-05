@@ -12,7 +12,10 @@ export class Point {
 }
 
 export class Board {
-    constructor(public readonly points: Point[][]) {}
+    constructor(
+        public readonly points: Point[][],
+        public readonly showCoordinates: boolean,
+    ) {}
 }
 
 export class RenderParams {

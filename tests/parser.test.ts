@@ -60,6 +60,24 @@ describe('Parser', () => {
         expect(result).toBeInstanceOf(ParseError);
       });
 
+      it('Coordinates ON should set showCoordinates=true', () => {
+        const source = testDataLoader.loadTestData('coordinates-on.txt');
+        const result = parser.parse(source);
+
+        expect(result).toBeInstanceOf(ParseSuccess);
+        expect((result as ParseSuccess).boardSize).toEqual({ width: 19, height: 19 });
+        expect((result as ParseSuccess).showCoordinates).toBe(true);
+      });
+
+      it('Coordinates OFF should set showCoordinates=false', () => {
+        const source = testDataLoader.loadTestData('coordinates-off.txt');
+        const result = parser.parse(source);
+
+        expect(result).toBeInstanceOf(ParseSuccess);
+        expect((result as ParseSuccess).boardSize).toEqual({ width: 19, height: 19 });
+        expect((result as ParseSuccess).showCoordinates).toBe(false);
+      });
+
   });
 
   describe('parse moves', () => {

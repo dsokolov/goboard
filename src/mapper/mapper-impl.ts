@@ -4,7 +4,7 @@ import { Board, Point, PointContent } from "../renderer/data";
 
 export class MapperImpl implements Mapper {
     map(source: ParseSuccess): Board {
-        const { boardSize, instructions } = source;
+        const { boardSize, instructions, showCoordinates } = source;
         const points: Point[][] = [];
         
         // Создаем пустую доску
@@ -21,7 +21,7 @@ export class MapperImpl implements Mapper {
             this.applyInstruction(points, instruction);
         }
         
-        return new Board(points);
+        return new Board(points, showCoordinates);
     }
     
     private applyInstruction(points: Point[][], instruction: Instruction): void {

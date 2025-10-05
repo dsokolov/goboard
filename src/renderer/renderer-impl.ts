@@ -61,6 +61,12 @@ export class RendererImpl implements Renderer {
             }
         }
 
+        // Координаты: цифры слева, буквы снизу
+        if (source.showCoordinates) {
+            this.renderLeftNumbers(svg, padding, stepY, boardSize, params.lineColor);
+            this.renderBottomLetters(svg, padding, stepX, boardSize, params.lineColor, totalHeight);
+        }
+
         return svg;
     }
 
@@ -145,5 +151,39 @@ export class RendererImpl implements Renderer {
         background.setAttribute('height', totalHeight.toString());
         background.setAttribute('fill', boardColor);
         return background;
+    }
+
+    private renderLeftNumbers(svg: SVGElement, padding: number, stepY: number, boardSize: number, color: string) {
+        const fontSize = Math.max(8, stepY * 0.4);
+        for (let i = 0; i < boardSize; i++) {
+            const yPos = padding + i * stepY;
+            const label = (i + 1).toString();
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', (padding - stepY * 0.5).toString());
+            text.setAttribute('y', yPos.toString());
+            text.setAttribute('fill', color);
+            text.setAttribute('font-size', fontSize.toString());
+            text.setAttribute('text-anchor', 'end');
+            text.setAttribute('dominant-baseline', 'middle');
+            text.textContent = label;
+            svg.appendChild(text);
+        }
+    }
+
+    private renderBottomLetters(svg: SVGElement, padding: number, stepX: number, boardSize: number, color: string, totalHeight: number) {
+        const fontSize = Math.max(8, stepX * 0.4);
+        for (let i = 0; i < boardSize; i++) {
+            const xPos = padding + i * stepX;
+            const label = String.fromCharCode('A'.charCodeAt(0) + i);
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', xPos.toString());
+            text.setAttribute('y', (totalHeight - padding + stepX * 0.5).toString());
+            text.setAttribute('fill', color);
+            text.setAttribute('font-size', fontSize.toString());
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'hanging');
+            text.textContent = label;
+            svg.appendChild(text);
+        }
     }
 }

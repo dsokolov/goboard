@@ -35,7 +35,8 @@ export interface ParseResult {}
 export class ParseSuccess implements ParseResult {
     constructor(
         public readonly instructions: Instruction[],
-         public readonly boardSize: BoardSize
+         public readonly boardSize: BoardSize,
+         public readonly showCoordinates: boolean
     ) {}
 }
 

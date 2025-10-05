@@ -11,6 +11,7 @@ export class ParserImpl implements Parser {
         const lines = source.trim().split('\n');
         let boardSize: { width: number, height: number } | null = null;
         const moves: Instruction[] = [];
+        let showCoordinates = true;
         
         for (const line of lines) {
             const trimmedLine = line.trim();
@@ -22,6 +23,13 @@ export class ParserImpl implements Parser {
                 const width = parseInt(sizeMatch[1], 10);
                 const height = parseInt(sizeMatch[2], 10);
                 boardSize = { width, height };
+                continue;
+            }
+
+            // Parse coordinates visibility from "coordinates on|off" format
+            const coordsMatch = trimmedLine.match(/^coordinates\s+(on|off)$/i);
+            if (coordsMatch) {
+                showCoordinates = coordsMatch[1].toLowerCase() === 'on';
                 continue;
             }
             
@@ -45,7 +53,7 @@ export class ParserImpl implements Parser {
             return new ParseError("Invalid format");
         }
         
-        return new ParseSuccess(moves, boardSize);
+        return new ParseSuccess(moves, boardSize, showCoordinates);
     }
     
     private parsePositions(coordinatesStr: string): Position[] {
