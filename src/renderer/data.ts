@@ -22,7 +22,6 @@ export class RenderParams {
     constructor(
         public readonly width: number = 250, 
         public readonly height: number = 250,
-        public readonly margin: number = 20,
         // Доля от расстояния между пунктами, определяющая диаметр камня (0..1)
         public readonly stoneSize: number = 0.8,
         // Цвет фона/поля доски

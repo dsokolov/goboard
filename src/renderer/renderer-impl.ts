@@ -8,7 +8,7 @@ export class RendererImpl implements Renderer {
         const totalWidth = params.width;
         const totalHeight = params.height;
         // Base padding on all sides
-        const basePadding = params.margin;
+        const basePadding = 0;
         svg.setAttribute('width', totalWidth.toString());
         svg.setAttribute('height', totalHeight.toString());
         svg.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
@@ -186,17 +186,10 @@ export class RendererImpl implements Renderer {
         for (let i = 0; i < boardSize; i++) {
             const yPos = paddingTop + i * stepY;
             const label = (i + 1).toString();
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             // Place numbers slightly less than one step away from the first vertical line
             const gap = stepX * 0.75 + Math.max(4, fontSize * 0.15);
-            text.setAttribute('x', (paddingLeft - gap).toString());
-            text.setAttribute('y', yPos.toString());
-            text.setAttribute('font-size', fontSize.toString());
-            text.setAttribute('text-anchor', 'end');
-            text.setAttribute('dominant-baseline', 'middle');
-            text.setAttribute('font-family', 'Arial, sans-serif');
-            text.setAttribute('style', `fill: ${color} !important;`);
-            text.textContent = label;
+            const x = (paddingLeft - gap);
+            const text = this.renderCoordinateSymbol(x, yPos, label, fontSize, color, 'end', 'middle');
             svg.appendChild(text);
         }
     }
@@ -206,18 +199,32 @@ export class RendererImpl implements Renderer {
         for (let i = 0; i < boardSize; i++) {
             const xPos = paddingLeft + i * stepX;
             const label = String.fromCharCode('A'.charCodeAt(0) + i);
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', xPos.toString());
             // Place letters slightly less than one step away from the bottom horizontal line
             const gap = stepY * 0.75 + Math.max(4, fontSize * 0.15);
-            text.setAttribute('y', (totalHeight - paddingBottom + gap).toString());
-            text.setAttribute('font-size', fontSize.toString());
-            text.setAttribute('text-anchor', 'middle');
-            text.setAttribute('dominant-baseline', 'hanging');
-            text.setAttribute('font-family', 'Arial, sans-serif');
-            text.setAttribute('style', `fill: ${color} !important;`);
-            text.textContent = label;
+            const y = (totalHeight - paddingBottom + gap);
+            const text = this.renderCoordinateSymbol(xPos, y, label, fontSize, color, 'middle', 'hanging');
             svg.appendChild(text);
         }
+    }
+
+    private renderCoordinateSymbol(
+        x: number,
+        y: number,
+        label: string,
+        fontSize: number,
+        color: string,
+        textAnchor: 'start' | 'middle' | 'end',
+        dominantBaseline: 'auto' | 'text-bottom' | 'alphabetic' | 'ideographic' | 'middle' | 'central' | 'mathematical' | 'hanging' | 'text-top' | 'bottom' | 'center' | 'top'
+    ): SVGElement {
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x.toString());
+        text.setAttribute('y', y.toString());
+        text.setAttribute('font-size', fontSize.toString());
+        text.setAttribute('text-anchor', textAnchor);
+        text.setAttribute('dominant-baseline', dominantBaseline);
+        text.setAttribute('font-family', 'Arial, sans-serif');
+        text.setAttribute('style', `fill: ${color} !important;`);
+        text.textContent = label;
+        return text;
     }
 }
