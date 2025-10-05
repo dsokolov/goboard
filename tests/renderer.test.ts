@@ -1,5 +1,5 @@
 import { createRenderer, Renderer } from '../src/renderer/renderer';
-import { Board, Cell } from '../src/renderer/data';
+import { Board, Point, PointContent } from '../src/renderer/data';
 import { createParser, Parser } from '../src/parser/parser';
 import { createMapper, Mapper } from '../src/mapper/mapper';
 import { ParseSuccess } from '../src/parser/data';

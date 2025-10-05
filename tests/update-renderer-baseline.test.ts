@@ -86,7 +86,7 @@ async function processFile(txtFilePath: string, parser: Parser, mapper: Mapper, 
 
         // Шаг 3: Маппинг
         const board = mapper.map(parseResult as any);
-        console.log(`  ✓ Маппинг успешен (доска ${board.cells.length}x${board.cells[0]?.length || 0})`);
+        console.log(`  ✓ Маппинг успешен (доска ${board.points.length}x${board.points[0]?.length || 0})`);
 
         // Шаг 4: Рендеринг
         const svgContent = renderer.render(board, new RenderParams(120, 120));

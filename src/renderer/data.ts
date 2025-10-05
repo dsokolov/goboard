@@ -1,11 +1,18 @@
-export enum Cell {
+export enum PointContent {
     Empty = 'empty',
     Black = 'black',
     White = 'white',
 }
 
+export class Point {
+    constructor(
+        public readonly content: PointContent,
+        public readonly hasHoshi: boolean,
+    ) {}
+}
+
 export class Board {
-    constructor(public readonly cells: Cell[][]) {}
+    constructor(public readonly points: Point[][]) {}
 }
 
 export class RenderParams {
