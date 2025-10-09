@@ -1,17 +1,25 @@
 import { Plugin } from 'obsidian';
-import { createRenderer } from './renderer/renderer';
+import 'reflect-metadata';
+import { Container } from 'typedi';
+import type { Renderer } from './renderer/renderer';
 import { RenderParams } from './renderer/data';
-import { createParser } from './parser/parser';
-import { createMapper } from './mapper/mapper';
+import type { Parser } from './parser/parser';
+import type { Mapper } from './mapper/mapper';
 import { ParseSuccess } from './parser/data';
+import { DIContainer, ParserToken, MapperToken, RendererToken } from './di/container';
 
 export default class GoBoardPlugin extends Plugin {
 
-	private parser = createParser();
-	private mapper = createMapper();
-	private renderer = createRenderer();
+	private parser!: Parser;
+	private mapper!: Mapper;
+	private renderer!: Renderer;
 
 	async onload() {
+
+		DIContainer.configure();
+		this.parser = Container.get(ParserToken);
+		this.mapper = Container.get(MapperToken);
+		this.renderer = Container.get(RendererToken);
 
 		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, ctx) => {
 
