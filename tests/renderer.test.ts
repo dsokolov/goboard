@@ -74,13 +74,35 @@ describe('Renderer', () => {
         }
       });
       
-      // Проверяем, что координаты используют CSS переменную
+      // Проверяем, что координаты используют CSS переменные для размера и семейства шрифтов
       const texts = svg.querySelectorAll('text');
       expect(texts.length).toBeGreaterThan(0);
       texts.forEach(text => {
         const style = text.getAttribute('style');
         expect(style).toContain('var(--text-normal, #dcddde)');
+        expect(style).toContain('var(--font-text-size,');
+        expect(style).toContain('var(--font-text, inherit)');
       });
+    });
+
+    it('should use adaptive board size based on font size', () => {
+      // Создаем доску 19x19 для проверки адаптивного размера
+      const points: Point[][] = Array(19).fill(null).map(() => 
+        Array(19).fill(null).map(() => new Point(PointContent.Empty, false))
+      );
+      const board = new Board(points, true);
+      
+      // Рендерим SVG с небольшим базовым размером
+      const renderParams = new RenderParams({ width: 200, height: 200, isDarkTheme: false });
+      const svg = renderer.render(board, renderParams);
+      
+      // Проверяем, что размер доски увеличился для большей доски
+      const width = parseInt(svg.getAttribute('width') || '0');
+      const height = parseInt(svg.getAttribute('height') || '0');
+      
+      // Размер должен быть больше базового для доски 19x19
+      expect(width).toBeGreaterThan(200);
+      expect(height).toBeGreaterThan(200);
     });
 
     it('should use different colors for light theme', () => {

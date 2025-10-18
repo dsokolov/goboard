@@ -3,10 +3,41 @@ import { Renderer } from "./renderer";
 
 export class RendererImpl implements Renderer {
 
+    private getFontSizeFromCSS(): number {
+        // Получаем размер шрифта из CSS переменных Obsidian
+        const root = document.documentElement;
+        const computedStyle = getComputedStyle(root);
+        
+        // Пытаемся получить размер шрифта из CSS переменной
+        const fontSizeVar = computedStyle.getPropertyValue('--font-text-size').trim();
+        if (fontSizeVar) {
+            const fontSize = parseFloat(fontSizeVar);
+            if (!isNaN(fontSize)) {
+                return fontSize;
+            }
+        }
+        
+        // Fallback: получаем размер шрифта из body
+        const bodyStyle = getComputedStyle(document.body);
+        const bodyFontSize = parseFloat(bodyStyle.fontSize);
+        return isNaN(bodyFontSize) ? 16 : bodyFontSize;
+    }
+
     render(source: Board, params: RenderParams): SVGElement {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        const totalWidth = params.width;
-        const totalHeight = params.height;
+        
+        // Получаем размер шрифта из CSS для адаптивного размера доски
+        const fontSize = this.getFontSizeFromCSS();
+        const boardSize = source.points.length;
+        
+        // Рассчитываем размер доски на основе размера шрифта
+        // Минимальный размер клетки должен быть в 2-3 раза больше размера шрифта
+        const minCellSize = fontSize * 2.5;
+        const calculatedSize = Math.max(minCellSize * (boardSize - 1), 200); // Минимум 200px
+        
+        const totalWidth = Math.max(params.width, calculatedSize);
+        const totalHeight = Math.max(params.height, calculatedSize);
+        
         // Base padding on all sides
         const basePadding = 0;
         svg.setAttribute('width', totalWidth.toString());
@@ -19,7 +50,6 @@ export class RendererImpl implements Renderer {
         svg.appendChild(background);
 
         // Добавляем линии доски
-        const boardSize = source.points.length;
 
         // Preliminary step assuming symmetric base padding to estimate sizes
         const prelimInnerWidth = totalWidth - 2 * basePadding;
@@ -27,9 +57,9 @@ export class RendererImpl implements Renderer {
         const prelimStepX = boardSize > 1 ? prelimInnerWidth / (boardSize - 1) : 0;
         const prelimStepY = boardSize > 1 ? prelimInnerHeight / (boardSize - 1) : 0;
 
-        // Estimate coordinate font sizes
-        const estNumFont = Math.max(8, prelimStepY * 0.4);
-        const estLetFont = Math.max(8, prelimStepX * 0.4);
+        // Estimate coordinate font sizes - используем размер шрифта из CSS для координат
+        const estNumFont = Math.max(fontSize, prelimStepY * 0.4);
+        const estLetFont = Math.max(fontSize, prelimStepX * 0.4);
 
         // Desired extra space from grid to label: one step plus small extra
         const smallExtra = Math.max(6, Math.round(Math.min(prelimStepX, prelimStepY) * 0.1));
@@ -195,7 +225,7 @@ export class RendererImpl implements Renderer {
     }
 
     private renderLeftNumbers(svg: SVGElement, paddingLeft: number, stepX: number, stepY: number, boardSize: number, paddingTop: number) {
-        const fontSize = Math.max(8, stepY * 0.4);
+        const fontSize = this.getFontSizeFromCSS();
         for (let i = 0; i < boardSize; i++) {
             // Инвертируем позицию: i=0 должна быть внизу (строка 1), i=boardSize-1 вверху (строка 9)
             const invertedI = boardSize - 1 - i;
@@ -210,7 +240,7 @@ export class RendererImpl implements Renderer {
     }
 
     private renderBottomLetters(svg: SVGElement, paddingLeft: number, stepY: number, stepX: number, boardSize: number, totalHeight: number, paddingBottom: number) {
-        const fontSize = Math.max(8, stepX * 0.4);
+        const fontSize = this.getFontSizeFromCSS();
         for (let i = 0; i < boardSize; i++) {
             const xPos = paddingLeft + i * stepX;
             const label = String.fromCharCode('A'.charCodeAt(0) + i);
@@ -233,11 +263,14 @@ export class RendererImpl implements Renderer {
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', x.toString());
         text.setAttribute('y', y.toString());
-        text.setAttribute('font-size', fontSize.toString());
         text.setAttribute('text-anchor', textAnchor);
         text.setAttribute('dominant-baseline', dominantBaseline);
-        text.setAttribute('font-family', 'Arial, sans-serif');
-        text.setAttribute('style', `fill: var(--text-normal, #dcddde) !important;`);
+        // Используем CSS переменные для размера и семейства шрифтов, как в основном тексте
+        text.setAttribute('style', `
+            font-size: var(--font-text-size, ${fontSize}px) !important;
+            font-family: var(--font-text, inherit) !important;
+            fill: var(--text-normal, #dcddde) !important;
+        `);
         text.textContent = label;
         return text;
     }

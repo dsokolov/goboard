@@ -1,4 +1,5 @@
 # 9x9
+Гобан 9х9
 ```goboard
 size 9x9
 coordinates on

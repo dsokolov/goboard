@@ -3,8 +3,8 @@
 size 9x9
 coordinates on
 hoshi on
-B A1
-W I9
-
+B G7
+W C3
+B D4
 ```
 
