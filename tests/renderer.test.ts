@@ -36,62 +36,38 @@ describe('Renderer', () => {
       const board = new Board(points, true);
       
       // Рендерим SVG
-      const renderParams = new RenderParams({ width: 100, height: 100, isDarkTheme: true });
+      const renderParams = new RenderParams({ width: 100, height: 100 });
       const svg = renderer.render(board, renderParams);
       
-      // Проверяем, что фон использует CSS переменную
+      // Проверяем, что фон использует CSS класс
       const background = svg.querySelector('rect');
       expect(background).toBeTruthy();
-      expect(background?.getAttribute('fill')).toBe('var(--background-primary,rgb(210, 15, 15))');
+      expect(background?.classList.contains('go-board-background')).toBe(true);
       
-      // Проверяем, что линии используют CSS переменную
+      // Проверяем, что линии используют CSS класс
       const lines = svg.querySelectorAll('line');
       expect(lines.length).toBeGreaterThan(0);
       lines.forEach(line => {
-        expect(line.getAttribute('stroke')).toBe('var(--text-muted, #8a8a8a)');
+        expect(line.classList.contains('go-board-line')).toBe(true);
       });
       
-      // Проверяем, что камни используют фиксированные цвета
+      // Проверяем, что камни используют CSS классы
       const circles = svg.querySelectorAll('circle');
       expect(circles.length).toBeGreaterThan(0);
       
       circles.forEach(circle => {
-        const fill = circle.getAttribute('fill');
-        const stroke = circle.getAttribute('stroke');
-        
-        // Камни должны использовать CSS переменные в зависимости от темы
-        if (fill === 'var(--background-primary, #1e1e1e)' || fill === 'var(--text-normal, #dcddde)') {
-          // Это камень в тёмной теме - проверяем CSS переменные
-          expect(fill).toMatch(/var\(--/);
-          // В тёмной теме только чёрные камни имеют контур, белые - нет
-          if (fill === 'var(--background-primary, #1e1e1e)') {
-            expect(stroke).toMatch(/var\(--/);
-          } else {
-            expect(stroke).toBe('none');
-          }
-        } else if (fill === 'var(--text-normal, #2c2c2c)' || fill === 'var(--background-primary, #ffffff)') {
-          // Это камень в светлой теме - проверяем CSS переменные
-          expect(fill).toMatch(/var\(--/);
-          // В светлой теме только белые камни имеют контур, чёрные - нет
-          if (fill === 'var(--background-primary, #ffffff)') {
-            expect(stroke).toMatch(/var\(--/);
-          } else {
-            expect(stroke).toBe('none');
-          }
-        } else {
-          // Это хоси - должны использовать CSS переменные
-          expect(fill).toMatch(/var\(--/);
-        }
+        // Камни должны иметь соответствующие CSS классы
+        const hasStoneClass = circle.classList.contains('go-stone-black') || 
+                             circle.classList.contains('go-stone-white') ||
+                             circle.classList.contains('go-board-hoshi');
+        expect(hasStoneClass).toBe(true);
       });
       
-      // Проверяем, что координаты используют CSS переменные для размера и семейства шрифтов
+      // Проверяем, что координаты используют CSS класс
       const texts = svg.querySelectorAll('text');
       expect(texts.length).toBeGreaterThan(0);
       texts.forEach(text => {
-        const style = text.getAttribute('style');
-        expect(style).toContain('var(--text-normal, #dcddde)');
-        expect(style).toContain('var(--font-text-size,');
-        expect(style).toContain('var(--font-text, inherit)');
+        expect(text.classList.contains('go-board-coordinate')).toBe(true);
       });
     });
 
@@ -103,7 +79,7 @@ describe('Renderer', () => {
       const board = new Board(points, true);
       
       // Рендерим SVG с небольшим базовым размером
-      const renderParams = new RenderParams({ width: 200, height: 200, isDarkTheme: false });
+      const renderParams = new RenderParams({ width: 200, height: 200 });
       const svg = renderer.render(board, renderParams);
       
       // Проверяем, что размер доски увеличился для большей доски
@@ -125,31 +101,19 @@ describe('Renderer', () => {
       const board = new Board(points, true);
       
       // Рендерим SVG для светлой темы
-      const renderParams = new RenderParams({ width: 100, height: 100, isDarkTheme: false });
+      const renderParams = new RenderParams({ width: 100, height: 100 });
       const svg = renderer.render(board, renderParams);
       
-      // Проверяем, что камни используют правильные CSS переменные для светлой темы
+      // Проверяем, что камни используют CSS классы
       const circles = svg.querySelectorAll('circle');
       expect(circles.length).toBeGreaterThan(0);
       
       circles.forEach(circle => {
-        const fill = circle.getAttribute('fill');
-        const stroke = circle.getAttribute('stroke');
-        
-        // Камни должны использовать CSS переменные для светлой темы
-        if (fill === 'var(--text-normal, #2c2c2c)' || fill === 'var(--background-primary, #ffffff)') {
-          // Это камень в светлой теме - проверяем CSS переменные
-          expect(fill).toMatch(/var\(--/);
-          // В светлой теме только белые камни имеют контур, чёрные - нет
-          if (fill === 'var(--background-primary, #ffffff)') {
-            expect(stroke).toMatch(/var\(--/);
-          } else {
-            expect(stroke).toBe('none');
-          }
-        } else {
-          // Это хоси - должны использовать CSS переменные
-          expect(fill).toMatch(/var\(--/);
-        }
+        // Камни должны иметь соответствующие CSS классы
+        const hasStoneClass = circle.classList.contains('go-stone-black') || 
+                             circle.classList.contains('go-stone-white') ||
+                             circle.classList.contains('go-board-hoshi');
+        expect(hasStoneClass).toBe(true);
       });
     });
   });

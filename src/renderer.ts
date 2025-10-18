@@ -82,7 +82,7 @@ export class Renderer {
                     const invertedY = boardSize - 1 - y;
                     const circle = this.renderStone(
                         padding, padding, stepX, stepY, x, invertedY, point.content,
-                        params.stoneSize, params.isDarkTheme
+                        params.stoneSize
                     );
                     svg.appendChild(circle);
                 }
@@ -106,8 +106,7 @@ export class Renderer {
         x: number,
         y: number,
         cell: PointContent,
-        stoneSizeFraction: number,
-        isDarkTheme: boolean
+        stoneSizeFraction: number
     ) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = paddingLeft + x * stepX;
@@ -119,23 +118,9 @@ export class Renderer {
         circle.setAttribute('r', radius.toString());
 
         if (cell === PointContent.Black) {
-            if (isDarkTheme) {
-                circle.setAttribute('fill', 'var(--background-primary, #1e1e1e)');
-                circle.setAttribute('stroke', 'var(--text-normal, #dcddde)');
-                circle.setAttribute('stroke-width', '1.5');
-            } else {
-                circle.setAttribute('fill', 'var(--text-normal, #2c2c2c)');
-                circle.setAttribute('stroke', 'none');
-            }
+            circle.classList.add('go-stone-black');
         } else if (cell === PointContent.White) {
-            if (isDarkTheme) {
-                circle.setAttribute('fill', 'var(--text-normal, #dcddde)');
-                circle.setAttribute('stroke', 'none');
-            } else {
-                circle.setAttribute('fill', 'var(--background-primary, #ffffff)');
-                circle.setAttribute('stroke', 'var(--text-normal, #2c2c2c)');
-                circle.setAttribute('stroke-width', '1.5');
-            }
+            circle.classList.add('go-stone-white');
         }
         return circle;
     }
@@ -155,7 +140,7 @@ export class Renderer {
         dot.setAttribute('cx', cx.toString());
         dot.setAttribute('cy', cy.toString());
         dot.setAttribute('r', radius.toString());
-        dot.setAttribute('fill', 'var(--text-muted, #8a8a8a)');
+        dot.classList.add('go-board-hoshi');
         return dot;
     }
 
@@ -165,8 +150,7 @@ export class Renderer {
         hLine.setAttribute('y1', yPos.toString());
         hLine.setAttribute('x2', xEnd.toString());
         hLine.setAttribute('y2', yPos.toString());
-        hLine.setAttribute('stroke', 'var(--text-muted, #8a8a8a)');
-        hLine.setAttribute('stroke-width', '1');
+        hLine.classList.add('go-board-line');
         return hLine;
     }
 
@@ -176,8 +160,7 @@ export class Renderer {
         vLine.setAttribute('y1', yStart.toString());
         vLine.setAttribute('x2', xPos.toString());
         vLine.setAttribute('y2', yEnd.toString());
-        vLine.setAttribute('stroke', 'var(--text-muted, #8a8a8a)');
-        vLine.setAttribute('stroke-width', '1');
+        vLine.classList.add('go-board-line');
         return vLine;
     }
 
@@ -187,7 +170,7 @@ export class Renderer {
         background.setAttribute('y', '0');
         background.setAttribute('width', totalWidth.toString());
         background.setAttribute('height', totalHeight.toString());
-        background.setAttribute('fill', 'var(--background-primary,rgb(210, 15, 15))');
+        background.classList.add('go-board-background');
         return background;
     }
 
@@ -229,11 +212,7 @@ export class Renderer {
         text.setAttribute('y', y.toString());
         text.setAttribute('text-anchor', textAnchor);
         text.setAttribute('dominant-baseline', dominantBaseline);
-        text.setAttribute('style', `
-            font-size: var(--font-text-size, ${fontSize}px) !important;
-            font-family: var(--font-text, inherit) !important;
-            fill: var(--text-normal, #dcddde) !important;
-        `);
+        text.classList.add('go-board-coordinate');
         text.textContent = label;
         return text;
     }

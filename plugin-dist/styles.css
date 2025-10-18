@@ -155,3 +155,47 @@
 	transition: max-width 0.3s ease, max-height 0.3s ease;
 }
 
+/* CSS классы для элементов доски */
+.go-board-background {
+	fill: var(--background-primary);
+}
+
+.go-board-line {
+	stroke: var(--text-muted);
+	stroke-width: 1;
+}
+
+.go-board-hoshi {
+	fill: var(--text-muted);
+}
+
+.go-board-coordinate {
+	font-size: var(--font-text-size);
+	font-family: var(--font-text, inherit);
+	fill: var(--text-normal);
+}
+
+/* Стили камней для светлой темы */
+.theme-light .go-stone-black {
+	fill: var(--text-normal);
+	stroke: none;
+}
+
+.theme-light .go-stone-white {
+	fill: var(--background-primary);
+	stroke: var(--text-normal);
+	stroke-width: 1.5;
+}
+
+/* Стили камней для тёмной темы */
+.theme-dark .go-stone-black {
+	fill: var(--background-primary);
+	stroke: var(--text-normal);
+	stroke-width: 1.5;
+}
+
+.theme-dark .go-stone-white {
+	fill: var(--text-normal);
+	stroke: none;
+}
+
