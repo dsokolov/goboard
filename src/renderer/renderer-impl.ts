@@ -149,26 +149,27 @@ export class RendererImpl implements Renderer {
 
         if (cell === PointContent.Black) {
             if (isDarkTheme) {
-                // В тёмной теме чёрный камень должен быть тёмным
+                // В тёмной теме чёрный камень должен быть тёмным с контрастным светлым контуром
                 circle.setAttribute('fill', 'var(--background-primary, #1e1e1e)');
-                circle.setAttribute('stroke', 'var(--background-modifier-border, #3c3c3c)');
+                circle.setAttribute('stroke', 'var(--text-normal, #dcddde)');
+                circle.setAttribute('stroke-width', '1.5');
             } else {
-                // В светлой теме чёрный камень должен быть тёмным
+                // В светлой теме чёрный камень без контура (хорошо виден на светлом фоне)
                 circle.setAttribute('fill', 'var(--text-normal, #2c2c2c)');
-                circle.setAttribute('stroke', 'var(--background-modifier-border, #666666)');
+                circle.setAttribute('stroke', 'none');
             }
         } else if (cell === PointContent.White) {
             if (isDarkTheme) {
-                // В тёмной теме белый камень должен быть светлым
+                // В тёмной теме белый камень без контура (хорошо виден на тёмном фоне)
                 circle.setAttribute('fill', 'var(--text-normal, #dcddde)');
-                circle.setAttribute('stroke', 'var(--background-modifier-border, #3c3c3c)');
+                circle.setAttribute('stroke', 'none');
             } else {
-                // В светлой теме белый камень должен быть светлым
+                // В светлой теме белый камень должен быть светлым с контрастным тёмным контуром
                 circle.setAttribute('fill', 'var(--background-primary, #ffffff)');
-                circle.setAttribute('stroke', 'var(--background-modifier-border, #cccccc)');
+                circle.setAttribute('stroke', 'var(--text-normal, #2c2c2c)');
+                circle.setAttribute('stroke-width', '1.5');
             }
         }
-        circle.setAttribute('stroke-width', '1');
         return circle;
     }
 

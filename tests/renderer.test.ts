@@ -63,11 +63,21 @@ describe('Renderer', () => {
         if (fill === 'var(--background-primary, #1e1e1e)' || fill === 'var(--text-normal, #dcddde)') {
           // Это камень в тёмной теме - проверяем CSS переменные
           expect(fill).toMatch(/var\(--/);
-          expect(stroke).toMatch(/var\(--/);
+          // В тёмной теме только чёрные камни имеют контур, белые - нет
+          if (fill === 'var(--background-primary, #1e1e1e)') {
+            expect(stroke).toMatch(/var\(--/);
+          } else {
+            expect(stroke).toBe('none');
+          }
         } else if (fill === 'var(--text-normal, #2c2c2c)' || fill === 'var(--background-primary, #ffffff)') {
           // Это камень в светлой теме - проверяем CSS переменные
           expect(fill).toMatch(/var\(--/);
-          expect(stroke).toMatch(/var\(--/);
+          // В светлой теме только белые камни имеют контур, чёрные - нет
+          if (fill === 'var(--background-primary, #ffffff)') {
+            expect(stroke).toMatch(/var\(--/);
+          } else {
+            expect(stroke).toBe('none');
+          }
         } else {
           // Это хоси - должны использовать CSS переменные
           expect(fill).toMatch(/var\(--/);
@@ -130,7 +140,12 @@ describe('Renderer', () => {
         if (fill === 'var(--text-normal, #2c2c2c)' || fill === 'var(--background-primary, #ffffff)') {
           // Это камень в светлой теме - проверяем CSS переменные
           expect(fill).toMatch(/var\(--/);
-          expect(stroke).toMatch(/var\(--/);
+          // В светлой теме только белые камни имеют контур, чёрные - нет
+          if (fill === 'var(--background-primary, #ffffff)') {
+            expect(stroke).toMatch(/var\(--/);
+          } else {
+            expect(stroke).toBe('none');
+          }
         } else {
           // Это хоси - должны использовать CSS переменные
           expect(fill).toMatch(/var\(--/);
