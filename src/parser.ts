@@ -1,4 +1,5 @@
-import { ParseError, ParseResult, ParseSuccess, Instruction, Position, Color, SinglePosition, IntervalPosition } from "./models";
+import { ParseError, ParseResult, ParseSuccess, Instruction, Position, Color, SinglePosition, IntervalPosition, BoardSize } from "./models";
+import { parseCoordinate } from "./utils";
 
 export class Parser {
 
@@ -8,7 +9,7 @@ export class Parser {
         }
         
         const lines = source.trim().split('\n');
-        let boardSize: { width: number, height: number } | null = null;
+        let boardSize: BoardSize | null = null;
         const moves: Instruction[] = [];
         let showCoordinates = true;
         
@@ -74,36 +75,22 @@ export class Parser {
         // Check if it's an interval (contains dash)
         if (coord.includes('-')) {
             const [startCoord, endCoord] = coord.split('-').map(c => c.trim());
-            const startPos = this.parseCoordinate(startCoord);
-            const endPos = this.parseCoordinate(endCoord);
+            const startCoords = parseCoordinate(startCoord);
+            const endCoords = parseCoordinate(endCoord);
             
-            if (startPos && endPos && startPos instanceof SinglePosition && endPos instanceof SinglePosition) {
+            if (startCoords && endCoords) {
+                const startPos = new SinglePosition(startCoords.x, startCoords.y);
+                const endPos = new SinglePosition(endCoords.x, endCoords.y);
                 return new IntervalPosition(startPos, endPos);
             }
         } else {
             // Single position
-            return this.parseCoordinate(coord);
+            const coords = parseCoordinate(coord);
+            if (coords) {
+                return new SinglePosition(coords.x, coords.y);
+            }
         }
         
         return null;
-    }
-    
-    private parseCoordinate(coord: string): SinglePosition | null {
-        // Parse coordinate like "A1" -> (0,0), "J9" -> (8,8)
-        const match = coord.match(/^([A-Z])(\d+)$/);
-        if (!match) return null;
-        
-        const letter = match[1].toUpperCase();
-        const number = parseInt(match[2], 10);
-        
-        // Учитываем пропуск буквы 'I' в традиционной нотации Го
-        let x = letter.charCodeAt(0) - 'A'.charCodeAt(0);
-        if (letter >= 'J') {
-            x = x - 1; // Сдвигаем на одну позицию влево для букв J и далее
-        }
-        
-        const y = number - 1;
-        
-        return new SinglePosition(x, y);
     }
 }

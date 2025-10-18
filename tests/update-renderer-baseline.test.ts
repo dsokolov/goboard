@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Parser } from '../src/parser';
 import { Mapper } from '../src/mapper';
 import { Renderer } from '../src/renderer';
-import { ParseError, RenderParams } from '../src/models';
+import { ParseError, createRenderParams } from '../src/models';
 
 /**
  * Скрипт для обновления бейзлайна рендерера
@@ -88,7 +88,7 @@ async function processFile(txtFilePath: string, parser: Parser, mapper: Mapper, 
         console.log(`  ✓ Маппинг успешен (доска ${board.points.length}x${board.points[0]?.length || 0})`);
 
         // Шаг 4: Рендеринг
-        const svgContent = renderer.render(board, new RenderParams());
+        const svgContent = renderer.render(board, createRenderParams());
         console.log(`  ✓ Рендеринг успешен`);
 
         // Шаг 5: Сохранение SVG

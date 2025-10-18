@@ -1,6 +1,6 @@
 import { Plugin } from 'obsidian';
 import { Renderer } from './renderer';
-import { RenderParams } from './models';
+import { createRenderParams } from './models';
 import { Parser } from './parser';
 import { Mapper } from './mapper';
 import { ParseSuccess } from './models';
@@ -34,7 +34,7 @@ export default class GoBoardPlugin extends Plugin {
 		const parseResult = this.parser.parse(source);
 		if (parseResult instanceof ParseSuccess) {
 			const board = this.mapper.map(parseResult);
-			const renderParams = new RenderParams();
+			const renderParams = createRenderParams();
 			return this.renderer.render(board, renderParams);
 		}
 		return null;

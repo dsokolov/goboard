@@ -1,22 +1,23 @@
-export interface Position {}
-
-export class SinglePosition implements Position {
+export class SinglePosition {
     constructor(
         public readonly x: number, 
         public readonly y: number
     ) {}
 }
 
-export class IntervalPosition implements Position {
+export class IntervalPosition {
     constructor(
         public readonly start: SinglePosition, 
         public readonly end: SinglePosition,
     ) {}
 }
 
-export class BoardSize {
-    constructor(public readonly width: number, public readonly height: number) {}
-}
+export type Position = SinglePosition | IntervalPosition;
+
+export type BoardSize = {
+    readonly width: number;
+    readonly height: number;
+};
 
 export enum Color {
     Black = "Black",
@@ -30,19 +31,19 @@ export class Instruction {
     ) {}
 }
 
-export interface ParseResult {}
-
-export class ParseSuccess implements ParseResult {
+export class ParseSuccess {
     constructor(
         public readonly instructions: Instruction[],
-         public readonly boardSize: BoardSize,
-         public readonly showCoordinates: boolean = false
+        public readonly boardSize: BoardSize,
+        public readonly showCoordinates: boolean = false
     ) {}
 }
 
-export class ParseError implements ParseResult {
+export class ParseError {
     constructor(public readonly error: string = '') {}
 }
+
+export type ParseResult = ParseSuccess | ParseError;
 
 export enum PointContent {
     Empty = 'empty',
@@ -64,18 +65,17 @@ export class Board {
     ) {}
 }
 
-export class RenderParams {
-    public readonly width: number;
-    public readonly height: number;
+export type RenderParams = {
+    readonly width: number;
+    readonly height: number;
+};
 
-    constructor({
-        width = 250,
-        height = 250,
-    }: {
-        width?: number;
-        height?: number;
-    } = {}) {
-        this.width = width;
-        this.height = height;
-    }
+export function createRenderParams({
+    width = 250,
+    height = 250,
+}: {
+    width?: number;
+    height?: number;
+} = {}): RenderParams {
+    return { width, height };
 }

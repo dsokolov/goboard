@@ -1,4 +1,8 @@
 import { Board, PointContent, RenderParams } from "./models";
+import { indexToLetter } from "./utils";
+
+type TextAnchor = 'start' | 'middle' | 'end';
+type DominantBaseline = 'auto' | 'text-bottom' | 'alphabetic' | 'ideographic' | 'middle' | 'central' | 'mathematical' | 'hanging' | 'text-top' | 'bottom' | 'center' | 'top';
 
 export class Renderer {
 
@@ -196,9 +200,7 @@ export class Renderer {
         const fontSize = this.getFontSizeFromCSS();
         for (let i = 0; i < boardSize; i++) {
             const xPos = paddingLeft + i * stepX;
-            // Пропускаем букву 'I' как в традиционной нотации Го
-            const label = i < 8 ? String.fromCharCode('A'.charCodeAt(0) + i) : String.fromCharCode('A'.charCodeAt(0) + i + 1);
-            // Увеличенный отступ для координат, чтобы камни не закрывали их
+            const label = indexToLetter(i);
             const gap = Math.max(8, fontSize * 1.2);
             const y = totalHeight - paddingBottom + gap;
             const text = this.renderCoordinateSymbol(xPos, y, label, fontSize, 'middle', 'hanging');
@@ -211,8 +213,8 @@ export class Renderer {
         y: number,
         label: string,
         fontSize: number,
-        textAnchor: 'start' | 'middle' | 'end',
-        dominantBaseline: 'auto' | 'text-bottom' | 'alphabetic' | 'ideographic' | 'middle' | 'central' | 'mathematical' | 'hanging' | 'text-top' | 'bottom' | 'center' | 'top'
+        textAnchor: TextAnchor,
+        dominantBaseline: DominantBaseline
     ): SVGElement {
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', x.toString());

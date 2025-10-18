@@ -1,5 +1,5 @@
 import { Renderer } from '../src/renderer';
-import { Board, Point, PointContent, RenderParams } from '../src/models';
+import { Board, Point, PointContent, createRenderParams } from '../src/models';
 import { Parser } from '../src/parser';
 import { Mapper } from '../src/mapper';
 import { ParseSuccess } from '../src/models';
@@ -36,7 +36,7 @@ describe('Renderer', () => {
       const board = new Board(points, true);
       
       // Рендерим SVG
-      const renderParams = new RenderParams({ width: 100, height: 100 });
+      const renderParams = createRenderParams({ width: 100, height: 100 });
       const svg = renderer.render(board, renderParams);
       
       // Проверяем, что фон использует CSS класс
@@ -79,7 +79,7 @@ describe('Renderer', () => {
       const board = new Board(points, true);
       
       // Рендерим SVG с небольшим базовым размером
-      const renderParams = new RenderParams({ width: 200, height: 200 });
+      const renderParams = createRenderParams({ width: 200, height: 200 });
       const svg = renderer.render(board, renderParams);
       
       // Проверяем, что размер доски увеличился для большей доски
@@ -101,7 +101,7 @@ describe('Renderer', () => {
       const board = new Board(points, true);
       
       // Рендерим SVG для светлой темы
-      const renderParams = new RenderParams({ width: 100, height: 100 });
+      const renderParams = createRenderParams({ width: 100, height: 100 });
       const svg = renderer.render(board, renderParams);
       
       // Проверяем, что камни используют CSS классы
@@ -127,7 +127,7 @@ describe('Renderer', () => {
       const board = mapper.map(parseResult as ParseSuccess);
       expect(board.showCoordinates).toBe(true);
       
-      const renderParams = new RenderParams();
+      const renderParams = createRenderParams();
       const svg = renderer.render(board, renderParams);
       const textElements = svg.querySelectorAll('text');
       
@@ -152,7 +152,7 @@ describe('Renderer', () => {
       const board = mapper.map(parseResult as ParseSuccess);
       expect(board.showCoordinates).toBe(false);
       
-      const renderParams = new RenderParams();
+      const renderParams = createRenderParams();
       const svg = renderer.render(board, renderParams);
       const textElements = svg.querySelectorAll('text');
       

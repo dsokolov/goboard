@@ -1,5 +1,4 @@
-import { BoardSize, ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition } from "./models";
-import { Board, Point, PointContent } from "./models";
+import { BoardSize, ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition, Board, Point, PointContent } from "./models";
 
 export class Mapper {
     map(source: ParseSuccess): Board {
@@ -64,44 +63,28 @@ export class Mapper {
     }
     
     private mapColorToContent(color: Color): PointContent {
-        switch (color) {
-            case Color.Black:
-                return PointContent.Black;
-            case Color.White:
-                return PointContent.White;
-            default:
-                return PointContent.Empty;
-        }
+        return color === Color.Black ? PointContent.Black : 
+               color === Color.White ? PointContent.White : 
+               PointContent.Empty;
     }
 
     private hasHoshi(boardSize: BoardSize, x: number, y: number): boolean {
+        const hoshiPositions: Record<string, number[]> = {
+            '19x19': [3, 9, 15],
+            '13x13': [3, 6, 9],
+            '9x9': [2, 4, 6]
+        };
+        
         const key = `${boardSize.width}x${boardSize.height}`;
-        switch (key) {
-            case '19x19':
-                return this.hasHoshi19(x, y);
-            case '13x13':
-                return this.hasHoshi13(x, y);
-            case '9x9':
-                return this.hasHoshi9(x, y);
-            default:
-                return false;
+        const coords = hoshiPositions[key];
+        
+        if (!coords) return false;
+        
+        // Special case for 9x9: center point is always hoshi, corners are hoshi
+        if (key === '9x9') {
+            return (coords.includes(x) && coords.includes(y)) || (x === 4 && y === 4);
         }
-    }
-
-    private hasHoshi19(x: number, y: number): boolean {
-        const coords = [3, 9, 15];
+        
         return coords.includes(x) && coords.includes(y);
-    }
-
-    private hasHoshi13(x: number, y: number): boolean {
-        const coords = [3, 6, 9];
-        return coords.includes(x) && coords.includes(y);
-    }
-
-    private hasHoshi9(x: number, y: number): boolean {
-        return (
-            ((x === 2 || x === 6) && (y === 2 || y === 6)) ||
-            (x === 4 && y === 4)
-        );
     }
 }

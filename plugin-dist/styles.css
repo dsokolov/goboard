@@ -9,19 +9,26 @@
 	overflow: hidden;
 	width: 100%;
 	box-sizing: border-box;
+	/* Адаптивная верстка для всех устройств */
+	flex-wrap: wrap;
+	justify-content: center;
 }
-
-
 
 .go-board-container svg {
 	border: 1px solid var(--background-modifier-border, #ccc);
 	border-radius: 4px;
 	background-color: var(--background-secondary, #DCB35C);
 	box-shadow: 0 2px 8px var(--background-modifier-box-shadow, rgba(0, 0, 0, 0.1));
-	/* Адаптивное масштабирование SVG */
-	max-width: 100%;
+	/* Единая адаптивная система масштабирования */
+	max-width: min(90vw, 800px);
+	max-height: min(80vh, 600px);
+	width: auto;
 	height: auto;
 	display: block;
+	/* Обеспечиваем сохранение пропорций при масштабировании */
+	object-fit: contain;
+	/* Плавное масштабирование */
+	transition: max-width 0.3s ease, max-height 0.3s ease;
 }
 
 /* Обеспечиваем наследование CSS переменных для SVG */
@@ -34,54 +41,6 @@
 .go-board-svg * {
 	/* Наследуем CSS переменные для всех элементов SVG */
 	color: inherit;
-}
-
-/* Адаптивные стили для мобильных устройств */
-@media (max-width: 768px) {
-	.go-board-container {
-		flex-direction: column !important;
-		align-items: center;
-		/* Обеспечиваем правильное масштабирование на мобильных */
-		max-width: 100vw;
-		padding: 0 1rem;
-	}
-	
-	.go-board-container svg {
-		/* Принудительное масштабирование для больших диаграмм на мобильных */
-		max-width: calc(100vw - 2rem);
-		max-height: 80vh;
-		width: auto;
-		height: auto;
-	}
-	
-}
-
-/* Стили для планшетов */
-@media (max-width: 1024px) and (min-width: 769px) {
-	.go-board-container svg {
-		max-width: 90vw;
-		max-height: 75vh;
-	}
-}
-
-/* Дополнительные стили для очень маленьких экранов */
-@media (max-width: 480px) {
-	.go-board-container {
-		padding: 0 0.5rem;
-	}
-	
-	.go-board-container svg {
-		max-width: calc(100vw - 1rem);
-		max-height: 70vh;
-	}
-}
-
-/* Универсальные стили для всех размеров экрана */
-.go-board-container svg {
-	/* Обеспечиваем сохранение пропорций при масштабировании */
-	object-fit: contain;
-	/* Плавное масштабирование */
-	transition: max-width 0.3s ease, max-height 0.3s ease;
 }
 
 /* CSS классы для элементов доски */
