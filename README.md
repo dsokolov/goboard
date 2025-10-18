@@ -1,41 +1,41 @@
 # GoBoard
 
-Obsidian plugin for rendering Go game diagrams from markdown code blocks using `goboard` language identifier.
+## What is this?
 
-## Features
+GoBoard is a plugin for [Obsidian](https://obsidian.md/) that renders [Go game](https://en.wikipedia.org/wiki/Go_(game)) diagrams.
 
-- Render Go game diagrams from markdown code blocks
-- Customizable board appearance through settings
-- Support for different board sizes (9x9, 13x13, 19x19)
-- Configurable stone colors, board colors, and line thickness
-- Optional coordinate display
-- Settings panel accessible through Obsidian's plugin settings
+## Installation
 
-## Settings
+Currently, the GoBoard plugin is available for beta testing through [BRAT](https://github.com/TfTHacker/obsidian42-brat).
 
-The plugin includes a comprehensive settings panel where you can configure:
-
-- **Board Size**: Default board size (9x9, 13x13, or 19x19)
-- **Stone Size Ratio**: Size of stones relative to cell size (0.1-1.0)
-- **Line Width**: Thickness of board lines (0.5-3.0)
-- **Background Color**: Color of the board background
-- **Line Color**: Color of the board lines
-- **Black Stone Color**: Color of black stones
-- **White Stone Color**: Color of white stones
-- **Show Coordinates**: Toggle coordinate display on/off
-- **Coordinates Color**: Color of coordinate labels
-- **Coordinates Font Size**: Font size of coordinate labels (8-20)
+1. If you don't have BRAT yet, [install it](https://obsidian.md/plugins?search=BRAT).
+1. In the BRAT plugin settings, add the repository `https://github.com/dsokolov/goboard`, following the [instructions](https://github.com/TfTHacker/obsidian42-brat).
+1. Done, now you can draw diagrams!
 
 ## Usage
 
-Use the `goboard` language identifier in markdown code blocks:
+Diagrams are drawn based on [markdown code blocks](https://www.codecademy.com/resources/docs/markdown/code-blocks) with the `goboard` syntax specified.
 
-````markdown
+For example, the following code will draw an empty 9x9 goban:
+
+<pre>
 ```goboard
-size 19x19
-coordinates on
-B D4
-W Q16
-B K10
+size 9x9
 ```
-````
+</pre>
+
+![Empty 9x9 goban](docs/images/empty-goban-9x9.png)
+
+To place stones on the diagram, use `B <position>` and `W <position>` for black and white stones respectively. For example:
+
+<pre>
+```goboard
+size 9x9
+B G7
+W C3
+```
+</pre>
+
+![First two moves on 9x9 goban](docs/images/simple-game-9x9.png)
+
+For more usage examples, see [examples.md](docs/examples.md).
