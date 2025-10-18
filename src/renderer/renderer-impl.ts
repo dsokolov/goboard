@@ -15,7 +15,7 @@ export class RendererImpl implements Renderer {
         svg.classList.add('go-board-svg');
 
         // Фон доски должен покрывать всю область SVG, чтобы поля были того же цвета
-        const background = this.renderBackground(totalWidth, totalHeight, params.boardColor);
+        const background = this.renderBackground(totalWidth, totalHeight, params.colors.boardColor);
         svg.appendChild(background);
 
         // Добавляем линии доски
@@ -52,9 +52,9 @@ export class RendererImpl implements Renderer {
         for (let i = 0; i < boardSize; i++) {
             const xPos = paddingLeft + i * stepX;
             const yPos = paddingTop + i * stepY;
-            const vLine = this.renderVerticalLines(paddingTop, totalHeight - paddingBottom, xPos, params.lineColor);
+            const vLine = this.renderVerticalLines(paddingTop, totalHeight - paddingBottom, xPos, params.colors.lineColor);
             svg.appendChild(vLine);
-            const hLine = this.renderHorizontalLines(paddingLeft, totalWidth - paddingRight, yPos, params.lineColor);
+            const hLine = this.renderHorizontalLines(paddingLeft, totalWidth - paddingRight, yPos, params.colors.lineColor);
             svg.appendChild(hLine);
         }
 
@@ -63,7 +63,7 @@ export class RendererImpl implements Renderer {
             for (let x = 0; x < boardSize; x++) {
                 const point = source.points[y][x];
                 if (point.hasHoshi) {
-                    const hoshi = this.renderHoshi(paddingLeft, paddingTop, stepX, stepY, x, y, params.lineColor);
+                    const hoshi = this.renderHoshi(paddingLeft, paddingTop, stepX, stepY, x, y, params.colors.lineColor);
                     svg.appendChild(hoshi);
                 }
             }
@@ -77,9 +77,9 @@ export class RendererImpl implements Renderer {
                     const circle = this.renderStone(
                         paddingLeft, paddingTop, stepX, stepY, x, y, point.content,
                         params.stoneSize,
-                        params.blackStoneColor,
-                        params.whiteStoneColor,
-                        params.lineColor
+                        params.colors.blackStoneColor,
+                        params.colors.whiteStoneColor,
+                        params.colors.lineColor
                     );
                     svg.appendChild(circle);
                 }
@@ -89,8 +89,8 @@ export class RendererImpl implements Renderer {
         // Координаты: цифры слева, буквы снизу
         if (source.showCoordinates) {
             // Use the final step sizes to position labels exactly one grid step away
-            this.renderLeftNumbers(svg, paddingLeft, stepX, stepY, boardSize, params.lineColor, paddingTop);
-            this.renderBottomLetters(svg, paddingLeft, stepY, stepX, boardSize, params.lineColor, totalHeight, paddingBottom);
+            this.renderLeftNumbers(svg, paddingLeft, stepX, stepY, boardSize, params.colors.lineColor, paddingTop);
+            this.renderBottomLetters(svg, paddingLeft, stepY, stepX, boardSize, params.colors.lineColor, totalHeight, paddingBottom);
         }
 
         return svg;

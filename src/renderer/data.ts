@@ -19,18 +19,49 @@ export class Board {
 }
 
 export class RenderParams {
-    constructor(
-        public readonly width: number = 250, 
-        public readonly height: number = 250,
-        // Доля от расстояния между пунктами, определяющая диаметр камня (0..1)
-        public readonly stoneSize: number = 0.8,
-        // Цвет фона/поля доски
-        public readonly boardColor: string = '#DCB35C',
-        // Цвет линий сетки (и хоси)
-        public readonly lineColor: string = '#000000',
-        // Цвет черных камней
-        public readonly blackStoneColor: string = '#000000',
-        // Цвет белых камней
-        public readonly whiteStoneColor: string = '#FFFFFF',
-    ) {}
+    public readonly width: number;
+    public readonly height: number;
+    public readonly stoneSize: number;
+    public readonly colors: RenderColors;
+
+    constructor({
+        width = 250,
+        height = 250,
+        stoneSize = 0.8,
+        colors = new RenderColors(),
+    }: {
+        width?: number;
+        height?: number;
+        stoneSize?: number;
+        colors?: RenderColors;
+    } = {}) {
+        this.width = width;
+        this.height = height;
+        this.stoneSize = stoneSize;
+        this.colors = colors;
+    }
+}
+
+export class RenderColors {
+    public readonly boardColor: string;
+    public readonly lineColor: string;
+    public readonly blackStoneColor: string;
+    public readonly whiteStoneColor: string;
+
+    constructor({
+        boardColor = '#DCB35C',
+        lineColor = '#000000',
+        blackStoneColor = '#000000',
+        whiteStoneColor = '#FFFFFF',
+    }: {
+        boardColor?: string;
+        lineColor?: string;
+        blackStoneColor?: string;
+        whiteStoneColor?: string;
+    } = {}) {
+        this.boardColor = boardColor;
+        this.lineColor = lineColor;
+        this.blackStoneColor = blackStoneColor;
+        this.whiteStoneColor = whiteStoneColor;
+    }
 }

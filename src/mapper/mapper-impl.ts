@@ -1,6 +1,7 @@
 import { BoardSize, ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition } from "../parser/data";
 import { Mapper } from "./mapper";
-import { Board, Point, PointContent } from "../renderer/data";
+import { Board, Point, PointContent, RenderColors } from "../renderer/data";
+import { SchemeColors } from "../scheme-colors";
 
 export class MapperImpl implements Mapper {
     map(source: ParseSuccess): Board {
@@ -104,5 +105,14 @@ export class MapperImpl implements Mapper {
             ((x === 2 || x === 6) && (y === 2 || y === 6)) ||
             (x === 4 && y === 4)
         );
+    }
+
+    mapSchemeColorsToRenderColors(schemeColors: SchemeColors): RenderColors {
+        return new RenderColors({
+            boardColor: schemeColors.background,     // используем фон схемы для доски
+            lineColor: schemeColors.border,          // используем цвет границ для линий
+            blackStoneColor: schemeColors.text,      // используем основной текст для черных камней
+            whiteStoneColor: schemeColors.foreground // используем вторичный фон для белых камней
+        });
     }
 }
