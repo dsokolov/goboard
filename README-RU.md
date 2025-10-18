@@ -24,6 +24,8 @@ size 9x9
 ```
 </pre>
 
+![Пустой гобан 9x9](docs/images/empty-goban-9x9.png)
+
 Для размещения камней на диаграмме используйте `B <position>` и `W <position>` для чёрных и белых камней соотвественно. Например
 
 <pre>
@@ -33,5 +35,7 @@ B G7
 W C3
 ```
 </pre>
+
+![Первые две постановки на гобане 9x9](docs/images/simple-game-9x9.png)
 
 Больше примеров использования смотрите в [examples.md](docs/examples.md).
