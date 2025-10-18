@@ -22,6 +22,7 @@ export class Renderer {
         return isNaN(bodyFontSize) ? 16 : bodyFontSize;
     }
 
+
     render(source: Board, params: RenderParams): SVGElement {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         
@@ -81,8 +82,7 @@ export class Renderer {
                 if (point.content !== PointContent.Empty) {
                     const invertedY = boardSize - 1 - y;
                     const circle = this.renderStone(
-                        padding, padding, stepX, stepY, x, invertedY, point.content,
-                        params.stoneSize
+                        padding, padding, stepX, stepY, x, invertedY, point.content
                     );
                     svg.appendChild(circle);
                 }
@@ -105,18 +105,19 @@ export class Renderer {
         stepY: number,
         x: number,
         y: number,
-        cell: PointContent,
-        stoneSizeFraction: number
+        cell: PointContent
     ) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = paddingLeft + x * stepX;
         const cy = paddingTop + y * stepY;
         circle.setAttribute('cx', cx.toString());
         circle.setAttribute('cy', cy.toString());
-        const diameter = Math.min(stepX, stepY) * stoneSizeFraction;
-        const radius = diameter / 2;
-        circle.setAttribute('r', radius.toString());
+        // Радиус теперь задается через CSS переменную
+        // circle.setAttribute('r', radius.toString()); - убрано
 
+        // Добавляем базовый класс для всех камней
+        circle.classList.add('go-stone');
+        
         if (cell === PointContent.Black) {
             circle.classList.add('go-stone-black');
         } else if (cell === PointContent.White) {
@@ -136,10 +137,11 @@ export class Renderer {
         const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = paddingLeft + x * stepX;
         const cy = paddingTop + y * stepY;
-        const radius = Math.max(2, Math.min(stepX, stepY) * 0.06);
+        
+        // Фиксированный радиус хоси (задается в CSS)
         dot.setAttribute('cx', cx.toString());
         dot.setAttribute('cy', cy.toString());
-        dot.setAttribute('r', radius.toString());
+        dot.setAttribute('r', '1.5');
         dot.classList.add('go-board-hoshi');
         return dot;
     }

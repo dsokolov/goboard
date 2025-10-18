@@ -67,19 +67,15 @@ export class Board {
 export class RenderParams {
     public readonly width: number;
     public readonly height: number;
-    public readonly stoneSize: number;
 
     constructor({
         width = 250,
         height = 250,
-        stoneSize = 0.8,
     }: {
         width?: number;
         height?: number;
-        stoneSize?: number;
     } = {}) {
         this.width = width;
         this.height = height;
-        this.stoneSize = stoneSize;
     }
 }
