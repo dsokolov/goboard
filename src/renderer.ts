@@ -112,8 +112,10 @@ export class Renderer {
         const cy = paddingTop + y * stepY;
         circle.setAttribute('cx', cx.toString());
         circle.setAttribute('cy', cy.toString());
-        // Радиус теперь задается через CSS переменную
-        // circle.setAttribute('r', radius.toString()); - убрано
+        
+        // Рассчитываем радиус как расстояние между линиями умноженное на 0.8
+        const radius = Math.min(stepX, stepY) * 0.46;
+        circle.setAttribute('r', radius.toString());
 
         // Добавляем базовый класс для всех камней
         circle.classList.add('go-stone');

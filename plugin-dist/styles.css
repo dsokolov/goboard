@@ -1,16 +1,10 @@
 /* Стили для рендеринга диаграмм Го */
 
-/* Базовый стиль для всех камней */
-.go-stone {
-	r: 15px;
-}
-
 .go-board-container {
 	display: flex;
 	align-items: flex-start;
 	margin: 1rem 0;
 	gap: 1rem;
-	/* CSS автоматически обрабатывает RTL через direction */
 	/* Предотвращаем переполнение контейнера */
 	overflow: hidden;
 	width: 100%;
