@@ -1,8 +1,8 @@
-import { createRenderer, Renderer } from '../src/renderer/renderer';
-import { Board, Point, PointContent, RenderParams } from '../src/renderer/data';
-import { createParser, Parser } from '../src/parser/parser';
-import { createMapper, Mapper } from '../src/mapper/mapper';
-import { ParseSuccess } from '../src/parser/data';
+import { Renderer } from '../src/renderer';
+import { Board, Point, PointContent, RenderParams } from '../src/models';
+import { Parser } from '../src/parser';
+import { Mapper } from '../src/mapper';
+import { ParseSuccess } from '../src/models';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -20,9 +20,9 @@ describe('Renderer', () => {
   let mapper: Mapper;
 
   beforeEach(() => {
-    renderer = createRenderer();
-    parser = createParser();
-    mapper = createMapper();
+    renderer = new Renderer();
+    parser = new Parser();
+    mapper = new Mapper();
   });
 
   describe('render', () => {

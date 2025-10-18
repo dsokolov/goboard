@@ -1,9 +1,7 @@
-import { BoardSize, ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition } from "../parser/data";
-import { Mapper } from "./mapper";
-import { Board, Point, PointContent, RenderColors } from "../renderer/data";
-import { SchemeColors } from "../scheme-colors";
+import { BoardSize, ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition } from "./models";
+import { Board, Point, PointContent } from "./models";
 
-export class MapperImpl implements Mapper {
+export class Mapper {
     map(source: ParseSuccess): Board {
         const { boardSize, instructions, showCoordinates } = source;
         const points: Point[][] = [];
@@ -105,9 +103,5 @@ export class MapperImpl implements Mapper {
             ((x === 2 || x === 6) && (y === 2 || y === 6)) ||
             (x === 4 && y === 4)
         );
-    }
-
-    mapSchemeColorsToRenderColors(schemeColors: SchemeColors): RenderColors {
-        return new RenderColors();
     }
 }

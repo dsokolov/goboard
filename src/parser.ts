@@ -1,7 +1,6 @@
-import { ParseError, ParseResult, ParseSuccess, Instruction, Position, Color, SinglePosition, IntervalPosition } from "./data";
-import { Parser } from "./parser";
+import { ParseError, ParseResult, ParseSuccess, Instruction, Position, Color, SinglePosition, IntervalPosition } from "./models";
 
-export class ParserImpl implements Parser {
+export class Parser {
 
     parse(source: string): ParseResult {
         if (source.trim() === '') {

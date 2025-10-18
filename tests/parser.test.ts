@@ -1,12 +1,12 @@
-import { Parser, createParser } from '../src/parser/parser';
-import { Instruction, Color, ParseError, ParseSuccess, SinglePosition, IntervalPosition } from '../src/parser/data';
+import { Parser } from '../src/parser';
+import { Instruction, Color, ParseError, ParseSuccess, SinglePosition, IntervalPosition } from '../src/models';
 import { testDataLoader } from './test-data-loader';
 
 describe('Parser', () => {
   let parser: Parser;
 
   beforeEach(() => {
-    parser = createParser();
+    parser = new Parser();
   });
 
   describe('parse', () => {

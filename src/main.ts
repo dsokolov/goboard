@@ -1,29 +1,22 @@
 import { Plugin } from 'obsidian';
-import 'reflect-metadata';
-import { Container } from 'typedi';
-import type { Renderer } from './renderer/renderer';
-import { RenderParams } from './renderer/data';
-import type { Parser } from './parser/parser';
-import type { Mapper } from './mapper/mapper';
-import { ParseSuccess } from './parser/data';
-import { DIContainer, ParserToken, MapperToken, RendererToken } from './di/container';
-import { SchemeColorsProvider, SchemeColorsProviderToken } from './scheme-colors';
+import { Renderer } from './renderer';
+import { RenderParams } from './models';
+import { Parser } from './parser';
+import { Mapper } from './mapper';
+import { ParseSuccess } from './models';
 
 export default class GoBoardPlugin extends Plugin {
 
 	private parser!: Parser;
 	private mapper!: Mapper;
 	private renderer!: Renderer;
-	private schemeColorsProvider!: SchemeColorsProvider;
 	private isDarkTheme: boolean = false;
 
 	async onload() {
 
-		DIContainer.configure();
-		this.parser = Container.get(ParserToken);
-		this.mapper = Container.get(MapperToken);
-		this.renderer = Container.get(RendererToken);
-		this.schemeColorsProvider = Container.get(SchemeColorsProviderToken);
+		this.parser = new Parser();
+		this.mapper = new Mapper();
+		this.renderer = new Renderer();
 		
 		// Определяем текущую тему
 		this.updateThemeState();
@@ -49,10 +42,7 @@ export default class GoBoardPlugin extends Plugin {
 		const parseResult = this.parser.parse(source);
 		if (parseResult instanceof ParseSuccess) {
 			const board = this.mapper.map(parseResult);
-			const schemeColors = this.schemeColorsProvider.getColors();
-			const renderColors = this.mapper.mapSchemeColorsToRenderColors(schemeColors);
 			const renderParams = new RenderParams({
-				colors: renderColors,
 				isDarkTheme: this.isDarkTheme
 			});
 			return this.renderer.render(board, renderParams);

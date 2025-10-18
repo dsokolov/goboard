@@ -1,10 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { createParser, Parser } from '../src/parser/parser';
-import { createMapper, Mapper } from '../src/mapper/mapper';
-import { createRenderer, Renderer} from '../src/renderer/renderer';
-import { ParseError } from '../src/parser/data';
-import { RenderParams } from '../src/renderer/data';
+import { Parser } from '../src/parser';
+import { Mapper } from '../src/mapper';
+import { Renderer } from '../src/renderer';
+import { ParseError, RenderParams } from '../src/models';
 
 /**
  * Скрипт для обновления бейзлайна рендерера
@@ -21,9 +20,9 @@ describe('Update Renderer Baseline', () => {
     let renderer: Renderer;
 
     beforeEach(() => {
-        parser = createParser();
-        mapper = createMapper();
-        renderer = createRenderer();
+        parser = new Parser();
+        mapper = new Mapper();
+        renderer = new Renderer();
     });
 
     it('должен обновить бейзлайн рендерера - обработать все txt файлы и создать SVG файлы', async () => {

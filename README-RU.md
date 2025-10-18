@@ -39,3 +39,13 @@ W C3
 ![Первые две постановки на гобане 9x9](docs/images/simple-game-9x9.png)
 
 Больше примеров использования смотрите в [examples.md](docs/examples.md).
+
+## Сборка проекта
+
+```
+npm run build
+```
+
+## Лицензия
+
+[LICENSE](LICENSE)

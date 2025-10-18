@@ -1,12 +1,11 @@
-import { createMapper, Mapper } from '../src/mapper/mapper';
-import { ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition, BoardSize } from '../src/parser/data';
-import { Board, PointContent } from '../src/renderer/data';
+import { Mapper } from '../src/mapper';
+import { ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition, BoardSize, Board, PointContent } from '../src/models';
 
 describe('Mapper', () => {
   let mapper: Mapper;
 
   beforeEach(() => {
-    mapper = createMapper();
+    mapper = new Mapper();
   });
 
   describe('map', () => {

@@ -43,3 +43,47 @@ export class ParseSuccess implements ParseResult {
 export class ParseError implements ParseResult {
     constructor(public readonly error: string = '') {}
 }
+
+export enum PointContent {
+    Empty = 'empty',
+    Black = 'black',
+    White = 'white',
+}
+
+export class Point {
+    constructor(
+        public readonly content: PointContent,
+        public readonly hasHoshi: boolean,
+    ) {}
+}
+
+export class Board {
+    constructor(
+        public readonly points: Point[][],
+        public readonly showCoordinates: boolean,
+    ) {}
+}
+
+export class RenderParams {
+    public readonly width: number;
+    public readonly height: number;
+    public readonly stoneSize: number;
+    public readonly isDarkTheme: boolean;
+
+    constructor({
+        width = 250,
+        height = 250,
+        stoneSize = 0.8,
+        isDarkTheme = false,
+    }: {
+        width?: number;
+        height?: number;
+        stoneSize?: number;
+        isDarkTheme?: boolean;
+    } = {}) {
+        this.width = width;
+        this.height = height;
+        this.stoneSize = stoneSize;
+        this.isDarkTheme = isDarkTheme;
+    }
+}
