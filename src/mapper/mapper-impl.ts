@@ -108,11 +108,6 @@ export class MapperImpl implements Mapper {
     }
 
     mapSchemeColorsToRenderColors(schemeColors: SchemeColors): RenderColors {
-        return new RenderColors({
-            boardColor: schemeColors.background,     // используем фон схемы для доски
-            lineColor: schemeColors.border,          // используем цвет границ для линий
-            blackStoneColor: schemeColors.text,      // используем основной текст для черных камней
-            whiteStoneColor: schemeColors.foreground // используем вторичный фон для белых камней
-        });
+        return new RenderColors();
     }
 }

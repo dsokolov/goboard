@@ -15,7 +15,7 @@ export class RendererImpl implements Renderer {
         svg.classList.add('go-board-svg');
 
         // Фон доски должен покрывать всю область SVG, чтобы поля были того же цвета
-        const background = this.renderBackground(totalWidth, totalHeight, params.colors.boardColor);
+        const background = this.renderBackground(totalWidth, totalHeight);
         svg.appendChild(background);
 
         // Добавляем линии доски
@@ -52,9 +52,9 @@ export class RendererImpl implements Renderer {
         for (let i = 0; i < boardSize; i++) {
             const xPos = paddingLeft + i * stepX;
             const yPos = paddingTop + i * stepY;
-            const vLine = this.renderVerticalLines(paddingTop, totalHeight - paddingBottom, xPos, params.colors.lineColor);
+            const vLine = this.renderVerticalLines(paddingTop, totalHeight - paddingBottom, xPos);
             svg.appendChild(vLine);
-            const hLine = this.renderHorizontalLines(paddingLeft, totalWidth - paddingRight, yPos, params.colors.lineColor);
+            const hLine = this.renderHorizontalLines(paddingLeft, totalWidth - paddingRight, yPos);
             svg.appendChild(hLine);
         }
 
@@ -63,7 +63,7 @@ export class RendererImpl implements Renderer {
             for (let x = 0; x < boardSize; x++) {
                 const point = source.points[y][x];
                 if (point.hasHoshi) {
-                    const hoshi = this.renderHoshi(paddingLeft, paddingTop, stepX, stepY, x, y, params.colors.lineColor);
+                    const hoshi = this.renderHoshi(paddingLeft, paddingTop, stepX, stepY, x, y);
                     svg.appendChild(hoshi);
                 }
             }
@@ -76,10 +76,7 @@ export class RendererImpl implements Renderer {
                 if (point.content !== PointContent.Empty) {
                     const circle = this.renderStone(
                         paddingLeft, paddingTop, stepX, stepY, x, y, point.content,
-                        params.stoneSize,
-                        params.colors.blackStoneColor,
-                        params.colors.whiteStoneColor,
-                        params.colors.lineColor
+                        params.stoneSize, params.isDarkTheme
                     );
                     svg.appendChild(circle);
                 }
@@ -89,8 +86,8 @@ export class RendererImpl implements Renderer {
         // Координаты: цифры слева, буквы снизу
         if (source.showCoordinates) {
             // Use the final step sizes to position labels exactly one grid step away
-            this.renderLeftNumbers(svg, paddingLeft, stepX, stepY, boardSize, params.colors.lineColor, paddingTop);
-            this.renderBottomLetters(svg, paddingLeft, stepY, stepX, boardSize, params.colors.lineColor, totalHeight, paddingBottom);
+            this.renderLeftNumbers(svg, paddingLeft, stepX, stepY, boardSize, paddingTop);
+            this.renderBottomLetters(svg, paddingLeft, stepY, stepX, boardSize, totalHeight, paddingBottom);
         }
 
         return svg;
@@ -105,9 +102,7 @@ export class RendererImpl implements Renderer {
         y: number,
         cell: PointContent,
         stoneSizeFraction: number,
-        blackColor: string,
-        whiteColor: string,
-        strokeColor: string
+        isDarkTheme: boolean
     ) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = paddingLeft + x * stepX;
@@ -119,11 +114,25 @@ export class RendererImpl implements Renderer {
         circle.setAttribute('r', radius.toString());
 
         if (cell === PointContent.Black) {
-            circle.setAttribute('fill', blackColor);
-            circle.setAttribute('stroke', strokeColor);
+            if (isDarkTheme) {
+                // В тёмной теме чёрный камень должен быть тёмным
+                circle.setAttribute('fill', 'var(--background-primary, #1e1e1e)');
+                circle.setAttribute('stroke', 'var(--background-modifier-border, #3c3c3c)');
+            } else {
+                // В светлой теме чёрный камень должен быть тёмным
+                circle.setAttribute('fill', 'var(--text-normal, #2c2c2c)');
+                circle.setAttribute('stroke', 'var(--background-modifier-border, #666666)');
+            }
         } else if (cell === PointContent.White) {
-            circle.setAttribute('fill', whiteColor);
-            circle.setAttribute('stroke', strokeColor);
+            if (isDarkTheme) {
+                // В тёмной теме белый камень должен быть светлым
+                circle.setAttribute('fill', 'var(--text-normal, #dcddde)');
+                circle.setAttribute('stroke', 'var(--background-modifier-border, #3c3c3c)');
+            } else {
+                // В светлой теме белый камень должен быть светлым
+                circle.setAttribute('fill', 'var(--background-primary, #ffffff)');
+                circle.setAttribute('stroke', 'var(--background-modifier-border, #cccccc)');
+            }
         }
         circle.setAttribute('stroke-width', '1');
         return circle;
@@ -135,8 +144,7 @@ export class RendererImpl implements Renderer {
         stepX: number,
         stepY: number,
         x: number,
-        y: number,
-        lineColor: string,
+        y: number
     ) {
         const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = paddingLeft + x * stepX;
@@ -145,43 +153,44 @@ export class RendererImpl implements Renderer {
         dot.setAttribute('cx', cx.toString());
         dot.setAttribute('cy', cy.toString());
         dot.setAttribute('r', radius.toString());
-        dot.setAttribute('fill', lineColor);
+        dot.setAttribute('fill', 'var(--text-muted, #8a8a8a)');
         return dot;
     }
 
-    private renderHorizontalLines(xStart: number, xEnd: number, yPos: number, lineColor: string) {
+    private renderHorizontalLines(xStart: number, xEnd: number, yPos: number) {
         const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         hLine.setAttribute('x1', xStart.toString());
         hLine.setAttribute('y1', yPos.toString());
         hLine.setAttribute('x2', xEnd.toString());
         hLine.setAttribute('y2', yPos.toString());
-        hLine.setAttribute('stroke', lineColor);
+        hLine.setAttribute('stroke', 'var(--text-muted, #8a8a8a)');
         hLine.setAttribute('stroke-width', '1');
         return hLine;
     }
 
-    private renderVerticalLines(yStart: number, yEnd: number, xPos: number, lineColor: string) {
+    private renderVerticalLines(yStart: number, yEnd: number, xPos: number) {
         const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         vLine.setAttribute('x1', xPos.toString());
         vLine.setAttribute('y1', yStart.toString());
         vLine.setAttribute('x2', xPos.toString());
         vLine.setAttribute('y2', yEnd.toString());
-        vLine.setAttribute('stroke', lineColor);
+        vLine.setAttribute('stroke', 'var(--text-muted, #8a8a8a)');
         vLine.setAttribute('stroke-width', '1');
         return vLine;
     }
 
-    private renderBackground(totalWidth: number, totalHeight: number, boardColor: string) {
+    private renderBackground(totalWidth: number, totalHeight: number) {
         const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         background.setAttribute('x', '0');
         background.setAttribute('y', '0');
         background.setAttribute('width', totalWidth.toString());
         background.setAttribute('height', totalHeight.toString());
-        background.setAttribute('fill', boardColor);
+        // Используем CSS переменную для цвета доски
+        background.setAttribute('fill', 'var(--background-primary,rgb(210, 15, 15))');
         return background;
     }
 
-    private renderLeftNumbers(svg: SVGElement, paddingLeft: number, stepX: number, stepY: number, boardSize: number, color: string, paddingTop: number) {
+    private renderLeftNumbers(svg: SVGElement, paddingLeft: number, stepX: number, stepY: number, boardSize: number, paddingTop: number) {
         const fontSize = Math.max(8, stepY * 0.4);
         for (let i = 0; i < boardSize; i++) {
             const yPos = paddingTop + i * stepY;
@@ -189,12 +198,12 @@ export class RendererImpl implements Renderer {
             // Place numbers slightly less than one step away from the first vertical line
             const gap = stepX * 0.75 + Math.max(4, fontSize * 0.15);
             const x = (paddingLeft - gap);
-            const text = this.renderCoordinateSymbol(x, yPos, label, fontSize, color, 'end', 'middle');
+            const text = this.renderCoordinateSymbol(x, yPos, label, fontSize, 'end', 'middle');
             svg.appendChild(text);
         }
     }
 
-    private renderBottomLetters(svg: SVGElement, paddingLeft: number, stepY: number, stepX: number, boardSize: number, color: string, totalHeight: number, paddingBottom: number) {
+    private renderBottomLetters(svg: SVGElement, paddingLeft: number, stepY: number, stepX: number, boardSize: number, totalHeight: number, paddingBottom: number) {
         const fontSize = Math.max(8, stepX * 0.4);
         for (let i = 0; i < boardSize; i++) {
             const xPos = paddingLeft + i * stepX;
@@ -202,7 +211,7 @@ export class RendererImpl implements Renderer {
             // Place letters slightly less than one step away from the bottom horizontal line
             const gap = stepY * 0.75 + Math.max(4, fontSize * 0.15);
             const y = (totalHeight - paddingBottom + gap);
-            const text = this.renderCoordinateSymbol(xPos, y, label, fontSize, color, 'middle', 'hanging');
+            const text = this.renderCoordinateSymbol(xPos, y, label, fontSize, 'middle', 'hanging');
             svg.appendChild(text);
         }
     }
@@ -212,7 +221,6 @@ export class RendererImpl implements Renderer {
         y: number,
         label: string,
         fontSize: number,
-        color: string,
         textAnchor: 'start' | 'middle' | 'end',
         dominantBaseline: 'auto' | 'text-bottom' | 'alphabetic' | 'ideographic' | 'middle' | 'central' | 'mathematical' | 'hanging' | 'text-top' | 'bottom' | 'center' | 'top'
     ): SVGElement {
@@ -223,7 +231,7 @@ export class RendererImpl implements Renderer {
         text.setAttribute('text-anchor', textAnchor);
         text.setAttribute('dominant-baseline', dominantBaseline);
         text.setAttribute('font-family', 'Arial, sans-serif');
-        text.setAttribute('style', `fill: ${color} !important;`);
+        text.setAttribute('style', `fill: var(--text-normal, #dcddde) !important;`);
         text.textContent = label;
         return text;
     }

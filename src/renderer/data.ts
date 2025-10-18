@@ -23,45 +23,31 @@ export class RenderParams {
     public readonly height: number;
     public readonly stoneSize: number;
     public readonly colors: RenderColors;
+    public readonly isDarkTheme: boolean;
 
     constructor({
         width = 250,
         height = 250,
         stoneSize = 0.8,
         colors = new RenderColors(),
+        isDarkTheme = false,
     }: {
         width?: number;
         height?: number;
         stoneSize?: number;
         colors?: RenderColors;
+        isDarkTheme?: boolean;
     } = {}) {
         this.width = width;
         this.height = height;
         this.stoneSize = stoneSize;
         this.colors = colors;
+        this.isDarkTheme = isDarkTheme;
     }
 }
 
 export class RenderColors {
-    public readonly boardColor: string;
-    public readonly lineColor: string;
-    public readonly blackStoneColor: string;
-    public readonly whiteStoneColor: string;
-
-    constructor({
-        boardColor = '#DCB35C',
-        lineColor = '#000000',
-        blackStoneColor = '#000000',
-        whiteStoneColor = '#FFFFFF',
-    }: {
-        boardColor?: string;
-        lineColor?: string;
-        blackStoneColor?: string;
-        whiteStoneColor?: string;
-    } = {}) {
-        this.boardColor = boardColor;
-        this.lineColor = lineColor;
-        this.blackStoneColor = blackStoneColor;
-        this.whiteStoneColor = whiteStoneColor;
+    constructor() {
+        // Все цвета теперь берутся напрямую из CSS переменных
     }
 }
