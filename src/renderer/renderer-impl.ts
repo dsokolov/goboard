@@ -63,7 +63,9 @@ export class RendererImpl implements Renderer {
             for (let x = 0; x < boardSize; x++) {
                 const point = source.points[y][x];
                 if (point.hasHoshi) {
-                    const hoshi = this.renderHoshi(paddingLeft, paddingTop, stepX, stepY, x, y);
+                    // Инвертируем y-координату: y=0 должна быть внизу, y=boardSize-1 вверху
+                    const invertedY = boardSize - 1 - y;
+                    const hoshi = this.renderHoshi(paddingLeft, paddingTop, stepX, stepY, x, invertedY);
                     svg.appendChild(hoshi);
                 }
             }
@@ -74,8 +76,10 @@ export class RendererImpl implements Renderer {
             for (let x = 0; x < boardSize; x++) {
                 const point = source.points[y][x];
                 if (point.content !== PointContent.Empty) {
+                    // Инвертируем y-координату: y=0 должна быть внизу, y=boardSize-1 вверху
+                    const invertedY = boardSize - 1 - y;
                     const circle = this.renderStone(
-                        paddingLeft, paddingTop, stepX, stepY, x, y, point.content,
+                        paddingLeft, paddingTop, stepX, stepY, x, invertedY, point.content,
                         params.stoneSize, params.isDarkTheme
                     );
                     svg.appendChild(circle);
@@ -193,7 +197,9 @@ export class RendererImpl implements Renderer {
     private renderLeftNumbers(svg: SVGElement, paddingLeft: number, stepX: number, stepY: number, boardSize: number, paddingTop: number) {
         const fontSize = Math.max(8, stepY * 0.4);
         for (let i = 0; i < boardSize; i++) {
-            const yPos = paddingTop + i * stepY;
+            // Инвертируем позицию: i=0 должна быть внизу (строка 1), i=boardSize-1 вверху (строка 9)
+            const invertedI = boardSize - 1 - i;
+            const yPos = paddingTop + invertedI * stepY;
             const label = (i + 1).toString();
             // Place numbers slightly less than one step away from the first vertical line
             const gap = stepX * 0.75 + Math.max(4, fontSize * 0.15);

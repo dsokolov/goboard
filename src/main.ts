@@ -34,18 +34,8 @@ export default class GoBoardPlugin extends Plugin {
 		);
 		
 		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, ctx) => {
-
-			const parseResult = this.parser.parse(source);
-			if (parseResult instanceof ParseSuccess) {
-				const board = this.mapper.map(parseResult);
-				const schemeColors = this.schemeColorsProvider.getColors();
-				const renderColors = this.mapper.mapSchemeColorsToRenderColors(schemeColors);
-				const renderParams = new RenderParams({
-					colors: renderColors,
-					isDarkTheme: this.isDarkTheme
-				});
-				const svg = this.renderer.render(board, renderParams);
-
+			const svg = this.renderBoard(source);
+			if (svg) {
 				const boardContainer = document.createElement('div');
 				boardContainer.classList.add('go-board-container');
 				boardContainer.setAttribute('data-source', source);
@@ -53,6 +43,21 @@ export default class GoBoardPlugin extends Plugin {
 				el.appendChild(boardContainer);
 			}
 		});
+	}
+
+	private renderBoard(source: string): SVGElement | null {
+		const parseResult = this.parser.parse(source);
+		if (parseResult instanceof ParseSuccess) {
+			const board = this.mapper.map(parseResult);
+			const schemeColors = this.schemeColorsProvider.getColors();
+			const renderColors = this.mapper.mapSchemeColorsToRenderColors(schemeColors);
+			const renderParams = new RenderParams({
+				colors: renderColors,
+				isDarkTheme: this.isDarkTheme
+			});
+			return this.renderer.render(board, renderParams);
+		}
+		return null;
 	}
 
 	private updateThemeState(): void {
@@ -77,18 +82,8 @@ export default class GoBoardPlugin extends Plugin {
 		boardContainers.forEach(container => {
 			const source = container.getAttribute('data-source');
 			if (source) {
-				// Парсим и перерендерим доску с новой темой
-				const parseResult = this.parser.parse(source);
-				if (parseResult instanceof ParseSuccess) {
-					const board = this.mapper.map(parseResult);
-					const schemeColors = this.schemeColorsProvider.getColors();
-					const renderColors = this.mapper.mapSchemeColorsToRenderColors(schemeColors);
-					const renderParams = new RenderParams({
-						colors: renderColors,
-						isDarkTheme: this.isDarkTheme
-					});
-					const svg = this.renderer.render(board, renderParams);
-					
+				const svg = this.renderBoard(source);
+				if (svg) {
 					// Заменяем старый SVG на новый
 					container.innerHTML = '';
 					container.appendChild(svg);
