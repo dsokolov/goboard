@@ -46,8 +46,8 @@ export class Renderer {
         const background = this.renderBackground(totalWidth, totalHeight);
         svg.appendChild(background);
 
-        // Упрощенная логика padding
-        const padding = source.showCoordinates ? fontSize * 1.5 : 20;
+        // Увеличенные отступы для координат, чтобы камни не закрывали подписи
+        const padding = source.showCoordinates ? fontSize * 2.5 : 20;
         const innerWidth = totalWidth - 2 * padding;
         const innerHeight = totalHeight - 2 * padding;
         const stepX = boardSize > 1 ? innerWidth / (boardSize - 1) : 0;
@@ -182,8 +182,9 @@ export class Renderer {
             const invertedI = boardSize - 1 - i;
             const yPos = paddingTop + invertedI * stepY;
             const label = (i + 1).toString();
-            const gap = stepX * 0.75 + Math.max(4, fontSize * 0.15);
-            const x = (paddingLeft - gap);
+            // Увеличенный отступ для координат, чтобы камни не закрывали их
+            const gap = Math.max(8, fontSize * 1.2);
+            const x = paddingLeft - gap;
             const text = this.renderCoordinateSymbol(x, yPos, label, fontSize, 'end', 'middle');
             svg.appendChild(text);
         }
@@ -193,9 +194,11 @@ export class Renderer {
         const fontSize = this.getFontSizeFromCSS();
         for (let i = 0; i < boardSize; i++) {
             const xPos = paddingLeft + i * stepX;
-            const label = String.fromCharCode('A'.charCodeAt(0) + i);
-            const gap = stepY * 0.75 + Math.max(4, fontSize * 0.15);
-            const y = (totalHeight - paddingBottom + gap);
+            // Пропускаем букву 'I' как в традиционной нотации Го
+            const label = i < 8 ? String.fromCharCode('A'.charCodeAt(0) + i) : String.fromCharCode('A'.charCodeAt(0) + i + 1);
+            // Увеличенный отступ для координат, чтобы камни не закрывали их
+            const gap = Math.max(8, fontSize * 1.2);
+            const y = totalHeight - paddingBottom + gap;
             const text = this.renderCoordinateSymbol(xPos, y, label, fontSize, 'middle', 'hanging');
             svg.appendChild(text);
         }
@@ -212,6 +215,7 @@ export class Renderer {
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', x.toString());
         text.setAttribute('y', y.toString());
+        text.setAttribute('font-size', fontSize.toString());
         text.setAttribute('text-anchor', textAnchor);
         text.setAttribute('dominant-baseline', dominantBaseline);
         text.classList.add('go-board-coordinate');

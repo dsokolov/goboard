@@ -96,7 +96,12 @@ export class Parser {
         const letter = match[1].toUpperCase();
         const number = parseInt(match[2], 10);
         
-        const x = (letter.charCodeAt(0) - 'A'.charCodeAt(0));
+        // Учитываем пропуск буквы 'I' в традиционной нотации Го
+        let x = letter.charCodeAt(0) - 'A'.charCodeAt(0);
+        if (letter >= 'J') {
+            x = x - 1; // Сдвигаем на одну позицию влево для букв J и далее
+        }
+        
         const y = number - 1;
         
         return new SinglePosition(x, y);

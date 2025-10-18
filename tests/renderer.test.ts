@@ -116,6 +116,48 @@ describe('Renderer', () => {
         expect(hasStoneClass).toBe(true);
       });
     });
+
+    it('should render coordinates when enabled', () => {
+      const source = 'size 9x9\ncoordinates on';
+      const parseResult = parser.parse(source);
+      
+      expect(parseResult).toBeInstanceOf(ParseSuccess);
+      expect((parseResult as ParseSuccess).showCoordinates).toBe(true);
+      
+      const board = mapper.map(parseResult as ParseSuccess);
+      expect(board.showCoordinates).toBe(true);
+      
+      const renderParams = new RenderParams();
+      const svg = renderer.render(board, renderParams);
+      const textElements = svg.querySelectorAll('text');
+      
+      console.log('Text elements count:', textElements.length);
+      expect(textElements.length).toBeGreaterThan(0);
+      
+      // Проверяем, что у текстовых элементов есть font-size
+      textElements.forEach((element, index) => {
+        const fontSize = element.getAttribute('font-size');
+        console.log(`Element ${index}: "${element.textContent}" font-size: ${fontSize}`);
+        expect(fontSize).toBeTruthy();
+      });
+    });
+
+    it('should not render coordinates when disabled', () => {
+      const source = 'size 9x9\ncoordinates off';
+      const parseResult = parser.parse(source);
+      
+      expect(parseResult).toBeInstanceOf(ParseSuccess);
+      expect((parseResult as ParseSuccess).showCoordinates).toBe(false);
+      
+      const board = mapper.map(parseResult as ParseSuccess);
+      expect(board.showCoordinates).toBe(false);
+      
+      const renderParams = new RenderParams();
+      const svg = renderer.render(board, renderParams);
+      const textElements = svg.querySelectorAll('text');
+      
+      expect(textElements.length).toBe(0);
+    });
   });
 
 });
