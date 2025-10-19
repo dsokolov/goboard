@@ -69,22 +69,35 @@ export class Mapper {
     }
 
     private hasHoshi(boardSize: BoardSize, x: number, y: number): boolean {
-        const hoshiPositions: Record<string, number[]> = {
-            '19x19': [3, 9, 15],
-            '13x13': [3, 6, 9],
-            '9x9': [2, 4, 6]
-        };
-        
         const key = `${boardSize.width}x${boardSize.height}`;
-        const coords = hoshiPositions[key];
         
-        if (!coords) return false;
-        
-        // Special case for 9x9: center point is always hoshi, corners are hoshi
-        if (key === '9x9') {
-            return (coords.includes(x) && coords.includes(y)) || (x === 4 && y === 4);
+        // Стандартные позиции хоси для разных размеров досок
+        if (key === '19x19') {
+            // Для 19x19: позиции 3, 9, 15 (4-4, 10-10, 16-16 и их комбинации)
+            const hoshiCoords = [3, 9, 15];
+            return hoshiCoords.includes(x) && hoshiCoords.includes(y);
         }
         
-        return coords.includes(x) && coords.includes(y);
+        if (key === '13x13') {
+            // Для 13x13: позиции 3, 6, 9 (4-4, 7-7, 10-10 и их комбинации)
+            const hoshiCoords = [3, 6, 9];
+            return hoshiCoords.includes(x) && hoshiCoords.includes(y);
+        }
+        
+        if (key === '9x9') {
+            // Для 9x9: стандартные позиции хоси согласно правилам Го
+            // C3, G3, E5 (центр), C7, G7
+            // В 0-based координатах: (2,2), (6,2), (4,4), (2,6), (6,6)
+            const hoshiPositions = [
+                [2, 2], // C3
+                [6, 2], // G3  
+                [4, 4], // E5 (центр)
+                [2, 6], // C7
+                [6, 6]  // G7
+            ];
+            return hoshiPositions.some(([hx, hy]) => hx === x && hy === y);
+        }
+        
+        return false;
     }
 }
