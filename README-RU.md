@@ -60,6 +60,10 @@ npm test
 npm run update-baseline
 ```
 
+## Замечания и предложения
+
+Если вы нашли баг или есть предложения по улучшению - не стасняйтесь [заводить тикеты](https://github.com/dsokolov/goboard/issues)!
+
 ## Лицензия
 
 [LICENSE](LICENSE)

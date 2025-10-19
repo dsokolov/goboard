@@ -24,7 +24,7 @@ size 9x9
 ```
 </pre>
 
-![Empty 9x9 goban](docs/images/empty-goban-9x9.png)
+![Empty 9x9 goban (light theme)](docs/images/empty-board-9x9-light.png) ![Empty 9x9 goban (dark theme)](docs/images/empty-board-9x9-dark.png)
 
 To place stones on the diagram, use `B <position>` and `W <position>` for black and white stones respectively. For example:
 
@@ -36,6 +36,34 @@ W C3
 ```
 </pre>
 
-![First two moves on 9x9 goban](docs/images/simple-game-9x9.png)
+![First two moves on 9x9 goban (light theme)](docs/images/moves-first-two-light.png) ![First two moves on 9x9 goban (dark theme)](docs/images/moves-first-two-dark.png)
 
 For more usage examples, see [examples.md](docs/examples.md).
+
+## Building the project
+
+Build the project, including copying the distribution to the development vault:
+
+```
+npm run build
+```
+
+Running tests:
+
+```
+npm test
+```
+
+Updating test baselines:
+
+```
+npm run update-baseline
+```
+
+## Issues and suggestions
+
+If you found a bug or have suggestions for improvement - don't hesitate to [create issues](https://github.com/dsokolov/goboard/issues)!
+
+## License
+
+[LICENSE](LICENSE)
