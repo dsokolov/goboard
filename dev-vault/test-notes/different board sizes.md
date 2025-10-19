@@ -4,8 +4,7 @@
 size 9x9
 coordinates on
 hoshi on
-B G7,G8
-W D4,E4,D5
+B A1
 ```
 # 13x13
 ```goboard

@@ -103,13 +103,13 @@ describe('Mapper', () => {
       const board = mapper.map(parseSuccess);
 
       expect(board.points[0][0].content).toBe(PointContent.Black);
-      expect(board.points[0][1].content).toBe(PointContent.White);
-      expect(board.points[0][2].content).toBe(PointContent.Black);
+      expect(board.points[1][0].content).toBe(PointContent.White);
+      expect(board.points[2][0].content).toBe(PointContent.Black);
       
       // Проверяем, что остальные клетки пустые
       for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
-          if (!((i === 0 && j === 0) || (i === 0 && j === 1) || (i === 0 && j === 2))) {
+          if (!((i === 0 && j === 0) || (i === 1 && j === 0) || (i === 2 && j === 0))) {
             expect(board.points[i][j].content).toBe(PointContent.Empty);
           }
         }
@@ -126,13 +126,13 @@ describe('Mapper', () => {
 
       // Проверяем, что все позиции от A1 до A5 заполнены черными камнями
       for (let j = 0; j <= 4; j++) {
-        expect(board.points[0][j].content).toBe(PointContent.Black);
+        expect(board.points[j][0].content).toBe(PointContent.Black);
       }
       
       // Проверяем, что остальные клетки пустые
       for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
-          if (i !== 0 || j > 4) {
+          if (j !== 0 || i > 4) {
             expect(board.points[i][j].content).toBe(PointContent.Empty);
           }
         }
@@ -155,15 +155,15 @@ describe('Mapper', () => {
       
       // Проверяем интервальную позицию A3-A5
       for (let j = 2; j <= 4; j++) {
-        expect(board.points[0][j].content).toBe(PointContent.Black);
+        expect(board.points[j][0].content).toBe(PointContent.Black);
       }
       
       // Проверяем, что A2 пустая
-      expect(board.points[0][1].content).toBe(PointContent.Empty);
+      expect(board.points[1][0].content).toBe(PointContent.Empty);
       
       // Проверяем, что остальные клетки пустые
-      for (let i = 1; i < 9; i++) {
-        for (let j = 0; j < 9; j++) {
+      for (let i = 0; i < 9; i++) {
+        for (let j = 1; j < 9; j++) {
           expect(board.points[i][j].content).toBe(PointContent.Empty);
         }
       }
@@ -180,13 +180,13 @@ describe('Mapper', () => {
       const board = mapper.map(parseSuccess);
 
       expect(board.points[0][0].content).toBe(PointContent.Black);
-      expect(board.points[0][1].content).toBe(PointContent.White);
+      expect(board.points[1][0].content).toBe(PointContent.White);
       expect(board.points[1][1].content).toBe(PointContent.Black);
       expect(board.points[2][2].content).toBe(PointContent.White);
       
       // Проверяем, что остальные клетки пустые
       const expectedEmpty = [
-        [0, 2], [1, 0], [1, 2], [2, 0], [2, 1]
+        [2, 0], [0, 1], [2, 1], [0, 2], [1, 2]
       ];
       
       for (const [i, j] of expectedEmpty) {
@@ -226,13 +226,13 @@ describe('Mapper', () => {
       ];
       
       for (const [x, y] of expectedPositions) {
-        expect(board.points[x][y].content).toBe(PointContent.Black);
+        expect(board.points[y][x].content).toBe(PointContent.Black);
       }
       
       // Проверяем, что остальные клетки пустые
       for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
-          const isInSquare = expectedPositions.some(([x, y]) => x === i && y === j);
+          const isInSquare = expectedPositions.some(([x, y]) => y === i && x === j);
           if (!isInSquare) {
             expect(board.points[i][j].content).toBe(PointContent.Empty);
           }

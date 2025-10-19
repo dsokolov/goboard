@@ -35,10 +35,10 @@ export class Mapper {
     }
     
     private placeStone(points: Point[][], x: number, y: number, content: PointContent): void {
-        if (x >= 0 && x < points.length && y >= 0 && y < points[x].length) {
-            const existing = points[x][y];
+        if (y >= 0 && y < points.length && x >= 0 && x < points[y].length) {
+            const existing = points[y][x];
             const hoshi = existing ? existing.hasHoshi : false;
-            points[x][y] = new Point(content, hoshi);
+            points[y][x] = new Point(content, hoshi);
         }
     }
     
@@ -55,8 +55,8 @@ export class Mapper {
         const maxY = Math.max(startY, endY);
         
         // Заполняем весь прямоугольник
-        for (let x = minX; x <= maxX; x++) {
-            for (let y = minY; y <= maxY; y++) {
+        for (let y = minY; y <= maxY; y++) {
+            for (let x = minX; x <= maxX; x++) {
                 this.placeStone(points, x, y, content);
             }
         }
