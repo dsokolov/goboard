@@ -1,5 +1,5 @@
 import { Renderer } from '../src/renderer';
-import { Board, Point, PointContent, createRenderParams } from '../src/models';
+import { Board, Point, PointContent, createRenderParams, ParseError } from '../src/models';
 import { Parser } from '../src/parser';
 import { Mapper } from '../src/mapper';
 import { ParseSuccess } from '../src/models';
@@ -160,7 +160,244 @@ describe('Renderer', () => {
     });
   });
 
+  describe('baseline comparison', () => {
+    it('should match baseline SVG files for all test data', async () => {
+      const testDataDir = path.join(__dirname, 'test-data');
+      const baselineDir = path.join(testDataDir, 'baseline');
+      
+      // Получаем все txt файлы
+      const txtFiles = getTxtFiles(testDataDir);
+      
+      if (txtFiles.length === 0) {
+        console.log('Не найдено txt файлов в каталоге test-data');
+        return;
+      }
+
+      console.log(`\n=== Проверка соответствия бейзлайну для ${txtFiles.length} файлов ===\n`);
+
+      // Обрабатываем каждый файл для обеих тем
+      for (const txtFile of txtFiles) {
+        await compareFileWithBaseline(txtFile, parser, mapper, renderer, baselineDir);
+      }
+
+      console.log('\n=== Проверка соответствия бейзлайну завершена! ===\n');
+    });
+  });
+
 });
+
+/**
+ * Получает список всех txt файлов в указанном каталоге
+ */
+function getTxtFiles(dir: string): string[] {
+  try {
+    const files = fs.readdirSync(dir);
+    return files
+      .filter(file => file.endsWith('.txt'))
+      .map(file => path.join(dir, file));
+  } catch (error) {
+    console.error(`Ошибка чтения каталога ${dir}:`, error);
+    return [];
+  }
+}
+
+/**
+ * Сравнивает файл с бейзлайном для обеих тем
+ */
+async function compareFileWithBaseline(
+  txtFilePath: string, 
+  parser: Parser, 
+  mapper: Mapper, 
+  renderer: Renderer, 
+  baselineDir: string
+): Promise<void> {
+  const fileName = path.basename(txtFilePath);
+  const baseFileName = fileName.replace('.txt', '');
+  
+  console.log(`Проверка файла: ${fileName}`);
+
+  try {
+    // Шаг 1: Читаем содержимое файла
+    const content = fs.readFileSync(txtFilePath, 'utf-8');
+    console.log(`  ✓ Файл прочитан (${content.length} символов)`);
+
+    // Шаг 2: Парсинг
+    const parseResult = parser.parse(content);
+    if (parseResult instanceof ParseError) {
+      console.log(`  ⚠ Пропуск файла из-за ошибки парсинга: ${parseResult.error}`);
+      return; // Пропускаем файлы, которые не могут быть распарсены
+    }
+    console.log(`  ✓ Парсинг успешен`);
+
+    // Шаг 3: Маппинг
+    const board = mapper.map(parseResult as any);
+    console.log(`  ✓ Маппинг успешен (доска ${board.points.length}x${board.points[0]?.length || 0})`);
+
+    // Проверяем светлую тему
+    await compareThemeWithBaseline(board, renderer, baselineDir, baseFileName, 'light');
+    
+    // Проверяем тёмную тему
+    await compareThemeWithBaseline(board, renderer, baselineDir, baseFileName, 'dark');
+
+  } catch (error) {
+    console.error(`  ✗ Ошибка при проверке ${fileName}:`, error instanceof Error ? error.message : error);
+    throw error; // Пробрасываем ошибку, чтобы тест упал
+  }
+  
+  console.log(''); // Пустая строка для разделения
+}
+
+/**
+ * Сравнивает рендеринг с бейзлайном для конкретной темы
+ */
+async function compareThemeWithBaseline(
+  board: Board,
+  renderer: Renderer,
+  baselineDir: string,
+  baseFileName: string,
+  theme: 'light' | 'dark'
+): Promise<void> {
+  // Шаг 1: Рендерим SVG в памяти
+  const svgContent = renderer.render(board, createRenderParams());
+  addStylesToSVG(svgContent, theme);
+  const currentSvgString = new XMLSerializer().serializeToString(svgContent);
+  
+  // Шаг 2: Читаем бейзлайн SVG
+  const baselineSvgPath = path.join(baselineDir, `${baseFileName}-${theme}.svg`);
+  
+  if (!fs.existsSync(baselineSvgPath)) {
+    throw new Error(`Бейзлайн файл не найден: ${baselineSvgPath}`);
+  }
+  
+  const baselineSvgString = fs.readFileSync(baselineSvgPath, 'utf-8');
+  
+  // Шаг 3: Нормализуем и сравниваем
+  const normalizedCurrent = normalizeSvgString(currentSvgString);
+  const normalizedBaseline = normalizeSvgString(baselineSvgString);
+  
+  console.log(`  ✓ SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы сгенерирован`);
+  
+  if (normalizedCurrent !== normalizedBaseline) {
+    // Находим различия для более информативного сообщения
+    const differences = findSvgDifferences(normalizedCurrent, normalizedBaseline);
+    
+    console.error(`  ✗ SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы не соответствует бейзлайну!`);
+    console.error(`    Файл: ${baselineSvgPath}`);
+    console.error(`    Различия: ${differences}`);
+    
+    // Сохраняем текущий результат для отладки
+    const debugPath = baselineSvgPath.replace('.svg', '-current.svg');
+    fs.writeFileSync(debugPath, currentSvgString, 'utf-8');
+    console.error(`    Текущий результат сохранен в: ${debugPath}`);
+    
+    throw new Error(`SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы не соответствует бейзлайну. Файл: ${baseFileName}`);
+  }
+  
+  console.log(`  ✓ SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы соответствует бейзлайну`);
+}
+
+/**
+ * Находит различия между двумя SVG строками
+ */
+function findSvgDifferences(current: string, baseline: string): string {
+  const currentLines = current.split('\n');
+  const baselineLines = baseline.split('\n');
+  
+  const maxLines = Math.max(currentLines.length, baselineLines.length);
+  const differences: string[] = [];
+  
+  for (let i = 0; i < maxLines; i++) {
+    const currentLine = currentLines[i] || '';
+    const baselineLine = baselineLines[i] || '';
+    
+    if (currentLine !== baselineLine) {
+      differences.push(`Строка ${i + 1}: "${currentLine}" !== "${baselineLine}"`);
+      if (differences.length >= 5) { // Ограничиваем количество различий
+        differences.push('... (и другие различия)');
+        break;
+      }
+    }
+  }
+  
+  return differences.join('; ');
+}
+
+/**
+ * Добавляет описание используемых стилей в SVG элемент для указанной темы
+ */
+function addStylesToSVG(svg: SVGElement, theme: 'light' | 'dark'): void {
+  // Создаем элемент <defs> для стилей
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+  
+  // Создаем элемент <style> с описанием CSS стилей
+  const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+  
+  style.textContent = `
+/* Стили для рендеринга диаграмм Го - ${theme === 'light' ? 'Светлая' : 'Тёмная'} тема */
+
+/* Основной контейнер SVG */
+.go-board-svg {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: min(90vw, 800px);
+    max-height: min(80vh, 600px);
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    transition: max-width 0.3s ease, max-height 0.3s ease;
+}
+
+/* Фон доски */
+.go-board-background {
+    fill: ${theme === 'light' ? '#f8f8f8' : '#2a2a2a'};
+}
+
+/* Линии доски */
+.go-board-line {
+    stroke: ${theme === 'light' ? '#333333' : '#cccccc'};
+    stroke-width: 1;
+}
+
+/* Звездные точки (хоси) */
+.go-board-hoshi {
+    fill: ${theme === 'light' ? '#333333' : '#cccccc'};
+    r: 5;
+}
+
+/* Координаты */
+.go-board-coordinate {
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    fill: ${theme === 'light' ? '#333333' : '#cccccc'};
+}
+
+/* Стили камней для ${theme === 'light' ? 'светлой' : 'тёмной'} темы */
+.go-stone-black {
+    fill: ${theme === 'light' ? '#000000' : '#ffffff'};
+    stroke: ${theme === 'light' ? 'none' : '#000000'};
+    stroke-width: ${theme === 'light' ? '0' : '1.5'};
+}
+
+.go-stone-white {
+    fill: ${theme === 'light' ? '#ffffff' : '#000000'};
+    stroke: ${theme === 'light' ? '#000000' : 'none'};
+    stroke-width: ${theme === 'light' ? '1.5' : '0'};
+}
+
+/* Базовые стили камней */
+.go-stone {
+    /* Базовые стили для всех камней */
+}
+    `.trim();
+    
+  defs.appendChild(style);
+  
+  // Добавляем defs в начало SVG
+  svg.insertBefore(defs, svg.firstChild);
+}
 
 /**
  * Нормализует SVG строку для сравнения
