@@ -3,7 +3,7 @@
 	"name": "GoBoard",
 	"version": "0.6.1",
 	"minAppVersion": "0.15.0",
-	"description": "Render Go game diagrams from markdown code blocks",
+	"description": "Render Go game diagrams from markdown code blocks.",
 	"author": "Dmitry I. Sokolov",
 	"authorUrl": "https://github.com/dsokolov",
 	"fundingUrl": "",
