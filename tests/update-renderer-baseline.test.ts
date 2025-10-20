@@ -4,7 +4,7 @@ const sharp = require('sharp');
 import { Parser } from '../src/parser';
 import { Mapper } from '../src/mapper';
 import { Renderer } from '../src/renderer';
-import { ParseError, createRenderParams } from '../src/models';
+import { ParseError, ParseSuccess, createRenderParams } from '../src/models';
 
 /**
  * Скрипт для обновления бейзлайна рендерера
@@ -84,7 +84,7 @@ async function processFileForThemes(txtFilePath: string, parser: Parser, mapper:
         }
 
         // Шаг 3: Маппинг
-        const board = mapper.map(parseResult as any);
+        const board = mapper.map(parseResult as ParseSuccess);
 
         // Шаг 4: Рендеринг для светлой темы
         const lightSvgContent = renderer.render(board, createRenderParams());
@@ -130,7 +130,7 @@ async function processFile(txtFilePath: string, parser: Parser, mapper: Mapper, 
         }
 
         // Шаг 3: Маппинг
-        const board = mapper.map(parseResult as any);
+        const board = mapper.map(parseResult as ParseSuccess);
 
         // Шаг 4: Рендеринг
         const svgContent = renderer.render(board, createRenderParams());

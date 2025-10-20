@@ -217,7 +217,7 @@ async function compareFileWithBaseline(
     }
 
     // Шаг 3: Маппинг
-    const board = mapper.map(parseResult as any);
+    const board = mapper.map(parseResult as ParseSuccess);
 
     // Проверяем светлую тему
     await compareThemeWithBaseline(board, renderer, baselineDir, baseFileName, 'light');
