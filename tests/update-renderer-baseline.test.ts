@@ -41,18 +41,14 @@ describe('Update Renderer Baseline', () => {
         const txtFiles = getTxtFiles(testDataDir);
         
         if (txtFiles.length === 0) {
-            console.log('Не найдено txt файлов в каталоге test-data');
             return;
         }
-
-        console.log(`\n=== Обработка ${txtFiles.length} txt файлов для светлой и тёмной тем (SVG + PNG) ===\n`);
 
         // Обрабатываем каждый файл для обеих тем
         for (const txtFile of txtFiles) {
             await processFileForThemes(txtFile, parser, mapper, renderer, baselineDir);
         }
 
-        console.log('\n=== Обработка завершена! ===\n');
     });
 });
 
@@ -66,7 +62,6 @@ function getTxtFiles(dir: string): string[] {
             .filter(file => file.endsWith('.txt'))
             .map(file => path.join(dir, file));
     } catch (error) {
-        console.error(`Ошибка чтения каталога ${dir}:`, error);
         return [];
     }
 }
@@ -78,30 +73,24 @@ async function processFileForThemes(txtFilePath: string, parser: Parser, mapper:
     const fileName = path.basename(txtFilePath);
     const baseFileName = fileName.replace('.txt', '');
     
-    console.log(`Обработка файла: ${fileName}`);
-
     try {
         // Шаг 1: Читаем содержимое файла
         const content = fs.readFileSync(txtFilePath, 'utf-8');
-        console.log(`  ✓ Файл прочитан (${content.length} символов)`);
 
         // Шаг 2: Парсинг
         const parseResult = parser.parse(content);
         if (parseResult instanceof ParseError) {
             throw new Error(`Ошибка парсинга: ${parseResult.error}`);
         }
-        console.log(`  ✓ Парсинг успешен`);
 
         // Шаг 3: Маппинг
         const board = mapper.map(parseResult as any);
-        console.log(`  ✓ Маппинг успешен (доска ${board.points.length}x${board.points[0]?.length || 0})`);
 
         // Шаг 4: Рендеринг для светлой темы
         const lightSvgContent = renderer.render(board, createRenderParams());
         addStylesToSVG(lightSvgContent, 'light');
         const lightSvgPath = path.join(baselineDir, `${baseFileName}-light.svg`);
         fs.writeFileSync(lightSvgPath, new XMLSerializer().serializeToString(lightSvgContent), 'utf-8');
-        console.log(`  ✓ SVG для светлой темы сохранен: ${path.basename(lightSvgPath)}`);
 
         // Шаг 4.1: Конвертация SVG в PNG для светлой темы
         const lightPngPath = path.join(baselineDir, `${baseFileName}-light.png`);
@@ -112,18 +101,15 @@ async function processFileForThemes(txtFilePath: string, parser: Parser, mapper:
         addStylesToSVG(darkSvgContent, 'dark');
         const darkSvgPath = path.join(baselineDir, `${baseFileName}-dark.svg`);
         fs.writeFileSync(darkSvgPath, new XMLSerializer().serializeToString(darkSvgContent), 'utf-8');
-        console.log(`  ✓ SVG для тёмной темы сохранен: ${path.basename(darkSvgPath)}`);
 
         // Шаг 5.1: Конвертация SVG в PNG для тёмной темы
         const darkPngPath = path.join(baselineDir, `${baseFileName}-dark.png`);
         await convertSvgToPng(darkSvgPath, darkPngPath);
 
     } catch (error) {
-        console.error(`  ✗ Ошибка при обработке ${fileName}:`, error instanceof Error ? error.message : error);
-        console.log(`  → Переход к следующему файлу`);
+        // Пропускаем файл при ошибке
     }
-    
-    console.log(''); // Пустая строка для разделения
+
 }
 
 /**
@@ -133,42 +119,32 @@ async function processFile(txtFilePath: string, parser: Parser, mapper: Mapper, 
     const fileName = path.basename(txtFilePath);
     const svgFilePath = txtFilePath.replace('.txt', '.svg');
     
-    console.log(`Обработка файла: ${fileName}`);
-
     try {
         // Шаг 1: Читаем содержимое файла
         const content = fs.readFileSync(txtFilePath, 'utf-8');
-        console.log(`  ✓ Файл прочитан (${content.length} символов)`);
 
         // Шаг 2: Парсинг
         const parseResult = parser.parse(content);
         if (parseResult instanceof ParseError) {
             throw new Error(`Ошибка парсинга: ${parseResult.error}`);
         }
-        console.log(`  ✓ Парсинг успешен`);
 
         // Шаг 3: Маппинг
         const board = mapper.map(parseResult as any);
-        console.log(`  ✓ Маппинг успешен (доска ${board.points.length}x${board.points[0]?.length || 0})`);
 
         // Шаг 4: Рендеринг
         const svgContent = renderer.render(board, createRenderParams());
-        console.log(`  ✓ Рендеринг успешен`);
 
         // Шаг 5: Добавление стилей в SVG (по умолчанию светлая тема)
         addStylesToSVG(svgContent, 'light');
-        console.log(`  ✓ Стили добавлены в SVG`);
 
         // Шаг 6: Сохранение SVG
         fs.writeFileSync(svgFilePath, new XMLSerializer().serializeToString(svgContent), 'utf-8');
-        console.log(`  ✓ SVG сохранен: ${path.basename(svgFilePath)}`);
 
     } catch (error) {
-        console.error(`  ✗ Ошибка при обработке ${fileName}:`, error instanceof Error ? error.message : error);
-        console.log(`  → Переход к следующему файлу`);
+        // Пропускаем файл при ошибке
     }
-    
-    console.log(''); // Пустая строка для разделения
+
 }
 
 /**
@@ -179,9 +155,8 @@ async function convertSvgToPng(svgPath: string, pngPath: string): Promise<void> 
         await sharp(svgPath)
             .png()
             .toFile(pngPath);
-        console.log(`  ✓ PNG создан: ${path.basename(pngPath)}`);
     } catch (error) {
-        console.error(`  ✗ Ошибка конвертации SVG в PNG:`, error instanceof Error ? error.message : error);
+        // Пропускаем PNG при ошибке
     }
 }
 

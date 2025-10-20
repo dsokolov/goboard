@@ -130,14 +130,11 @@ describe('Renderer', () => {
       const renderParams = createRenderParams();
       const svg = renderer.render(board, renderParams);
       const textElements = svg.querySelectorAll('text');
-      
-      console.log('Text elements count:', textElements.length);
       expect(textElements.length).toBeGreaterThan(0);
       
       // Проверяем, что у текстовых элементов есть font-size
       textElements.forEach((element, index) => {
         const fontSize = element.getAttribute('font-size');
-        console.log(`Element ${index}: "${element.textContent}" font-size: ${fontSize}`);
         expect(fontSize).toBeTruthy();
       });
     });
@@ -169,18 +166,14 @@ describe('Renderer', () => {
       const txtFiles = getTxtFiles(testDataDir);
       
       if (txtFiles.length === 0) {
-        console.log('Не найдено txt файлов в каталоге test-data');
         return;
       }
-
-      console.log(`\n=== Проверка соответствия бейзлайну для ${txtFiles.length} файлов ===\n`);
 
       // Обрабатываем каждый файл для обеих тем
       for (const txtFile of txtFiles) {
         await compareFileWithBaseline(txtFile, parser, mapper, renderer, baselineDir);
       }
 
-      console.log('\n=== Проверка соответствия бейзлайну завершена! ===\n');
     });
   });
 
@@ -196,7 +189,6 @@ function getTxtFiles(dir: string): string[] {
       .filter(file => file.endsWith('.txt'))
       .map(file => path.join(dir, file));
   } catch (error) {
-    console.error(`Ошибка чтения каталога ${dir}:`, error);
     return [];
   }
 }
@@ -214,24 +206,18 @@ async function compareFileWithBaseline(
   const fileName = path.basename(txtFilePath);
   const baseFileName = fileName.replace('.txt', '');
   
-  console.log(`Проверка файла: ${fileName}`);
-
   try {
     // Шаг 1: Читаем содержимое файла
     const content = fs.readFileSync(txtFilePath, 'utf-8');
-    console.log(`  ✓ Файл прочитан (${content.length} символов)`);
 
     // Шаг 2: Парсинг
     const parseResult = parser.parse(content);
     if (parseResult instanceof ParseError) {
-      console.log(`  ⚠ Пропуск файла из-за ошибки парсинга: ${parseResult.error}`);
       return; // Пропускаем файлы, которые не могут быть распарсены
     }
-    console.log(`  ✓ Парсинг успешен`);
 
     // Шаг 3: Маппинг
     const board = mapper.map(parseResult as any);
-    console.log(`  ✓ Маппинг успешен (доска ${board.points.length}x${board.points[0]?.length || 0})`);
 
     // Проверяем светлую тему
     await compareThemeWithBaseline(board, renderer, baselineDir, baseFileName, 'light');
@@ -240,11 +226,9 @@ async function compareFileWithBaseline(
     await compareThemeWithBaseline(board, renderer, baselineDir, baseFileName, 'dark');
 
   } catch (error) {
-    console.error(`  ✗ Ошибка при проверке ${fileName}:`, error instanceof Error ? error.message : error);
     throw error; // Пробрасываем ошибку, чтобы тест упал
   }
   
-  console.log(''); // Пустая строка для разделения
 }
 
 /**
@@ -275,25 +259,18 @@ async function compareThemeWithBaseline(
   const normalizedCurrent = normalizeSvgString(currentSvgString);
   const normalizedBaseline = normalizeSvgString(baselineSvgString);
   
-  console.log(`  ✓ SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы сгенерирован`);
-  
   if (normalizedCurrent !== normalizedBaseline) {
     // Находим различия для более информативного сообщения
     const differences = findSvgDifferences(normalizedCurrent, normalizedBaseline);
     
-    console.error(`  ✗ SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы не соответствует бейзлайну!`);
-    console.error(`    Файл: ${baselineSvgPath}`);
-    console.error(`    Различия: ${differences}`);
     
     // Сохраняем текущий результат для отладки
     const debugPath = baselineSvgPath.replace('.svg', '-current.svg');
     fs.writeFileSync(debugPath, currentSvgString, 'utf-8');
-    console.error(`    Текущий результат сохранен в: ${debugPath}`);
     
-    throw new Error(`SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы не соответствует бейзлайну. Файл: ${baseFileName}`);
+    throw new Error(`SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы не соответствует бейзлайну. Файл: ${baseFileName}. Различия: ${differences}. Текущий результат: ${debugPath}`);
   }
-  
-  console.log(`  ✓ SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы соответствует бейзлайну`);
+
 }
 
 /**
