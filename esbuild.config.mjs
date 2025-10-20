@@ -12,6 +12,7 @@ if you want to view the source, please visit the github repository of this plugi
 `;
 
 const prod = (process.argv[2] === 'production');
+const verbose = process.env.GOBOARD_BUILD_VERBOSE === '1';
 
 // Функция для обновления manifest.json данными из package.json
 async function updateManifest() {
@@ -30,7 +31,7 @@ async function updateManifest() {
 		
 		// Записываем обновленный manifest.json
 		fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, '\t'));
-		console.log(`Updated manifest.json: version=${manifest.version}, description="${manifest.description}", author="${manifest.author}"`);
+		if (verbose) console.log(`Updated manifest.json: version=${manifest.version}, description="${manifest.description}", author="${manifest.author}"`);
 	} catch (error) {
 		console.error('Error updating manifest.json:', error);
 		process.exit(1);
@@ -46,7 +47,7 @@ async function copyPluginFiles() {
 		// Создаем целевую директорию если её нет
 		if (!fs.existsSync(targetDir)) {
 			fs.mkdirSync(targetDir, { recursive: true });
-			console.log(`Created directory: ${targetDir}`);
+			if (verbose) console.log(`Created directory: ${targetDir}`);
 		}
 		
 		// Читаем содержимое source директории
@@ -60,11 +61,11 @@ async function copyPluginFiles() {
 			// Проверяем, что это файл (не директория)
 			if (fs.statSync(sourcePath).isFile()) {
 				fs.copyFileSync(sourcePath, targetPath);
-				console.log(`Copied: ${file} -> ${targetPath}`);
+				if (verbose) console.log(`Copied: ${file} -> ${targetPath}`);
 			}
 		}
 		
-		console.log('Plugin files copied successfully!');
+		if (verbose) console.log('Plugin files copied successfully!');
 	} catch (error) {
 		console.error('Error copying plugin files:', error);
 		process.exit(1);
