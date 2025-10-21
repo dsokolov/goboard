@@ -1,6 +1,6 @@
-# GoBoard
+<img src="docs/images/macbook_pro_16.png" alt="Obsidian GoBoard Macbook" height="300" /> <img src="docs/images/google_pixel_8.png" alt="Obsidian GoBoard Google Pixel 8" height="150" />
 
-## What is this?
+# GoBoard
 
 GoBoard is a plugin for [Obsidian](https://obsidian.md/) that renders [Go game](https://en.wikipedia.org/wiki/Go_(game)) diagrams.
 
@@ -66,4 +66,4 @@ If you found a bug or have suggestions for improvement - don't hesitate to [crea
 
 ## License
 
-[LICENSE](LICENSE)
+MIT License - see [LICENSE](LICENSE) file for details.

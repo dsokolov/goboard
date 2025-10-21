@@ -1,6 +1,6 @@
-# GoBoard
+<img src="docs/images/macbook_pro_16.png" alt="Obsidian GoBoard Macbook" height="300" /> <img src="docs/images/google_pixel_8.png" alt="Obsidian GoBoard Google Pixel 8" height="150" />
 
-## Что это?
+# GoBoard
 
 GoBoard - это плагин для [Obsidian](https://obsidian.md/), рисующий диаграммы [игры Го](https://ru.wikipedia.org/wiki/%D0%93%D0%BE).
 
@@ -66,4 +66,4 @@ npm run update-baseline
 
 ## Лицензия
 
-[LICENSE](LICENSE)
+Лицензия MIT - подробности см. в файле [LICENSE](LICENSE).
