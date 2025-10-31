@@ -38,7 +38,7 @@ W C3
 
 ![Первые две постановки на гобане 9x9 (светлая тема)](docs/images/moves-first-two-light.png) ![Первые две постановки на гобане 9x9 (тёмная тема)](docs/images/moves-first-two-dark.png)
 
-Больше примеров использования смотрите в [examples.md](docs/examples.md).
+Больше примеров использования смотрите в [examples-ru.md](docs/examples-ru.md).
 
 ## Сборка проекта
 

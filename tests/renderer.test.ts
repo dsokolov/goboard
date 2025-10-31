@@ -33,7 +33,7 @@ describe('Renderer', () => {
         [new Point(PointContent.Empty, false), new Point(PointContent.Black, true), new Point(PointContent.Empty, false)],
         [new Point(PointContent.Empty, false), new Point(PointContent.Empty, false), new Point(PointContent.Empty, false)]
       ];
-      const board = new Board(points, true);
+      const board = new Board(points, true, 0, points[0].length - 1, 0, points.length - 1);
       
       // Рендерим SVG
       const renderParams = createRenderParams({ width: 100, height: 100 });
@@ -76,7 +76,7 @@ describe('Renderer', () => {
       const points: Point[][] = Array(19).fill(null).map(() => 
         Array(19).fill(null).map(() => new Point(PointContent.Empty, false))
       );
-      const board = new Board(points, true);
+      const board = new Board(points, true, 0, points[0].length - 1, 0, points.length - 1);
       
       // Рендерим SVG с небольшим базовым размером
       const renderParams = createRenderParams({ width: 200, height: 200 });
@@ -98,7 +98,7 @@ describe('Renderer', () => {
         [new Point(PointContent.Empty, false), new Point(PointContent.Black, true), new Point(PointContent.Empty, false)],
         [new Point(PointContent.Empty, false), new Point(PointContent.Empty, false), new Point(PointContent.Empty, false)]
       ];
-      const board = new Board(points, true);
+      const board = new Board(points, true, 0, points[0].length - 1, 0, points.length - 1);
       
       // Рендерим SVG для светлой темы
       const renderParams = createRenderParams({ width: 100, height: 100 });
@@ -157,6 +157,80 @@ describe('Renderer', () => {
     });
   });
 
+  describe('viewport rendering', () => {
+    it('full viewport (9x9) should render full grid with larger size than cropped viewport', () => {
+      const fullSource = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-full.txt'), 'utf-8');
+      const normalSource = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-normal.txt'), 'utf-8');
+
+      const fullParsed = parser.parse(fullSource) as ParseSuccess;
+      const normalParsed = parser.parse(normalSource) as ParseSuccess;
+
+      const fullBoard = mapper.map(fullParsed);
+      const normalBoard = mapper.map(normalParsed);
+
+      const svgFull = renderer.render(fullBoard, createRenderParams());
+      const svgNormal = renderer.render(normalBoard, createRenderParams());
+
+      const wFull = parseInt(svgFull.getAttribute('width') || '0');
+      const hFull = parseInt(svgFull.getAttribute('height') || '0');
+      const wNormal = parseInt(svgNormal.getAttribute('width') || '0');
+      const hNormal = parseInt(svgNormal.getAttribute('height') || '0');
+
+      expect(wFull).toBeGreaterThan(wNormal);
+      expect(hFull).toBeGreaterThan(hNormal);
+
+      // Full grid should have many lines; at least more than a cropped viewport
+      const linesFull = svgFull.querySelectorAll('line').length;
+      const linesNormal = svgNormal.querySelectorAll('line').length;
+      expect(linesFull).toBeGreaterThan(linesNormal);
+      expect(linesFull).toBeGreaterThanOrEqual(16);
+    });
+
+    it('single-cell viewport should render 1x1 grid with minimal size and 2 lines', () => {
+      const source = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-small.txt'), 'utf-8');
+      const parsed = parser.parse(source) as ParseSuccess;
+      const board = mapper.map(parsed);
+
+      const svg = renderer.render(board, createRenderParams());
+
+      // With coordinates on by default, padding = fontSize * 2.5, fallback fontSize=16 => padding≈40
+      const width = parseInt(svg.getAttribute('width') || '0');
+      const height = parseInt(svg.getAttribute('height') || '0');
+      expect(width).toBeGreaterThan(0);
+      expect(height).toBeGreaterThan(0);
+
+      const lines = svg.querySelectorAll('line');
+      // 1 vertical + 1 horizontal
+      expect(lines.length).toBe(2);
+    });
+
+    it('normal viewport should reduce grid lines and overall dimensions', () => {
+      const normalSource = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-normal.txt'), 'utf-8');
+      const fullSource = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-full.txt'), 'utf-8');
+
+      const normalParsed = parser.parse(normalSource) as ParseSuccess;
+      const fullParsed = parser.parse(fullSource) as ParseSuccess;
+
+      const normalBoard = mapper.map(normalParsed);
+      const fullBoard = mapper.map(fullParsed);
+
+      const svgNormal = renderer.render(normalBoard, createRenderParams());
+      const svgFull = renderer.render(fullBoard, createRenderParams());
+
+      const wNormal = parseInt(svgNormal.getAttribute('width') || '0');
+      const hNormal = parseInt(svgNormal.getAttribute('height') || '0');
+      const wFull = parseInt(svgFull.getAttribute('width') || '0');
+      const hFull = parseInt(svgFull.getAttribute('height') || '0');
+
+      expect(wNormal).toBeLessThan(wFull);
+      expect(hNormal).toBeLessThan(hFull);
+
+      const normalLines = svgNormal.querySelectorAll('line').length;
+      const fullLines = svgFull.querySelectorAll('line').length;
+      expect(normalLines).toBeLessThan(fullLines); // fewer grid lines in a cropped viewport
+    });
+  });
+
   describe('baseline comparison', () => {
     it('should match baseline SVG files for all test data', async () => {
       const testDataDir = path.join(__dirname, 'test-data');
@@ -180,17 +254,26 @@ describe('Renderer', () => {
 });
 
 /**
- * Получает список всех txt файлов в указанном каталоге
+ * Получает список указанных txt файлов из каталога
  */
 function getTxtFiles(dir: string): string[] {
-  try {
-    const files = fs.readdirSync(dir);
-    return files
-      .filter(file => file.endsWith('.txt'))
-      .map(file => path.join(dir, file));
-  } catch (error) {
-    return [];
-  }
+  // Список файлов для проверки
+  const testFiles = [
+    'board-with-stones-3x3.txt',
+    'empty-board-9x9.txt',
+    'empty-board-13x13.txt',
+    'empty-board-19x19.txt',
+    'coordinates-off.txt',
+    'coordinates-on.txt',
+    // viewport-focused scenarios
+    'viewport-full.txt',
+    'viewport-normal.txt',
+    'viewport-small.txt'
+  ];
+  
+  return testFiles
+    .map(file => path.join(dir, file))
+    .filter(filePath => fs.existsSync(filePath));
 }
 
 /**

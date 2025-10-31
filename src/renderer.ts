@@ -33,13 +33,39 @@ export class Renderer {
         // Получаем размер шрифта из CSS для адаптивного размера доски
         const fontSize = this.getFontSizeFromCSS();
         const boardSize = source.points.length;
+        const boardWidth = source.points[0]?.length ?? boardSize;
+        const fullLeft = 0;
+        const fullTop = 0;
+        const fullRight = boardWidth - 1;
+        const fullBottom = boardSize - 1;
+        const boundLeft = Math.max(fullLeft, Math.min(source.boundLeft, fullRight));
+        const boundRight = Math.min(fullRight, Math.max(source.boundRight, fullLeft));
+        const boundTop = Math.max(fullTop, Math.min(source.boundTop, fullBottom));
+        const boundBottom = Math.min(fullBottom, Math.max(source.boundBottom, fullTop));
         
-        // Рассчитываем размер доски на основе размера шрифта
+        // Увеличенные отступы для координат, чтобы камни не закрывали подписи
+        const padding = source.showCoordinates ? fontSize * 2.5 : 20;
+        
+        // Рассчитываем размер ячейки на основе полного размера доски
+        // Сначала находим размер для полной доски
         const minCellSize = fontSize * 2.5;
-        const calculatedSize = Math.max(minCellSize * (boardSize - 1), 200);
+        const fullCalculatedSize = Math.max(minCellSize * Math.max(boardWidth - 1, boardSize - 1), 200);
+        const fullTotalWidth = Math.max(params.width, fullCalculatedSize);
+        const fullTotalHeight = Math.max(params.height, fullCalculatedSize);
+        const fullInnerWidth = fullTotalWidth - 2 * padding;
+        const fullInnerHeight = fullTotalHeight - 2 * padding;
         
-        const totalWidth = Math.max(params.width, calculatedSize);
-        const totalHeight = Math.max(params.height, calculatedSize);
+        // Шаг ячеек на основе полного размера доски (размер ячейки остается постоянным)
+        const stepX = boardWidth > 1 ? fullInnerWidth / (boardWidth - 1) : 0;
+        const stepY = boardSize > 1 ? fullInnerHeight / (boardSize - 1) : 0;
+        
+        // Теперь рассчитываем размер SVG для видимой области
+        const visibleCols = boundRight - boundLeft + 1;
+        const visibleRows = boundBottom - boundTop + 1;
+        const visibleInnerWidth = visibleCols > 1 ? stepX * (visibleCols - 1) : 0;
+        const visibleInnerHeight = visibleRows > 1 ? stepY * (visibleRows - 1) : 0;
+        const totalWidth = visibleInnerWidth + 2 * padding;
+        const totalHeight = visibleInnerHeight + 2 * padding;
         
         svg.setAttribute('width', totalWidth.toString());
         svg.setAttribute('height', totalHeight.toString());
@@ -50,43 +76,54 @@ export class Renderer {
         const background = this.renderBackground(totalWidth, totalHeight);
         svg.appendChild(background);
 
-        // Увеличенные отступы для координат, чтобы камни не закрывали подписи
-        const padding = source.showCoordinates ? fontSize * 2.5 : 20;
-        const innerWidth = totalWidth - 2 * padding;
-        const innerHeight = totalHeight - 2 * padding;
-        const stepX = boardSize > 1 ? innerWidth / (boardSize - 1) : 0;
-        const stepY = boardSize > 1 ? innerHeight / (boardSize - 1) : 0;
+        const localCols = visibleCols;
+        const localRows = visibleRows;
 
         // Линии доски
-        for (let i = 0; i < boardSize; i++) {
+        const protrude = Math.max(Math.min(stepX, stepY) * 0.3, 6);
+        // Из-за инверсии оси Y (0 внизу в терминах доски, но сверху в SVG):
+        // если viewport не касается верхней кромки доски (boundBottom < fullBottom), торчим вверх → уменьшаем yStart
+        // если viewport не касается нижней кромки доски (boundTop > fullTop), торчим вниз  → увеличиваем yEnd
+        const yStart = padding - (boundBottom < fullBottom ? protrude : 0);
+        const yEnd = (totalHeight - padding) + (boundTop > fullTop ? protrude : 0);
+        const xStart = padding - (boundLeft > fullLeft ? protrude : 0);
+        const xEnd = (totalWidth - padding) + (boundRight < fullRight ? protrude : 0);
+
+        for (let i = 0; i < localCols; i++) {
             const xPos = padding + i * stepX;
-            const yPos = padding + i * stepY;
-            const vLine = this.renderVerticalLines(padding, totalHeight - padding, xPos);
+            const vLine = this.renderVerticalLines(yStart, yEnd, xPos);
             svg.appendChild(vLine);
-            const hLine = this.renderHorizontalLines(padding, totalWidth - padding, yPos);
+        }
+        for (let i = 0; i < localRows; i++) {
+            const yPos = padding + i * stepY;
+            const hLine = this.renderHorizontalLines(xStart, xEnd, yPos);
             svg.appendChild(hLine);
         }
 
         // Хоси (звездные точки)
-        for (let y = 0; y < boardSize; y++) {
-            for (let x = 0; x < boardSize; x++) {
+        for (let y = boundTop; y <= boundBottom; y++) {
+            for (let x = boundLeft; x <= boundRight; x++) {
                 const point = source.points[y][x];
                 if (point.hasHoshi) {
-                    const invertedY = boardSize - 1 - y;
-                    const hoshi = this.renderHoshi(padding, padding, stepX, stepY, x, invertedY);
+                    const relX = x - boundLeft;
+                    const relY = y - boundTop;
+                    const invertedYLocal = (localRows - 1) - relY;
+                    const hoshi = this.renderHoshi(padding, padding, stepX, stepY, relX, invertedYLocal);
                     svg.appendChild(hoshi);
                 }
             }
         }
 
         // Камни
-        for (let y = 0; y < boardSize; y++) {
-            for (let x = 0; x < boardSize; x++) {
+        for (let y = boundTop; y <= boundBottom; y++) {
+            for (let x = boundLeft; x <= boundRight; x++) {
                 const point = source.points[y][x];
                 if (point.content !== PointContent.Empty) {
-                    const invertedY = boardSize - 1 - y;
+                    const relX = x - boundLeft;
+                    const relY = y - boundTop;
+                    const invertedYLocal = (localRows - 1) - relY;
                     const circle = this.renderStone(
-                        padding, padding, stepX, stepY, x, invertedY, point.content
+                        padding, padding, stepX, stepY, relX, invertedYLocal, point.content
                     );
                     svg.appendChild(circle);
                 }
@@ -95,8 +132,8 @@ export class Renderer {
 
         // Координаты
         if (source.showCoordinates) {
-            this.renderLeftNumbers(svg, padding, stepX, stepY, boardSize, padding);
-            this.renderBottomLetters(svg, padding, stepY, stepX, boardSize, totalHeight, padding);
+            this.renderLeftNumbers(svg, padding, stepX, stepY, localRows, padding, boundTop);
+            this.renderBottomLetters(svg, padding, stepY, stepX, localCols, totalHeight, padding, boundLeft);
         }
 
         return svg;
@@ -182,12 +219,12 @@ export class Renderer {
         return background;
     }
 
-    private renderLeftNumbers(svg: SVGElement, paddingLeft: number, stepX: number, stepY: number, boardSize: number, paddingTop: number) {
+    private renderLeftNumbers(svg: SVGElement, paddingLeft: number, stepX: number, stepY: number, localRows: number, paddingTop: number, globalRowStart: number) {
         const fontSize = this.getFontSizeFromCSS();
-        for (let i = 0; i < boardSize; i++) {
-            const invertedI = boardSize - 1 - i;
+        for (let i = 0; i < localRows; i++) {
+            const invertedI = localRows - 1 - i;
             const yPos = paddingTop + invertedI * stepY;
-            const label = (i + 1).toString();
+            const label = (globalRowStart + i + 1).toString();
             // Увеличенный отступ для координат, чтобы камни не закрывали их
             const gap = Math.max(8, fontSize * 1.2);
             const x = paddingLeft - gap;
@@ -196,11 +233,11 @@ export class Renderer {
         }
     }
 
-    private renderBottomLetters(svg: SVGElement, paddingLeft: number, stepY: number, stepX: number, boardSize: number, totalHeight: number, paddingBottom: number) {
+    private renderBottomLetters(svg: SVGElement, paddingLeft: number, stepY: number, stepX: number, localCols: number, totalHeight: number, paddingBottom: number, globalColStart: number) {
         const fontSize = this.getFontSizeFromCSS();
-        for (let i = 0; i < boardSize; i++) {
+        for (let i = 0; i < localCols; i++) {
             const xPos = paddingLeft + i * stepX;
-            const label = indexToLetter(i);
+            const label = indexToLetter(globalColStart + i);
             const gap = Math.max(8, fontSize * 1.2);
             const y = totalHeight - paddingBottom + gap;
             const text = this.renderCoordinateSymbol(xPos, y, label, fontSize, 'middle', 'hanging');

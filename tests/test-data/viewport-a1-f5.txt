@@ -1,0 +1,6 @@
+size 9x9
+viewport A1-F5
+B C4
+W E3
+
+

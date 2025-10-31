@@ -1,4 +1,4 @@
-import { ParseError, ParseResult, ParseSuccess, Instruction, Position, Color, SinglePosition, IntervalPosition, BoardSize } from "./models";
+import { ParseError, ParseResult, ParseSuccess, Instruction, Position, Color, SinglePosition, IntervalPosition, BoardSize, Viewport } from "./models";
 import { parseCoordinate } from "./utils";
 
 export class Parser {
@@ -12,6 +12,7 @@ export class Parser {
         let boardSize: BoardSize | null = null;
         const moves: Instruction[] = [];
         let showCoordinates = true;
+        let viewport: Viewport | null = null;
         
         for (const line of lines) {
             const trimmedLine = line.trim();
@@ -33,6 +34,21 @@ export class Parser {
                 continue;
             }
             
+            // Parse viewport from "viewport A1-H9" format
+            if (trimmedLine.toLowerCase().startsWith('viewport')) {
+                const viewportMatch = trimmedLine.match(/^viewport\s+([^\s]+)\s*-\s*([^\s]+)$/i);
+                if (!viewportMatch) {
+                    return new ParseError('Invalid viewport');
+                }
+                const start = parseCoordinate(viewportMatch[1]);
+                const end = parseCoordinate(viewportMatch[2]);
+                if (!start || !end) {
+                    return new ParseError('Invalid viewport');
+                }
+                viewport = new Viewport(new SinglePosition(start.x, start.y), new SinglePosition(end.x, end.y));
+                continue;
+            }
+
             // Parse moves from "B A1" or "W J9" format, including comma and dash separated
             const moveMatch = trimmedLine.match(/^([BW])\s+(.+)$/i);
             if (moveMatch) {
@@ -53,7 +69,7 @@ export class Parser {
             return new ParseError("Invalid format");
         }
         
-        return new ParseSuccess(moves, boardSize, showCoordinates);
+        return new ParseSuccess(moves, boardSize, showCoordinates, viewport);
     }
     
     private parsePositions(coordinatesStr: string): Position[] {

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" class="go-board-svg"><defs><style>/* Стили для рендеринга диаграмм Го - Светлая тема */
+
+/* Основной контейнер SVG */
+.go-board-svg {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: min(90vw, 800px);
+    max-height: min(80vh, 600px);
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    transition: max-width 0.3s ease, max-height 0.3s ease;
+}
+
+/* Фон доски */
+.go-board-background {
+    fill: #f8f8f8;
+}
+
+/* Линии доски */
+.go-board-line {
+    stroke: #333333;
+    stroke-width: 1;
+}
+
+/* Звездные точки (хоси) */
+.go-board-hoshi {
+    fill: #333333;
+    r: 5;
+}
+
+/* Координаты */
+.go-board-coordinate {
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    fill: #333333;
+}
+
+/* Стили камней для светлой темы */
+.go-stone-black {
+    fill: #000000;
+    stroke: none;
+    stroke-width: 0;
+}
+
+.go-stone-white {
+    fill: #ffffff;
+    stroke: #000000;
+    stroke-width: 1.5;
+}
+
+/* Базовые стили камней */
+.go-stone {
+    /* Базовые стили для всех камней */
+}</style></defs><rect x="0" y="0" width="80" height="80" class="go-board-background"/><line x1="40" y1="31" x2="40" y2="49" class="go-board-line"/><line x1="31" y1="40" x2="49" y2="40" class="go-board-line"/><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="40" y="59.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text></svg>
