@@ -179,4 +179,40 @@ describe('Parser', () => {
       );
     });
   });
+
+  describe('parse viewport', () => {
+    it('Invalid viewport should return ParseError', () => {
+      const source = testDataLoader.loadTestData('viewport-invalid.txt');
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseError);
+      expect((result as ParseError).error).toEqual('Invalid viewport');
+    });
+
+    it('Small viewport should return ParseSuccess', () => {
+      const source = testDataLoader.loadTestData('viewport-small.txt');
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseSuccess);
+      expect((result as ParseSuccess).viewport).toEqual({ start: new SinglePosition(1, 1), end: new SinglePosition(1, 1) });
+    });
+
+    it('Full viewport should return ParseSuccess', () => {
+      const source = testDataLoader.loadTestData('viewport-full.txt');
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseSuccess);
+      expect((result as ParseSuccess).viewport).toEqual({ start: new SinglePosition(0, 0), end: new SinglePosition(7, 8) });
+    });
+
+    it('Normal viewport should return ParseSuccess', () => {
+      const source = testDataLoader.loadTestData('viewport-normal.txt');
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseSuccess);
+      expect((result as ParseSuccess).viewport).toEqual({ start: new SinglePosition(1, 1), end: new SinglePosition(4, 4) });
+    });
+
+  });
+
 });

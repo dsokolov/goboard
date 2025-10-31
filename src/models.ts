@@ -31,11 +31,19 @@ export class Instruction {
     ) {}
 }
 
+export class Viewport {
+    constructor(
+        public readonly start: SinglePosition,
+        public readonly end: SinglePosition
+    ) {}
+}
+
 export class ParseSuccess {
     constructor(
         public readonly instructions: Instruction[],
         public readonly boardSize: BoardSize,
-        public readonly showCoordinates: boolean = false
+        public readonly showCoordinates: boolean = false,
+        public readonly viewport: Viewport | null = null
     ) {}
 }
 
@@ -62,6 +70,10 @@ export class Board {
     constructor(
         public readonly points: Point[][],
         public readonly showCoordinates: boolean,
+        public readonly boundLeft: number,
+        public readonly boundRight: number,
+        public readonly boundTop: number,
+        public readonly boundBottom: number,
     ) {}
 }
 

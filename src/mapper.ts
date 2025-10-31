@@ -1,4 +1,4 @@
-import { BoardSize, ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition, Board, Point, PointContent } from "./models";
+import { BoardSize, ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition, Board, Point, PointContent, Viewport } from "./models";
 
 export class Mapper {
     map(source: ParseSuccess): Board {
@@ -19,7 +19,41 @@ export class Mapper {
             this.applyInstruction(points, instruction);
         }
         
-        return new Board(points, showCoordinates);
+        // Рассчитываем границы отображения (bounds)
+        const bounds = this.mapViewport(boardSize, source.viewport);
+
+        return new Board(points, showCoordinates, bounds.boundLeft, bounds.boundRight, bounds.boundTop, bounds.boundBottom);
+    }
+    
+    private mapViewport(boardSize: BoardSize, viewport: Viewport | null): {
+        boundLeft: number;
+        boundRight: number;
+        boundTop: number;
+        boundBottom: number;
+    } {
+        const fullLeft = 0;
+        const fullTop = 0;
+        const fullRight = boardSize.width - 1;
+        const fullBottom = boardSize.height - 1;
+
+        let boundLeft = fullLeft;
+        let boundRight = fullRight;
+        let boundTop = fullTop;
+        let boundBottom = fullBottom;
+
+        if (viewport) {
+            const startX = viewport.start.x;
+            const startY = viewport.start.y;
+            const endX = viewport.end.x;
+            const endY = viewport.end.y;
+
+            boundLeft = Math.max(fullLeft, Math.min(startX, endX));
+            boundRight = Math.min(fullRight, Math.max(startX, endX));
+            boundTop = Math.max(fullTop, Math.min(startY, endY));
+            boundBottom = Math.min(fullBottom, Math.max(startY, endY));
+        }
+
+        return { boundLeft, boundRight, boundTop, boundBottom };
     }
     
     private applyInstruction(points: Point[][], instruction: Instruction): void {
