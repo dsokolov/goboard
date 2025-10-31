@@ -24,7 +24,8 @@ size 9x9
 ```
 </pre>
 
-![Empty 9x9 goban (light theme)](docs/images/empty-board-9x9-light.png) ![Empty 9x9 goban (dark theme)](docs/images/empty-board-9x9-dark.png)
+![Empty 9x9 goban (light theme)](docs/images/empty-board-9x9-light.png#gh-light-mode-only)
+![Empty 9x9 goban (dark theme)](docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
 
 To place stones on the diagram, use `B <position>` and `W <position>` for black and white stones respectively. For example:
 
@@ -36,7 +37,8 @@ W C3
 ```
 </pre>
 
-![First two moves on 9x9 goban (light theme)](docs/images/moves-first-two-light.png) ![First two moves on 9x9 goban (dark theme)](docs/images/moves-first-two-dark.png)
+![First two moves on 9x9 goban (light theme)](docs/images/moves-first-two-light.png#gh-light-mode-only)
+![First two moves on 9x9 goban (dark theme)](docs/images/moves-first-two-dark.png#gh-dark-mode-only)
 
 For more usage examples, see [examples.md](docs/examples.md).
 

@@ -24,7 +24,8 @@ size 9x9
 ```
 </pre>
 
-![Пустой гобан 9x9 (светлая тема)](docs/images/empty-board-9x9-light.png) ![Пустой гобан 9x9 (тёмная тема)](docs/images/empty-board-9x9-dark.png)
+![Пустой гобан 9x9](docs/images/empty-board-9x9-light.png#gh-light-mode-only)
+![Пустой гобан 9x9](docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
 
 Для размещения камней на диаграмме используйте `B <position>` и `W <position>` для чёрных и белых камней соотвественно. Например
 
@@ -36,7 +37,8 @@ W C3
 ```
 </pre>
 
-![Первые две постановки на гобане 9x9 (светлая тема)](docs/images/moves-first-two-light.png) ![Первые две постановки на гобане 9x9 (тёмная тема)](docs/images/moves-first-two-dark.png)
+![Первые две постановки на гобане 9x9](docs/images/moves-first-two-light.png#gh-light-mode-only)
+![Первые две постановки на гобане 9x9](docs/images/moves-first-two-dark.png#gh-dark-mode-only)
 
 Больше примеров использования смотрите в [examples-ru.md](docs/examples-ru.md).
 
