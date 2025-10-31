@@ -1,7 +1,7 @@
 {
 	"id": "goboard",
 	"name": "GoBoard",
-	"version": "0.6.2",
+	"version": "0.7.0",
 	"minAppVersion": "0.15.0",
 	"description": "Render Go game diagrams from markdown code blocks",
 	"author": "Dmitry I. Sokolov",
