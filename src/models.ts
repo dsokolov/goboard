@@ -38,20 +38,23 @@ export class Viewport {
     ) {}
 }
 
-export class ParseSuccess {
+export class ParseResult {
     constructor(
-        public readonly instructions: Instruction[],
-        public readonly boardSize: BoardSize,
-        public readonly showCoordinates: boolean = false,
-        public readonly viewport: Viewport | null = null
+        public readonly instructions: Instruction[] = [],
+        public readonly boardSize: BoardSize = { width: 19, height: 19 },
+        public readonly showCoordinates: boolean = true,
+        public readonly errors: ParseError[] = [],
+        public readonly viewport: Viewport | null = null,
+        public readonly showHoshi: boolean = true
     ) {}
 }
 
 export class ParseError {
-    constructor(public readonly error: string = '') {}
+    constructor(
+        public readonly line: number,
+        public readonly message: string = '',
+    ) {}
 }
-
-export type ParseResult = ParseSuccess | ParseError;
 
 export enum PointContent {
     Empty = 'empty',

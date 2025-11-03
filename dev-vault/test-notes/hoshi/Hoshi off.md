@@ -1,0 +1,3 @@
+```goboard
+hoshi off
+```

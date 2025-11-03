@@ -1,8 +1,7 @@
 import { Renderer } from '../src/renderer';
-import { Board, Point, PointContent, createRenderParams, ParseError } from '../src/models';
+import { Board, Point, PointContent, createRenderParams, ParseResult } from '../src/models';
 import { Parser } from '../src/parser';
 import { Mapper } from '../src/mapper';
-import { ParseSuccess } from '../src/models';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -121,10 +120,10 @@ describe('Renderer', () => {
       const source = 'size 9x9\ncoordinates on';
       const parseResult = parser.parse(source);
       
-      expect(parseResult).toBeInstanceOf(ParseSuccess);
-      expect((parseResult as ParseSuccess).showCoordinates).toBe(true);
+      expect(parseResult).toBeInstanceOf(ParseResult);
+      expect(parseResult.showCoordinates).toBe(true);
       
-      const board = mapper.map(parseResult as ParseSuccess);
+      const board = mapper.map(parseResult);
       expect(board.showCoordinates).toBe(true);
       
       const renderParams = createRenderParams();
@@ -143,10 +142,10 @@ describe('Renderer', () => {
       const source = 'size 9x9\ncoordinates off';
       const parseResult = parser.parse(source);
       
-      expect(parseResult).toBeInstanceOf(ParseSuccess);
-      expect((parseResult as ParseSuccess).showCoordinates).toBe(false);
+      expect(parseResult).toBeInstanceOf(ParseResult);
+      expect(parseResult.showCoordinates).toBe(false);
       
-      const board = mapper.map(parseResult as ParseSuccess);
+      const board = mapper.map(parseResult);
       expect(board.showCoordinates).toBe(false);
       
       const renderParams = createRenderParams();
@@ -155,6 +154,60 @@ describe('Renderer', () => {
       
       expect(textElements.length).toBe(0);
     });
+
+    it('should render hoshi when enabled', () => {
+      const source = 'size 9x9\nhoshi on';
+      const parseResult = parser.parse(source);
+      
+      expect(parseResult).toBeInstanceOf(ParseResult);
+      expect(parseResult.showHoshi).toBe(true);
+      
+      const board = mapper.map(parseResult);
+      
+      // Проверяем, что точки хоси имеют hasHoshi = true
+      let hoshiCount = 0;
+      for (let i = 0; i < board.points.length; i++) {
+        for (let j = 0; j < board.points[i].length; j++) {
+          if (board.points[i][j].hasHoshi) {
+            hoshiCount++;
+          }
+        }
+      }
+      expect(hoshiCount).toBe(5); // На доске 9x9 должно быть 5 точек хоси
+      
+      const renderParams = createRenderParams();
+      const svg = renderer.render(board, renderParams);
+      const hoshiElements = svg.querySelectorAll('circle.go-board-hoshi');
+      
+      expect(hoshiElements.length).toBe(5);
+    });
+
+    it('should not render hoshi when disabled', () => {
+      const source = 'size 9x9\nhoshi off';
+      const parseResult = parser.parse(source);
+      
+      expect(parseResult).toBeInstanceOf(ParseResult);
+      expect(parseResult.showHoshi).toBe(false);
+      
+      const board = mapper.map(parseResult);
+      
+      // Проверяем, что точки хоси имеют hasHoshi = false
+      let hoshiCount = 0;
+      for (let i = 0; i < board.points.length; i++) {
+        for (let j = 0; j < board.points[i].length; j++) {
+          if (board.points[i][j].hasHoshi) {
+            hoshiCount++;
+          }
+        }
+      }
+      expect(hoshiCount).toBe(0);
+      
+      const renderParams = createRenderParams();
+      const svg = renderer.render(board, renderParams);
+      const hoshiElements = svg.querySelectorAll('circle.go-board-hoshi');
+      
+      expect(hoshiElements.length).toBe(0);
+    });
   });
 
   describe('viewport rendering', () => {
@@ -162,8 +215,8 @@ describe('Renderer', () => {
       const fullSource = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-full.txt'), 'utf-8');
       const normalSource = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-normal.txt'), 'utf-8');
 
-      const fullParsed = parser.parse(fullSource) as ParseSuccess;
-      const normalParsed = parser.parse(normalSource) as ParseSuccess;
+      const fullParsed = parser.parse(fullSource) as ParseResult;
+      const normalParsed = parser.parse(normalSource) as ParseResult;
 
       const fullBoard = mapper.map(fullParsed);
       const normalBoard = mapper.map(normalParsed);
@@ -188,7 +241,7 @@ describe('Renderer', () => {
 
     it('single-cell viewport should render 1x1 grid with minimal size and 2 lines', () => {
       const source = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-small.txt'), 'utf-8');
-      const parsed = parser.parse(source) as ParseSuccess;
+      const parsed = parser.parse(source) as ParseResult;
       const board = mapper.map(parsed);
 
       const svg = renderer.render(board, createRenderParams());
@@ -208,8 +261,8 @@ describe('Renderer', () => {
       const normalSource = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-normal.txt'), 'utf-8');
       const fullSource = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-full.txt'), 'utf-8');
 
-      const normalParsed = parser.parse(normalSource) as ParseSuccess;
-      const fullParsed = parser.parse(fullSource) as ParseSuccess;
+      const normalParsed = parser.parse(normalSource) as ParseResult;
+      const fullParsed = parser.parse(fullSource) as ParseResult;
 
       const normalBoard = mapper.map(normalParsed);
       const fullBoard = mapper.map(fullParsed);
@@ -257,23 +310,14 @@ describe('Renderer', () => {
  * Получает список указанных txt файлов из каталога
  */
 function getTxtFiles(dir: string): string[] {
-  // Список файлов для проверки
-  const testFiles = [
-    'board-with-stones-3x3.txt',
-    'empty-board-9x9.txt',
-    'empty-board-13x13.txt',
-    'empty-board-19x19.txt',
-    'coordinates-off.txt',
-    'coordinates-on.txt',
-    // viewport-focused scenarios
-    'viewport-full.txt',
-    'viewport-normal.txt',
-    'viewport-small.txt'
-  ];
-  
-  return testFiles
-    .map(file => path.join(dir, file))
-    .filter(filePath => fs.existsSync(filePath));
+  try {
+    const files = fs.readdirSync(dir);
+    return files
+      .filter(file => file.endsWith('.txt') && file !== 'empty-string.txt') // Пропускаем empty-string.txt, так как он не имеет baseline
+      .map(file => path.join(dir, file));
+  } catch (error) {
+    return [];
+  }
 }
 
 /**
@@ -295,12 +339,13 @@ async function compareFileWithBaseline(
 
     // Шаг 2: Парсинг
     const parseResult = parser.parse(content);
-    if (parseResult instanceof ParseError) {
+    // Всегда возвращается ParseResult, пропускаем если есть ошибки
+    if (parseResult.errors.length > 0) {
       return; // Пропускаем файлы, которые не могут быть распарсены
     }
 
     // Шаг 3: Маппинг
-    const board = mapper.map(parseResult as ParseSuccess);
+    const board = mapper.map(parseResult);
 
     // Проверяем светлую тему
     await compareThemeWithBaseline(board, renderer, baselineDir, baseFileName, 'light');

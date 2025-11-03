@@ -4,7 +4,7 @@ const sharp = require('sharp');
 import { Parser } from '../src/parser';
 import { Mapper } from '../src/mapper';
 import { Renderer } from '../src/renderer';
-import { ParseError, ParseSuccess, createRenderParams } from '../src/models';
+import { ParseResult, createRenderParams } from '../src/models';
 
 /**
  * Скрипт для обновления бейзлайна рендерера
@@ -79,12 +79,13 @@ async function processFileForThemes(txtFilePath: string, parser: Parser, mapper:
 
         // Шаг 2: Парсинг
         const parseResult = parser.parse(content);
-        if (parseResult instanceof ParseError) {
-            throw new Error(`Ошибка парсинга: ${parseResult.error}`);
+        if (parseResult.errors.length > 0) {
+            const errorMessages = parseResult.errors.map(e => `Line ${e.line}: ${e.message}`).join(', ');
+            throw new Error(`Ошибка парсинга: ${errorMessages}`);
         }
 
         // Шаг 3: Маппинг
-        const board = mapper.map(parseResult as ParseSuccess);
+        const board = mapper.map(parseResult);
 
         // Шаг 4: Рендеринг для светлой темы
         const lightSvgContent = renderer.render(board, createRenderParams());
@@ -125,12 +126,13 @@ async function processFile(txtFilePath: string, parser: Parser, mapper: Mapper, 
 
         // Шаг 2: Парсинг
         const parseResult = parser.parse(content);
-        if (parseResult instanceof ParseError) {
-            throw new Error(`Ошибка парсинга: ${parseResult.error}`);
+        if (parseResult.errors.length > 0) {
+            const errorMessages = parseResult.errors.map(e => `Line ${e.line}: ${e.message}`).join(', ');
+            throw new Error(`Ошибка парсинга: ${errorMessages}`);
         }
 
         // Шаг 3: Маппинг
-        const board = mapper.map(parseResult as ParseSuccess);
+        const board = mapper.map(parseResult);
 
         // Шаг 4: Рендеринг
         const svgContent = renderer.render(board, createRenderParams());

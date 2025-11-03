@@ -1,5 +1,5 @@
 import { Mapper } from '../src/mapper';
-import { ParseSuccess, Instruction, Color, SinglePosition, IntervalPosition, Board, PointContent } from '../src/models';
+import { ParseResult, Instruction, Color, SinglePosition, IntervalPosition, Board, PointContent } from '../src/models';
 
 describe('Mapper', () => {
   let mapper: Mapper;
@@ -10,8 +10,8 @@ describe('Mapper', () => {
 
   describe('map', () => {
     it('должен создавать пустую доску 3x3', () => {
-      const parseSuccess = new ParseSuccess([], { width: 3, height: 3 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult([], { width: 3, height: 3 });
+      const board = mapper.map(parseResult);
 
       expect(board).toBeInstanceOf(Board);
       expect(board.points).toHaveLength(3);
@@ -28,8 +28,8 @@ describe('Mapper', () => {
     });
 
     it('должен создавать пустую доску 9x9', () => {
-      const parseSuccess = new ParseSuccess([], { width: 9, height: 9 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult([], { width: 9, height: 9 });
+      const board = mapper.map(parseResult);
 
       expect(board).toBeInstanceOf(Board);
       expect(board.points).toHaveLength(9);
@@ -44,8 +44,8 @@ describe('Mapper', () => {
     });
 
     it('должен создавать пустую доску 19x19', () => {
-      const parseSuccess = new ParseSuccess([], { width: 19, height: 19 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult([], { width: 19, height: 19 });
+      const board = mapper.map(parseResult);
 
       expect(board).toBeInstanceOf(Board);
       expect(board.points).toHaveLength(19);
@@ -61,8 +61,8 @@ describe('Mapper', () => {
 
     it('должен размещать черный камень в позиции A1 (0,0)', () => {
       const instruction = new Instruction(Color.Black, [new SinglePosition(0, 0)]);
-      const parseSuccess = new ParseSuccess([instruction], { width: 9, height: 9 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 });
+      const board = mapper.map(parseResult);
 
       expect(board.points[0][0].content).toBe(PointContent.Black);
       
@@ -78,8 +78,8 @@ describe('Mapper', () => {
 
     it('должен размещать белый камень в позиции J9 (8,8)', () => {
       const instruction = new Instruction(Color.White, [new SinglePosition(8, 8)]);
-      const parseSuccess = new ParseSuccess([instruction], { width: 9, height: 9 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 });
+      const board = mapper.map(parseResult);
 
       expect(board.points[8][8].content).toBe(PointContent.White);
       
@@ -99,8 +99,8 @@ describe('Mapper', () => {
         new Instruction(Color.White, [new SinglePosition(0, 1)]),
         new Instruction(Color.Black, [new SinglePosition(0, 2)])
       ];
-      const parseSuccess = new ParseSuccess(instructions, { width: 9, height: 9 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult(instructions, { width: 9, height: 9 });
+      const board = mapper.map(parseResult);
 
       expect(board.points[0][0].content).toBe(PointContent.Black);
       expect(board.points[1][0].content).toBe(PointContent.White);
@@ -121,8 +121,8 @@ describe('Mapper', () => {
         Color.Black, 
         [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]
       );
-      const parseSuccess = new ParseSuccess([instruction], { width: 9, height: 9 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 });
+      const board = mapper.map(parseResult);
 
       // Проверяем, что все позиции от A1 до A5 заполнены черными камнями
       for (let j = 0; j <= 4; j++) {
@@ -147,8 +147,8 @@ describe('Mapper', () => {
           new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))
         ]
       );
-      const parseSuccess = new ParseSuccess([instruction], { width: 9, height: 9 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 });
+      const board = mapper.map(parseResult);
 
       // Проверяем одиночную позицию A1
       expect(board.points[0][0].content).toBe(PointContent.Black);
@@ -176,8 +176,8 @@ describe('Mapper', () => {
         new Instruction(Color.Black, [new SinglePosition(1, 1)]),
         new Instruction(Color.White, [new SinglePosition(2, 2)])
       ];
-      const parseSuccess = new ParseSuccess(instructions, { width: 3, height: 3 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult(instructions, { width: 3, height: 3 });
+      const board = mapper.map(parseResult);
 
       expect(board.points[0][0].content).toBe(PointContent.Black);
       expect(board.points[1][0].content).toBe(PointContent.White);
@@ -201,8 +201,8 @@ describe('Mapper', () => {
         [new IntervalPosition(new SinglePosition(1, 2), new SinglePosition(3, 4))]
       );
 
-      const parseSuccess = new ParseSuccess([instruction], { width: 9, height: 9 });
-      const board = mapper.map(parseSuccess);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 });
+      const board = mapper.map(parseResult);
 
       // Подсчитываем количество черных камней
       let blackStonesCount = 0;
@@ -236,6 +236,75 @@ describe('Mapper', () => {
           if (!isInSquare) {
             expect(board.points[i][j].content).toBe(PointContent.Empty);
           }
+        }
+      }
+    });
+
+    it('должен корректно размещать хоси на доске 9x9', () => {
+      const parseResult = new ParseResult([], { width: 9, height: 9 }, true, [], null, true);
+      const board = mapper.map(parseResult);
+
+      // Проверяем конкретные позиции хоси для доски 9x9:
+      // C3 (колонка C=2, строка 3 -> y=2), G3, E5, C7, G7
+      const expectedHoshiPositions = [
+        { x: 2, y: 2 }, // C3
+        { x: 6, y: 2 }, // G3
+        { x: 4, y: 4 }, // E5 (центр)
+        { x: 2, y: 6 }, // C7
+        { x: 6, y: 6 }  // G7
+      ];
+
+      // Проверяем, что все ожидаемые позиции являются хоси
+      for (const pos of expectedHoshiPositions) {
+        expect(board.points[pos.y][pos.x].hasHoshi).toBe(true);
+      }
+
+      // Проверяем общее количество хоси (должно быть 5)
+      let hoshiCount = 0;
+      for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+          if (board.points[i][j].hasHoshi) {
+            hoshiCount++;
+          }
+        }
+      }
+      expect(hoshiCount).toBe(5);
+    });
+
+    it('должен корректно размещать хоси на доске 13x13', () => {
+      const parseResult = new ParseResult([], { width: 13, height: 13 }, true, [], null, true);
+      const board = mapper.map(parseResult);
+
+      // Для 13x13 хоси находятся на позициях 3, 6, 9 (в обеих осях)
+      // Проверяем несколько позиций
+      expect(board.points[3][3].hasHoshi).toBe(true);  // D4
+      expect(board.points[3][6].hasHoshi).toBe(true);  // G4
+      expect(board.points[3][9].hasHoshi).toBe(true); // J4
+      expect(board.points[6][6].hasHoshi).toBe(true);  // G7 (центр)
+      expect(board.points[9][9].hasHoshi).toBe(true);  // J10
+    });
+
+    it('должен корректно размещать хоси на доске 19x19', () => {
+      const parseResult = new ParseResult([], { width: 19, height: 19 }, true, [], null, true);
+      const board = mapper.map(parseResult);
+
+      // Для 19x19 хоси находятся на позициях 3, 9, 15 (в обеих осях)
+      // Проверяем несколько позиций
+      expect(board.points[3][3].hasHoshi).toBe(true);   // D4
+      expect(board.points[3][9].hasHoshi).toBe(true);  // J4
+      expect(board.points[3][15].hasHoshi).toBe(true); // P4
+      expect(board.points[9][9].hasHoshi).toBe(true);  // J10 (центр)
+      expect(board.points[15][15].hasHoshi).toBe(true); // P16
+    });
+
+    it('должен не размещать хоси когда showHoshi=false', () => {
+      const parseResult = new ParseResult([], { width: 9, height: 9 }, true, [], null, false);
+      const board = mapper.map(parseResult);
+
+      // Проверяем, что нет хоси
+      for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+          expect(board.points[i][j].hasHoshi).toBe(false);
         }
       }
     });

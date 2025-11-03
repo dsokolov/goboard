@@ -3,7 +3,7 @@ import { Renderer } from './renderer';
 import { createRenderParams } from './models';
 import { Parser } from './parser';
 import { Mapper } from './mapper';
-import { ParseSuccess } from './models';
+import { ParseResult } from './models';
 
 export default class GoBoardPlugin extends Plugin {
 
@@ -32,12 +32,22 @@ export default class GoBoardPlugin extends Plugin {
 
 	private renderBoard(source: string): SVGElement | null {
 		const parseResult = this.parser.parse(source);
-		if (parseResult instanceof ParseSuccess) {
+		
+		// Проверяем наличие ошибок парсинга
+		if (parseResult.errors.length > 0) {
+			console.error('Go Board parse errors:', parseResult.errors.map(e => `Line ${e.line}: ${e.message}`).join('; '));
+			// Возвращаем null, чтобы не отображать некорректную доску
+			return null;
+		}
+		
+		try {
 			const board = this.mapper.map(parseResult);
 			const renderParams = createRenderParams();
 			return this.renderer.render(board, renderParams);
+		} catch (error) {
+			console.error('Go Board rendering error:', error);
+			return null;
 		}
-		return null;
 	}
 
 }
