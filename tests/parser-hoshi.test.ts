@@ -1,41 +1,60 @@
-import { Parser } from '../src/parser';
+import { HoshiParser } from '../src/parser';
 import { ParseResult } from '../src/models';
 
 describe('HoshiParser', () => {
-  let parser: Parser;
+  let parser: HoshiParser;
 
   beforeEach(() => {
-    parser = new Parser();
+    parser = new HoshiParser();
+  });
+
+  describe('isApplicable', () => {
+    it('should return true for hoshi line', () => {
+      expect(parser.isApplicable('hoshi on')).toBe(true);
+      expect(parser.isApplicable('hoshi off')).toBe(true);
+      expect(parser.isApplicable('HOSHI ON')).toBe(true);
+      expect(parser.isApplicable('hoshi    on')).toBe(true);
+    });
+
+    it('should return false for non-hoshi line', () => {
+      expect(parser.isApplicable('size 9x9')).toBe(false);
+      expect(parser.isApplicable('viewport A1-H9')).toBe(false);
+      expect(parser.isApplicable('coordinates on')).toBe(false);
+      expect(parser.isApplicable('B A1')).toBe(false);
+    });
   });
 
   describe('parse - hoshi visibility handling', () => {
     it('should parse hoshi on', () => {
-      const result = parser.parse('hoshi on');
+      const initialResult = new ParseResult();
+      const result = parser.parse('hoshi on', 1, initialResult);
 
-      expect(result).toBeInstanceOf(ParseResult);
       expect(result.showHoshi).toBe(true);
       expect(result.errors.length).toBe(0);
     });
 
     it('should parse hoshi off', () => {
-      const result = parser.parse('hoshi off');
+      const initialResult = new ParseResult();
+      const result = parser.parse('hoshi off', 1, initialResult);
 
-      expect(result).toBeInstanceOf(ParseResult);
       expect(result.showHoshi).toBe(false);
       expect(result.errors.length).toBe(0);
     });
 
     it('should handle case insensitive "hoshi" keyword', () => {
-      const result = parser.parse('HOSHI ON');
+      const initialResult = new ParseResult();
+      const result = parser.parse('HOSHI ON', 1, initialResult);
 
-      expect(result).toBeInstanceOf(ParseResult);
       expect(result.showHoshi).toBe(true);
       expect(result.errors.length).toBe(0);
     });
 
     it('should handle case insensitive "on" and "off"', () => {
-      const resultOn = parser.parse('hoshi ON');
-      const resultOff = parser.parse('hoshi OFF');
+      const initialResult1 = new ParseResult();
+      const resultOn = parser.parse('hoshi ON', 1, initialResult1);
+
+      const initialResult2 = new ParseResult();
+      const resultOff = parser.parse('hoshi OFF', 1, initialResult2);
 
       expect(resultOn.showHoshi).toBe(true);
       expect(resultOff.showHoshi).toBe(false);
@@ -44,37 +63,26 @@ describe('HoshiParser', () => {
     });
 
     it('should handle whitespace variations', () => {
-      const result = parser.parse('hoshi    on');
+      const initialResult = new ParseResult();
+      const result = parser.parse('hoshi    on', 1, initialResult);
 
-      expect(result).toBeInstanceOf(ParseResult);
       expect(result.showHoshi).toBe(true);
       expect(result.errors.length).toBe(0);
     });
 
-    it('should work with board size', () => {
-      const result = parser.parse('size 9x9\nhoshi off');
+    it('should preserve other ParseResult properties', () => {
+      const initialResult = new ParseResult(
+        [],
+        { width: 9, height: 9 },
+        false,
+        [],
+        null,
+        false
+      );
+      const result = parser.parse('hoshi on', 1, initialResult);
 
-      expect(result).toBeInstanceOf(ParseResult);
-      expect(result.boardSize).toEqual({ width: 9, height: 9 });
-      expect(result.showHoshi).toBe(false);
-      expect(result.errors.length).toBe(0);
-    });
-
-    it('should work with coordinates and moves', () => {
-      const result = parser.parse('size 9x9\ncoordinates off\nhoshi on\nB A1');
-
-      expect(result).toBeInstanceOf(ParseResult);
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.showCoordinates).toBe(false);
-      expect(result.showHoshi).toBe(true);
-      expect(result.instructions.length).toBe(1);
-      expect(result.errors.length).toBe(0);
-    });
-
-    it('should return ParseResult with default showHoshi=true for empty string', () => {
-      const result = parser.parse('');
-
-      expect(result).toBeInstanceOf(ParseResult);
       expect(result.showHoshi).toBe(true);
       expect(result.errors.length).toBe(0);
     });
