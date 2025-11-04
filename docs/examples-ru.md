@@ -4,63 +4,90 @@
 
 Для создания пустого гобана (поля для игры Го), достаточно в заметке Obsidian создать блок кода, указав в качестве синтаксиса `goboard`, например
 
+<!-- goboard: empty-board-default -->
 <pre>
 ```goboard
 ```
 </pre>
 
-![Диаграмма пустого гобана с настройками по умолчанию](images/empty_default_goban_light.png#gh-light-mode-only)
-![Диаграмма пустого гобана с настройками по умолчанию](images/empty_default_goban_light.png#gh-dark-mode-only)
+![Диаграмма пустого гобана с настройками по умолчанию (light theme)](/docs/images/empty-board-default-light.png#gh-light-mode-only)
+![Диаграмма пустого гобана с настройками по умолчанию (dark theme)](/docs/images/empty-board-default-dark.png#gh-dark-mode-only)
+
+## Размер гобана
+
+По-умолчанию размер гобана 19x19. Для явного указания размера используйте `size <высота>x<ширина>`. Например:
+
+<!-- goboard: empty-board-9x9 -->
+<pre>
+```goboard
+size 9x9
+```
+</pre>
+
+![Диаграмма пустого гобана размером 9x9 (light theme)](/docs/images/empty-board-9x9-light.png#gh-light-mode-only)
+![Диаграмма пустого гобана размером 9x9 (dark theme)](/docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
 
 ## Постановка одного камня
 
 Для постановки единичного камня используйте `<B|W> <координата>`, где `B` - чёрный камень, `W` - белый камень. Например постановка чёрного камня в сан-сан:
 
+<!-- goboard: one-stone -->
 <pre>
 ```goboard
-B С3
+size 9x9
+B C3
 ```
 </pre>
 
-TODO картинки постановки единичного камня
+![Постановка одного камня](/docs/images/one-stone-light.png#gh-light-mode-only)
+![Постановка одного камня](/docs/images/one-stone-dark.png#gh-dark-mode-only)
 
 ## Постановка группы камней
 
 Для краткости записи, можно одной строкой поставить сразу несколько камней. Координаты записываются через запятую (будет несколько отдельных камней или групп), через дефис (будет стена или плотная прямоугольная группа) либо комбинацией этих способов. Например, поставим три чёрных камня в ряд, несколько отдельно а белые выложим двумя прямоугольниками.
 
+
+<!-- goboard: group-of-stones -->
 <pre>
 ```goboard
+size 13x13
 B C3-C5, C7, C9
 W A9-B7,D8-E6
 ```
 </pre>
 
-TODO картинки постановки групп камней
+![Постановка группы камней](/docs/images/group-of-stones-light.png#gh-light-mode-only)
+![Постановка группы камней](/docs/images/group-of-stones-dark.png#gh-dark-mode-only)
 
 ## Нумерация постановок
 
 Каждый поставленный камень можно отмечать натуральным числом: `<B|W>[(число)] <координата>`. Например постановка в хоси и атака в сан-сан:
 
+<!-- goboard: mark-numbers-two-stones -->
 <pre>
 ```goboard
+size 9x9
 B(1) D4
 W(2) C3
 ```
 </pre>
 
-TODO картинка нумерации постановок
+![Нумерация постановок камней](/docs/images/mark-numbers-two-stones-light.png#gh-light-mode-only)
+![Нумерация постановок камней](/docs/images/mark-numbers-two-stones-dark.png#gh-dark-mode-only)
 
 ## Область видимости (viewport)
 
 Если нет необходимости отображать всю диаграмму гобана (например, рассматривается только небольшая позицию в углу), то можно исполььзовать параметр `viewport <координата1>-<координата2>`:
 
+<!-- goboard: viewport-two-stones -->
 <pre>
 ```goboard
-size 9x9
+size 19x19
 viewport A1-F5
 B C4
 W E3
 ```
 </pre>
 
-![Пример области видимости](images/viewport-a1-f5.png)
+![Область видимости](/docs/images/viewport-two-stones-light.png#gh-light-mode-only)
+![Область видимости](/docs/images/viewport-two-stones-dark.png#gh-dark-mode-only)

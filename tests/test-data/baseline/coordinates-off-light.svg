@@ -1,81 +1,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 720 720" class="go-board-svg"><defs><style>/* Стили для рендеринга диаграмм Го - Светлая тема */
 
-/* Основной контейнер SVG */
-.go-board-svg {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: transparent;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: min(90vw, 800px);
-    max-height: min(80vh, 600px);
-    width: auto;
-    height: auto;
-    display: block;
-    object-fit: contain;
-    transition: max-width 0.3s ease, max-height 0.3s ease;
-}
+/* Стили для рендеринга диаграмм Го */
 
-/* Фон доски */
+/* Обеспечиваем наследование CSS переменных для SVG */
+
+/* CSS классы для элементов доски */
 .go-board-background {
-    fill: #f8f8f8;
+	fill: #f8f8f8;
 }
 
-/* Линии доски */
 .go-board-line {
-    stroke: #333333;
-    stroke-width: 1;
+	stroke: #333333;
+	stroke-width: 1;
 }
 
-/* Звездные точки (хоси) */
 .go-board-hoshi {
-    fill: #333333;
-    r: 5;
+	fill: #333333;
+	r: 5
 }
 
-/* Координаты */
 .go-board-coordinate {
-    font-size: 16px;
-    font-family: Arial, sans-serif;
-    fill: #333333;
+	font-size: 16px;
+	font-family: Arial, sans-serif;
+	fill: #333333;
 }
 
 /* Стили камней для светлой темы */
 .go-stone-black {
-    fill: #000000;
-    stroke: none;
-    stroke-width: 0;
+	fill: #333333;
+	stroke: none;
 }
 
 .go-stone-white {
-    fill: #ffffff;
-    stroke: #000000;
-    stroke-width: 1.5;
+	fill: #f8f8f8;
+	stroke: #333333;
+	stroke-width: 1.5;
 }
 
-/* Базовые стили камней */
-.go-stone {
-    /* Базовые стили для всех камней */
-}
+/* Стили камней для тёмной темы */
 
 /* Стили меток */
 .go-board-mark {
-    font-size: 16px;
-    font-family: Arial, sans-serif;
-    font-weight: bold;
-    pointer-events: none;
-    user-select: none;
+	font-size: 16px;
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+	pointer-events: none;
+	user-select: none;
 }
 
 /* Белая метка (для черных камней) - светлая тема */
-/* В светлой теме: черный камень (#000000) → белая метка (#ffffff) */
-/* В темной теме: черный камень визуально белый (#ffffff) → черная метка для контраста */
 .go-board-mark-white {
-    fill: #ffffff;
+	fill: #f8f8f8;
 }
 
 /* Черная метка (для белых камней) - светлая тема */
-/* В светлой теме: белый камень (#ffffff) → черная метка (#333333) */
-/* В темной теме: белый камень визуально черный (#000000) → белая метка для контраста */
 .go-board-mark-black {
-    fill: #333333;
-}</style></defs><rect x="0" y="0" width="720" height="720" class="go-board-background"/><line x1="20" y1="20" x2="20" y2="700" class="go-board-line"/><line x1="57.77777777777778" y1="20" x2="57.77777777777778" y2="700" class="go-board-line"/><line x1="95.55555555555556" y1="20" x2="95.55555555555556" y2="700" class="go-board-line"/><line x1="133.33333333333334" y1="20" x2="133.33333333333334" y2="700" class="go-board-line"/><line x1="171.11111111111111" y1="20" x2="171.11111111111111" y2="700" class="go-board-line"/><line x1="208.88888888888889" y1="20" x2="208.88888888888889" y2="700" class="go-board-line"/><line x1="246.66666666666669" y1="20" x2="246.66666666666669" y2="700" class="go-board-line"/><line x1="284.44444444444446" y1="20" x2="284.44444444444446" y2="700" class="go-board-line"/><line x1="322.22222222222223" y1="20" x2="322.22222222222223" y2="700" class="go-board-line"/><line x1="360" y1="20" x2="360" y2="700" class="go-board-line"/><line x1="397.77777777777777" y1="20" x2="397.77777777777777" y2="700" class="go-board-line"/><line x1="435.55555555555554" y1="20" x2="435.55555555555554" y2="700" class="go-board-line"/><line x1="473.33333333333337" y1="20" x2="473.33333333333337" y2="700" class="go-board-line"/><line x1="511.11111111111114" y1="20" x2="511.11111111111114" y2="700" class="go-board-line"/><line x1="548.8888888888889" y1="20" x2="548.8888888888889" y2="700" class="go-board-line"/><line x1="586.6666666666666" y1="20" x2="586.6666666666666" y2="700" class="go-board-line"/><line x1="624.4444444444445" y1="20" x2="624.4444444444445" y2="700" class="go-board-line"/><line x1="662.2222222222223" y1="20" x2="662.2222222222223" y2="700" class="go-board-line"/><line x1="700" y1="20" x2="700" y2="700" class="go-board-line"/><line x1="20" y1="20" x2="700" y2="20" class="go-board-line"/><line x1="20" y1="57.77777777777778" x2="700" y2="57.77777777777778" class="go-board-line"/><line x1="20" y1="95.55555555555556" x2="700" y2="95.55555555555556" class="go-board-line"/><line x1="20" y1="133.33333333333334" x2="700" y2="133.33333333333334" class="go-board-line"/><line x1="20" y1="171.11111111111111" x2="700" y2="171.11111111111111" class="go-board-line"/><line x1="20" y1="208.88888888888889" x2="700" y2="208.88888888888889" class="go-board-line"/><line x1="20" y1="246.66666666666669" x2="700" y2="246.66666666666669" class="go-board-line"/><line x1="20" y1="284.44444444444446" x2="700" y2="284.44444444444446" class="go-board-line"/><line x1="20" y1="322.22222222222223" x2="700" y2="322.22222222222223" class="go-board-line"/><line x1="20" y1="360" x2="700" y2="360" class="go-board-line"/><line x1="20" y1="397.77777777777777" x2="700" y2="397.77777777777777" class="go-board-line"/><line x1="20" y1="435.55555555555554" x2="700" y2="435.55555555555554" class="go-board-line"/><line x1="20" y1="473.33333333333337" x2="700" y2="473.33333333333337" class="go-board-line"/><line x1="20" y1="511.11111111111114" x2="700" y2="511.11111111111114" class="go-board-line"/><line x1="20" y1="548.8888888888889" x2="700" y2="548.8888888888889" class="go-board-line"/><line x1="20" y1="586.6666666666666" x2="700" y2="586.6666666666666" class="go-board-line"/><line x1="20" y1="624.4444444444445" x2="700" y2="624.4444444444445" class="go-board-line"/><line x1="20" y1="662.2222222222223" x2="700" y2="662.2222222222223" class="go-board-line"/><line x1="20" y1="700" x2="700" y2="700" class="go-board-line"/><circle cx="133.33333333333334" cy="586.6666666666666" r="1.5" class="go-board-hoshi"/><circle cx="360" cy="586.6666666666666" r="1.5" class="go-board-hoshi"/><circle cx="586.6666666666666" cy="586.6666666666666" r="1.5" class="go-board-hoshi"/><circle cx="133.33333333333334" cy="360" r="1.5" class="go-board-hoshi"/><circle cx="360" cy="360" r="1.5" class="go-board-hoshi"/><circle cx="586.6666666666666" cy="360" r="1.5" class="go-board-hoshi"/><circle cx="133.33333333333334" cy="133.33333333333334" r="1.5" class="go-board-hoshi"/><circle cx="360" cy="133.33333333333334" r="1.5" class="go-board-hoshi"/><circle cx="586.6666666666666" cy="133.33333333333334" r="1.5" class="go-board-hoshi"/></svg>
+	fill: #333333;
+}
+
+/* Белая метка (для черных камней) - темная тема */
+
+/* Черная метка (для белых камней) - темная тема */</style></defs><rect x="0" y="0" width="720" height="720" class="go-board-background"/><line x1="20" y1="20" x2="20" y2="700" class="go-board-line"/><line x1="57.77777777777778" y1="20" x2="57.77777777777778" y2="700" class="go-board-line"/><line x1="95.55555555555556" y1="20" x2="95.55555555555556" y2="700" class="go-board-line"/><line x1="133.33333333333334" y1="20" x2="133.33333333333334" y2="700" class="go-board-line"/><line x1="171.11111111111111" y1="20" x2="171.11111111111111" y2="700" class="go-board-line"/><line x1="208.88888888888889" y1="20" x2="208.88888888888889" y2="700" class="go-board-line"/><line x1="246.66666666666669" y1="20" x2="246.66666666666669" y2="700" class="go-board-line"/><line x1="284.44444444444446" y1="20" x2="284.44444444444446" y2="700" class="go-board-line"/><line x1="322.22222222222223" y1="20" x2="322.22222222222223" y2="700" class="go-board-line"/><line x1="360" y1="20" x2="360" y2="700" class="go-board-line"/><line x1="397.77777777777777" y1="20" x2="397.77777777777777" y2="700" class="go-board-line"/><line x1="435.55555555555554" y1="20" x2="435.55555555555554" y2="700" class="go-board-line"/><line x1="473.33333333333337" y1="20" x2="473.33333333333337" y2="700" class="go-board-line"/><line x1="511.11111111111114" y1="20" x2="511.11111111111114" y2="700" class="go-board-line"/><line x1="548.8888888888889" y1="20" x2="548.8888888888889" y2="700" class="go-board-line"/><line x1="586.6666666666666" y1="20" x2="586.6666666666666" y2="700" class="go-board-line"/><line x1="624.4444444444445" y1="20" x2="624.4444444444445" y2="700" class="go-board-line"/><line x1="662.2222222222223" y1="20" x2="662.2222222222223" y2="700" class="go-board-line"/><line x1="700" y1="20" x2="700" y2="700" class="go-board-line"/><line x1="20" y1="20" x2="700" y2="20" class="go-board-line"/><line x1="20" y1="57.77777777777778" x2="700" y2="57.77777777777778" class="go-board-line"/><line x1="20" y1="95.55555555555556" x2="700" y2="95.55555555555556" class="go-board-line"/><line x1="20" y1="133.33333333333334" x2="700" y2="133.33333333333334" class="go-board-line"/><line x1="20" y1="171.11111111111111" x2="700" y2="171.11111111111111" class="go-board-line"/><line x1="20" y1="208.88888888888889" x2="700" y2="208.88888888888889" class="go-board-line"/><line x1="20" y1="246.66666666666669" x2="700" y2="246.66666666666669" class="go-board-line"/><line x1="20" y1="284.44444444444446" x2="700" y2="284.44444444444446" class="go-board-line"/><line x1="20" y1="322.22222222222223" x2="700" y2="322.22222222222223" class="go-board-line"/><line x1="20" y1="360" x2="700" y2="360" class="go-board-line"/><line x1="20" y1="397.77777777777777" x2="700" y2="397.77777777777777" class="go-board-line"/><line x1="20" y1="435.55555555555554" x2="700" y2="435.55555555555554" class="go-board-line"/><line x1="20" y1="473.33333333333337" x2="700" y2="473.33333333333337" class="go-board-line"/><line x1="20" y1="511.11111111111114" x2="700" y2="511.11111111111114" class="go-board-line"/><line x1="20" y1="548.8888888888889" x2="700" y2="548.8888888888889" class="go-board-line"/><line x1="20" y1="586.6666666666666" x2="700" y2="586.6666666666666" class="go-board-line"/><line x1="20" y1="624.4444444444445" x2="700" y2="624.4444444444445" class="go-board-line"/><line x1="20" y1="662.2222222222223" x2="700" y2="662.2222222222223" class="go-board-line"/><line x1="20" y1="700" x2="700" y2="700" class="go-board-line"/><circle cx="133.33333333333334" cy="586.6666666666666" r="1.5" class="go-board-hoshi"/><circle cx="360" cy="586.6666666666666" r="1.5" class="go-board-hoshi"/><circle cx="586.6666666666666" cy="586.6666666666666" r="1.5" class="go-board-hoshi"/><circle cx="133.33333333333334" cy="360" r="1.5" class="go-board-hoshi"/><circle cx="360" cy="360" r="1.5" class="go-board-hoshi"/><circle cx="586.6666666666666" cy="360" r="1.5" class="go-board-hoshi"/><circle cx="133.33333333333334" cy="133.33333333333334" r="1.5" class="go-board-hoshi"/><circle cx="360" cy="133.33333333333334" r="1.5" class="go-board-hoshi"/><circle cx="586.6666666666666" cy="133.33333333333334" r="1.5" class="go-board-hoshi"/></svg>

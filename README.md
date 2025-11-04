@@ -2,7 +2,7 @@
 
 # GoBoard
 
-GoBoard is a plugin for [Obsidian](https://obsidian.md/) that renders [Go game](https://en.wikipedia.org/wiki/Go_(game)) diagrams.
+GoBoard is a plugin for [Obsidian](https://obsidian.md/) that renders [Go game](https://en.wikipedia.org/wiki/Go_(game)) diagrams (also known as Weiqi or Baduk).
 
 ## Installation
 
@@ -18,6 +18,7 @@ Diagrams are drawn based on [markdown code blocks](https://www.codecademy.com/re
 
 For example, the following code will draw an empty 9x9 goban:
 
+<!-- goboard: empty-board-9x9 -->
 <pre>
 ```goboard
 size 9x9
@@ -29,6 +30,7 @@ size 9x9
 
 To place stones on the diagram, use `B <position>` and `W <position>` for black and white stones respectively. For example:
 
+<!-- goboard: moves-first-two -->
 <pre>
 ```goboard
 size 9x9
@@ -62,10 +64,16 @@ Updating test baselines:
 npm run update-baseline
 ```
 
+Updating documentation images
+
+```
+npm run update-docs
+```
+
 ## Issues and suggestions
 
 If you found a bug or have suggestions for improvement - don't hesitate to [create issues](https://github.com/dsokolov/goboard/issues)!
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License - see the [LICENSE](LICENSE) file for details.

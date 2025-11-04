@@ -1,8 +1,8 @@
-<img src="docs/images/macbook_pro_16.png" alt="Obsidian GoBoard Macbook" height="300" /> <img src="docs/images/google_pixel_8.png" alt="Obsidian GoBoard Google Pixel 8" height="150" />
+<img src="/docs/images/macbook_pro_16.png" alt="Obsidian GoBoard Macbook" height="300" /> <img src="/docs/images/google_pixel_8.png" alt="Obsidian GoBoard Google Pixel 8" height="150" />
 
 # GoBoard
 
-GoBoard - это плагин для [Obsidian](https://obsidian.md/), рисующий диаграммы [игры Го](https://ru.wikipedia.org/wiki/%D0%93%D0%BE).
+GoBoard - это плагин для [Obsidian](https://obsidian.md/), рисующий диаграммы [игры Го](https://ru.wikipedia.org/wiki/%D0%93%D0%BE) (так же известна как Вэйци или Падук).
 
 ## Установка
 
@@ -18,6 +18,7 @@ GoBoard - это плагин для [Obsidian](https://obsidian.md/), рису�
 
 Для примера, следующий код нарисует пустой гобан 9х9:
 
+<!-- goboard: empty-board-9x9 -->
 <pre>
 ```goboard
 size 9x9
@@ -29,6 +30,7 @@ size 9x9
 
 Для размещения камней на диаграмме используйте `B <position>` и `W <position>` для чёрных и белых камней соотвественно. Например
 
+<!-- goboard: moves-first-two -->
 <pre>
 ```gboard
 size 9x9
@@ -37,8 +39,8 @@ W C3
 ```
 </pre>
 
-![Первые две постановки на гобане 9x9](docs/images/moves-first-two-light.png#gh-light-mode-only)
-![Первые две постановки на гобане 9x9](docs/images/moves-first-two-dark.png#gh-dark-mode-only)
+![Первые две постановки на гобане 9x9](/docs/images/moves-first-two-light.png#gh-light-mode-only)
+![Первые две постановки на гобане 9x9](/docs/images/moves-first-two-dark.png#gh-dark-mode-only)
 
 Больше примеров использования смотрите в [examples-ru.md](docs/examples-ru.md).
 
@@ -60,6 +62,12 @@ npm test
 
 ```
 npm run update-baseline
+```
+
+Обновление картинок в документации
+
+```
+npm run update-docs
 ```
 
 ## Замечания и предложения

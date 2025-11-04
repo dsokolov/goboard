@@ -1,81 +1,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="230" height="200" viewBox="0 0 230 200" class="go-board-svg"><defs><style>/* Стили для рендеринга диаграмм Го - Тёмная тема */
 
-/* Основной контейнер SVG */
-.go-board-svg {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: transparent;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: min(90vw, 800px);
-    max-height: min(80vh, 600px);
-    width: auto;
-    height: auto;
-    display: block;
-    object-fit: contain;
-    transition: max-width 0.3s ease, max-height 0.3s ease;
-}
+/* Стили для рендеринга диаграмм Го */
 
-/* Фон доски */
+/* Обеспечиваем наследование CSS переменных для SVG */
+
+/* CSS классы для элементов доски */
 .go-board-background {
-    fill: #2a2a2a;
+	fill: #2a2a2a;
 }
 
-/* Линии доски */
 .go-board-line {
-    stroke: #cccccc;
-    stroke-width: 1;
+	stroke: #cccccc;
+	stroke-width: 1;
 }
 
-/* Звездные точки (хоси) */
 .go-board-hoshi {
-    fill: #cccccc;
-    r: 5;
+	fill: #cccccc;
+	r: 5
 }
 
-/* Координаты */
 .go-board-coordinate {
-    font-size: 16px;
-    font-family: Arial, sans-serif;
-    fill: #cccccc;
+	font-size: 16px;
+	font-family: Arial, sans-serif;
+	fill: #cccccc;
 }
+
+/* Стили камней для светлой темы */
 
 /* Стили камней для тёмной темы */
 .go-stone-black {
-    fill: #ffffff;
-    stroke: #000000;
-    stroke-width: 1.5;
+	fill: #2a2a2a;
+	stroke: #cccccc;
+	stroke-width: 1.5;
 }
 
 .go-stone-white {
-    fill: #000000;
-    stroke: none;
-    stroke-width: 0;
-}
-
-/* Базовые стили камней */
-.go-stone {
-    /* Базовые стили для всех камней */
+	fill: #cccccc;
+	stroke: none;
 }
 
 /* Стили меток */
 .go-board-mark {
-    font-size: 16px;
-    font-family: Arial, sans-serif;
-    font-weight: bold;
-    pointer-events: none;
-    user-select: none;
+	font-size: 16px;
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+	pointer-events: none;
+	user-select: none;
 }
 
-/* Белая метка (для черных камней) - тёмная тема */
-/* В светлой теме: черный камень (#000000) → белая метка (#ffffff) */
-/* В темной теме: черный камень визуально белый (#ffffff) → черная метка для контраста */
+/* Белая метка (для черных камней) - светлая тема */
+
+/* Черная метка (для белых камней) - светлая тема */
+
+/* Белая метка (для черных камней) - темная тема */
 .go-board-mark-white {
-    fill: #333333;
+	fill: #cccccc;
 }
 
-/* Черная метка (для белых камней) - тёмная тема */
-/* В светлой теме: белый камень (#ffffff) → черная метка (#333333) */
-/* В темной теме: белый камень визуально черный (#000000) → белая метка для контраста */
+/* Черная метка (для белых камней) - темная тема */
 .go-board-mark-black {
-    fill: #ffffff;
+	fill: #2a2a2a;
 }</style></defs><rect x="0" y="0" width="230" height="200" class="go-board-background"/><line x1="40" y1="31" x2="40" y2="160" class="go-board-line"/><line x1="70" y1="31" x2="70" y2="160" class="go-board-line"/><line x1="100" y1="31" x2="100" y2="160" class="go-board-line"/><line x1="130" y1="31" x2="130" y2="160" class="go-board-line"/><line x1="160" y1="31" x2="160" y2="160" class="go-board-line"/><line x1="190" y1="31" x2="190" y2="160" class="go-board-line"/><line x1="40" y1="40" x2="199" y2="40" class="go-board-line"/><line x1="40" y1="70" x2="199" y2="70" class="go-board-line"/><line x1="40" y1="100" x2="199" y2="100" class="go-board-line"/><line x1="40" y1="130" x2="199" y2="130" class="go-board-line"/><line x1="40" y1="160" x2="199" y2="160" class="go-board-line"/><circle cx="100" cy="100" r="1.5" class="go-board-hoshi"/><circle cx="160" cy="40" r="1.5" class="go-board-hoshi"/><circle cx="160" cy="100" r="13.8" class="go-stone go-stone-white"/><circle cx="100" cy="70" r="13.8" class="go-stone go-stone-black"/><text x="20.8" y="160" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">1</text><text x="20.8" y="130" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="20.8" y="100" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="20.8" y="70" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">4</text><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">5</text><text x="40" y="179.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">A</text><text x="70" y="179.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text><text x="100" y="179.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">C</text><text x="130" y="179.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">D</text><text x="160" y="179.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">E</text><text x="190" y="179.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">F</text></svg>

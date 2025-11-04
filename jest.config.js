@@ -3,7 +3,7 @@ module.exports = {
     testEnvironment: 'jsdom',
     roots: ['<rootDir>/src', '<rootDir>/tests'],
     testMatch: ['**/tests/**/*.test.ts', '**/?(*.)+(spec|test).ts'],
-    testPathIgnorePatterns: ['/node_modules/', '.*test-data-loader\\.ts$', '.*update-renderer-baseline\\.test\\.ts$'],
+    testPathIgnorePatterns: ['/node_modules/', '.*test-data-loader\\.ts$', '.*update-renderer-baseline\\.test\\.ts$', '.*update-docs-images\\.test\\.ts$'],
     collectCoverageFrom: [
       'src/**/*.ts',
       '!src/**/*.d.ts',

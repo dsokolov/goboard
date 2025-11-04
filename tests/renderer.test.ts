@@ -4,6 +4,7 @@ import { Parser } from '../src/parser';
 import { Mapper } from '../src/mapper';
 import * as fs from 'fs';
 import * as path from 'path';
+import { addStylesToSVG } from './render-utils';
 
 /**
  * Тесты для рендерера SVG изображений досок Го.
@@ -425,106 +426,6 @@ function findSvgDifferences(current: string, baseline: string): string {
   }
   
   return differences.join('; ');
-}
-
-/**
- * Добавляет описание используемых стилей в SVG элемент для указанной темы
- */
-function addStylesToSVG(svg: SVGElement, theme: 'light' | 'dark'): void {
-  // Создаем элемент <defs> для стилей
-  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-  
-  // Создаем элемент <style> с описанием CSS стилей
-  const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-  
-  style.textContent = `
-/* Стили для рендеринга диаграмм Го - ${theme === 'light' ? 'Светлая' : 'Тёмная'} тема */
-
-/* Основной контейнер SVG */
-.go-board-svg {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: transparent;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: min(90vw, 800px);
-    max-height: min(80vh, 600px);
-    width: auto;
-    height: auto;
-    display: block;
-    object-fit: contain;
-    transition: max-width 0.3s ease, max-height 0.3s ease;
-}
-
-/* Фон доски */
-.go-board-background {
-    fill: ${theme === 'light' ? '#f8f8f8' : '#2a2a2a'};
-}
-
-/* Линии доски */
-.go-board-line {
-    stroke: ${theme === 'light' ? '#333333' : '#cccccc'};
-    stroke-width: 1;
-}
-
-/* Звездные точки (хоси) */
-.go-board-hoshi {
-    fill: ${theme === 'light' ? '#333333' : '#cccccc'};
-    r: 5;
-}
-
-/* Координаты */
-.go-board-coordinate {
-    font-size: 16px;
-    font-family: Arial, sans-serif;
-    fill: ${theme === 'light' ? '#333333' : '#cccccc'};
-}
-
-/* Стили камней для ${theme === 'light' ? 'светлой' : 'тёмной'} темы */
-.go-stone-black {
-    fill: ${theme === 'light' ? '#000000' : '#ffffff'};
-    stroke: ${theme === 'light' ? 'none' : '#000000'};
-    stroke-width: ${theme === 'light' ? '0' : '1.5'};
-}
-
-.go-stone-white {
-    fill: ${theme === 'light' ? '#ffffff' : '#000000'};
-    stroke: ${theme === 'light' ? '#000000' : 'none'};
-    stroke-width: ${theme === 'light' ? '1.5' : '0'};
-}
-
-/* Базовые стили камней */
-.go-stone {
-    /* Базовые стили для всех камней */
-}
-
-/* Стили меток */
-.go-board-mark {
-    font-size: 16px;
-    font-family: Arial, sans-serif;
-    font-weight: bold;
-    pointer-events: none;
-    user-select: none;
-}
-
-/* Белая метка (для черных камней) - ${theme === 'light' ? 'светлая' : 'тёмная'} тема */
-/* В светлой теме: черный камень (#000000) → белая метка (#ffffff) */
-/* В темной теме: черный камень визуально белый (#ffffff) → черная метка для контраста */
-.go-board-mark-white {
-    fill: ${theme === 'light' ? '#ffffff' : '#333333'};
-}
-
-/* Черная метка (для белых камней) - ${theme === 'light' ? 'светлая' : 'тёмная'} тема */
-/* В светлой теме: белый камень (#ffffff) → черная метка (#333333) */
-/* В темной теме: белый камень визуально черный (#000000) → белая метка для контраста */
-.go-board-mark-black {
-    fill: ${theme === 'light' ? '#333333' : '#ffffff'};
-}
-    `.trim();
-    
-  defs.appendChild(style);
-  
-  // Добавляем defs в начало SVG
-  svg.insertBefore(defs, svg.firstChild);
 }
 
 /**
