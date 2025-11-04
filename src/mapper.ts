@@ -17,7 +17,7 @@ export class Mapper {
             for (let j = 0; j < boardSize.width; j++) {
                 // hasHoshi принимает (x, y) = (колонка, строка)
                 const hoshi = showHoshi && this.hasHoshi(boardSize, j, i);
-                points[i][j] = new Point(PointContent.Empty, hoshi);
+                points[i][j] = new Point(PointContent.Empty, null, hoshi);
             }
         }
         
@@ -66,25 +66,26 @@ export class Mapper {
     
     private applyInstruction(points: Point[][], instruction: Instruction): void {
         const content = this.mapColorToContent(instruction.color);
+        const mark = instruction.mark.type === 'number' ? instruction.mark.n.toString() : null;
         
         for (const position of instruction.positions) {
             if (position instanceof SinglePosition) {
-                this.placeStone(points, position.x, position.y, content);
+                this.placeStone(points, position.x, position.y, content, mark);
             } else if (position instanceof IntervalPosition) {
-                this.placeInterval(points, position, content);
+                this.placeInterval(points, position, content, mark);
             }
         }
     }
     
-    private placeStone(points: Point[][], x: number, y: number, content: PointContent): void {
+    private placeStone(points: Point[][], x: number, y: number, content: PointContent, mark: string | null): void {
         if (y >= 0 && y < points.length && x >= 0 && x < points[y].length) {
             const existing = points[y][x];
             const hoshi = existing ? existing.hasHoshi : false;
-            points[y][x] = new Point(content, hoshi);
+            points[y][x] = new Point(content, mark, hoshi);
         }
     }
     
-    private placeInterval(points: Point[][], interval: IntervalPosition, content: PointContent): void {
+    private placeInterval(points: Point[][], interval: IntervalPosition, content: PointContent, mark: string | null): void {
         const startX = interval.start.x;
         const startY = interval.start.y;
         const endX = interval.end.x;
@@ -99,7 +100,7 @@ export class Mapper {
         // Заполняем весь прямоугольник
         for (let y = minY; y <= maxY; y++) {
             for (let x = minX; x <= maxX; x++) {
-                this.placeStone(points, x, y, content);
+                this.placeStone(points, x, y, content, mark);
             }
         }
     }

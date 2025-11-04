@@ -1,5 +1,5 @@
 import { MoveParser } from '../src/parser';
-import { Instruction, Color, SinglePosition, IntervalPosition, ParseResult } from '../src/models';
+import { Instruction, Color, SinglePosition, IntervalPosition, ParseResult, MarkNone, MarkNumber } from '../src/models';
 
 describe('MoveParser', () => {
   let parser: MoveParser;
@@ -15,6 +15,20 @@ describe('MoveParser', () => {
       expect(parser.isApplicable('b A1')).toBe(true);
       expect(parser.isApplicable('w A1')).toBe(true);
       expect(parser.isApplicable('B    A1')).toBe(true);
+      expect(parser.isApplicable('B(1) A1')).toBe(true);
+      expect(parser.isApplicable('W(2) A1')).toBe(true);
+      expect(parser.isApplicable('b(1) A1')).toBe(true);
+      expect(parser.isApplicable('w(2) A1')).toBe(true);
+      expect(parser.isApplicable('B A1,A5')).toBe(true);
+      expect(parser.isApplicable('B A1-A5')).toBe(true);
+      expect(parser.isApplicable('B A1,A5-A9')).toBe(true);
+      expect(parser.isApplicable('W A1')).toBe(true);
+      expect(parser.isApplicable('W A1,A5')).toBe(true);
+      expect(parser.isApplicable('W A1-A5')).toBe(true);
+      expect(parser.isApplicable('W A1,A5-A9')).toBe(true);
+      expect(parser.isApplicable('b A1')).toBe(true);
+      expect(parser.isApplicable('b A1,A5')).toBe(true);
+      expect(parser.isApplicable('b A1-A5')).toBe(true);
     });
 
     it('should return false for non-move line', () => {
@@ -30,7 +44,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, [new SinglePosition(0, 0)]),
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -40,7 +54,7 @@ describe('MoveParser', () => {
       const result = parser.parse('W I9', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.White, [new SinglePosition(8, 8)]),
+        new Instruction(Color.White, new MarkNone(), [new SinglePosition(8, 8)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -50,7 +64,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1,A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -60,7 +74,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+        new Instruction(Color.Black, new MarkNone(), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -70,7 +84,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1, A3-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -80,7 +94,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1, A3-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -99,10 +113,10 @@ describe('MoveParser', () => {
       const result4 = parser.parse('W D1, D2, D3', 4, initialResult4);
 
       expect(result4.instructions).toEqual([
-        new Instruction(Color.Black, [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
-        new Instruction(Color.White, [new SinglePosition(0, 1)]),
-        new Instruction(Color.Black, [new IntervalPosition(new SinglePosition(2, 0), new SinglePosition(4, 2)), new IntervalPosition(new SinglePosition(5, 0), new SinglePosition(5, 8))]),
-        new Instruction(Color.White, [new SinglePosition(3, 0), new SinglePosition(3, 1), new SinglePosition(3, 2)]),
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+        new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
+        new Instruction(Color.Black, new MarkNone(), [new IntervalPosition(new SinglePosition(2, 0), new SinglePosition(4, 2)), new IntervalPosition(new SinglePosition(5, 0), new SinglePosition(5, 8))]),
+        new Instruction(Color.White, new MarkNone(), [new SinglePosition(3, 0), new SinglePosition(3, 1), new SinglePosition(3, 2)]),
       ]);
       expect(result4.errors.length).toBe(0);
     });
@@ -125,7 +139,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B    A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, [new SinglePosition(0, 0)]),
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -144,6 +158,133 @@ describe('MoveParser', () => {
 
       expect(result.errors.length).toBeGreaterThan(0);
       expect(result.errors.some(e => e.message.includes('Invalid interval format'))).toBe(true);
+    });
+  });
+
+  describe('parse - move handling with numbers', () => {
+    it('should parse single black move with number B(1) D4', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('B(1) D4', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(3, 3)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse single white move with number W(2) C3', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('W(2) C3', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(Color.White, new MarkNumber(2), [new SinglePosition(2, 2)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse multiple moves with numbers', () => {
+      const initialResult1 = new ParseResult();
+      const result1 = parser.parse('B(1) D4', 1, initialResult1);
+
+      const initialResult2 = new ParseResult(result1.instructions);
+      const result2 = parser.parse('W(2) C3', 2, initialResult2);
+
+      expect(result2.instructions).toEqual([
+        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(3, 3)]),
+        new Instruction(Color.White, new MarkNumber(2), [new SinglePosition(2, 2)]),
+      ]);
+      expect(result2.errors.length).toBe(0);
+    });
+
+    it('should parse comma-separated moves with number B(1) A1,A5', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('B(1) A1,A5', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse dash-separated interval moves with number B(1) A1-A5', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('B(1) A1-A5', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(Color.Black, new MarkNumber(1), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse mixed single and interval moves with number B(1) A1, A3-A5', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('B(1) A1, A3-A5', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should handle case insensitive color with numbers', () => {
+      const initialResult1 = new ParseResult();
+      const result1 = parser.parse('b(1) A1', 1, initialResult1);
+
+      const initialResult2 = new ParseResult();
+      const result2 = parser.parse('w(2) A1', 1, initialResult2);
+
+      expect(result1.instructions[0].color).toBe(Color.Black);
+      expect(result2.instructions[0].color).toBe(Color.White);
+      expect(result1.instructions[0].mark).toEqual(new MarkNumber(1));
+      expect(result2.instructions[0].mark).toEqual(new MarkNumber(2));
+      expect(result1.errors.length).toBe(0);
+      expect(result2.errors.length).toBe(0);
+    });
+
+    it('should handle whitespace variations with numbers', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('B(1)    A1', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should handle numbers with different values', () => {
+      const initialResult1 = new ParseResult();
+      const result1 = parser.parse('B(1) A1', 1, initialResult1);
+
+      const initialResult2 = new ParseResult(result1.instructions);
+      const result2 = parser.parse('W(10) A2', 2, initialResult2);
+
+      const initialResult3 = new ParseResult(result2.instructions);
+      const result3 = parser.parse('B(99) A3', 3, initialResult3);
+
+      expect(result3.instructions).toEqual([
+        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0)]),
+        new Instruction(Color.White, new MarkNumber(10), [new SinglePosition(0, 1)]),
+        new Instruction(Color.Black, new MarkNumber(99), [new SinglePosition(0, 2)]),
+      ]);
+      expect(result3.errors.length).toBe(0);
+    });
+
+    it('should handle mixed moves with and without numbers', () => {
+      const initialResult1 = new ParseResult();
+      const result1 = parser.parse('B(1) A1', 1, initialResult1);
+
+      const initialResult2 = new ParseResult(result1.instructions);
+      const result2 = parser.parse('W A2', 2, initialResult2);
+
+      const initialResult3 = new ParseResult(result2.instructions);
+      const result3 = parser.parse('B(3) A3', 3, initialResult3);
+
+      expect(result3.instructions).toEqual([
+        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0)]),
+        new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
+        new Instruction(Color.Black, new MarkNumber(3), [new SinglePosition(0, 2)]),
+      ]);
+      expect(result3.errors.length).toBe(0);
     });
   });
 });

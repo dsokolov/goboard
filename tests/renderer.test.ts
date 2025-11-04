@@ -28,9 +28,9 @@ describe('Renderer', () => {
     it('should use CSS variables for all colors', () => {
       // Создаем простую доску 3x3 с камнями
       const points: Point[][] = [
-        [new Point(PointContent.Black, false), new Point(PointContent.White, false), new Point(PointContent.Empty, false)],
-        [new Point(PointContent.Empty, false), new Point(PointContent.Black, true), new Point(PointContent.Empty, false)],
-        [new Point(PointContent.Empty, false), new Point(PointContent.Empty, false), new Point(PointContent.Empty, false)]
+        [new Point(PointContent.Black, null, false), new Point(PointContent.White, null, false), new Point(PointContent.Empty, null, false)],
+        [new Point(PointContent.Empty, null, false), new Point(PointContent.Black, null, true), new Point(PointContent.Empty, null, false)],
+        [new Point(PointContent.Empty, null, false), new Point(PointContent.Empty, null, false), new Point(PointContent.Empty, null, false)]
       ];
       const board = new Board(points, true, 0, points[0].length - 1, 0, points.length - 1);
       
@@ -73,7 +73,7 @@ describe('Renderer', () => {
     it('should use adaptive board size based on font size', () => {
       // Создаем доску 19x19 для проверки адаптивного размера
       const points: Point[][] = Array(19).fill(null).map(() => 
-        Array(19).fill(null).map(() => new Point(PointContent.Empty, false))
+        Array(19).fill(null).map(() => new Point(PointContent.Empty, null, false))
       );
       const board = new Board(points, true, 0, points[0].length - 1, 0, points.length - 1);
       
@@ -93,9 +93,9 @@ describe('Renderer', () => {
     it('should use different colors for light theme', () => {
       // Создаем простую доску 3x3 с камнями
       const points: Point[][] = [
-        [new Point(PointContent.Black, false), new Point(PointContent.White, false), new Point(PointContent.Empty, false)],
-        [new Point(PointContent.Empty, false), new Point(PointContent.Black, true), new Point(PointContent.Empty, false)],
-        [new Point(PointContent.Empty, false), new Point(PointContent.Empty, false), new Point(PointContent.Empty, false)]
+        [new Point(PointContent.Black, null, false), new Point(PointContent.White, null, false), new Point(PointContent.Empty, null, false)],
+        [new Point(PointContent.Empty, null, false), new Point(PointContent.Black, null, true), new Point(PointContent.Empty, null, false)],
+        [new Point(PointContent.Empty, null, false), new Point(PointContent.Empty, null, false), new Point(PointContent.Empty, null, false)]
       ];
       const board = new Board(points, true, 0, points[0].length - 1, 0, points.length - 1);
       
@@ -495,6 +495,29 @@ function addStylesToSVG(svg: SVGElement, theme: 'light' | 'dark'): void {
 /* Базовые стили камней */
 .go-stone {
     /* Базовые стили для всех камней */
+}
+
+/* Стили меток */
+.go-board-mark {
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Белая метка (для черных камней) - ${theme === 'light' ? 'светлая' : 'тёмная'} тема */
+/* В светлой теме: черный камень (#000000) → белая метка (#ffffff) */
+/* В темной теме: черный камень визуально белый (#ffffff) → черная метка для контраста */
+.go-board-mark-white {
+    fill: ${theme === 'light' ? '#ffffff' : '#333333'};
+}
+
+/* Черная метка (для белых камней) - ${theme === 'light' ? 'светлая' : 'тёмная'} тема */
+/* В светлой теме: белый камень (#ffffff) → черная метка (#333333) */
+/* В темной теме: белый камень визуально черный (#000000) → белая метка для контраста */
+.go-board-mark-black {
+    fill: ${theme === 'light' ? '#333333' : '#ffffff'};
 }
     `.trim();
     
