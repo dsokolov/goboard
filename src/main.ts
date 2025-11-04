@@ -3,7 +3,6 @@ import { Renderer } from './renderer';
 import { createRenderParams } from './models';
 import { Parser } from './parser';
 import { Mapper } from './mapper';
-import { ParseResult } from './models';
 
 export default class GoBoardPlugin extends Plugin {
 
@@ -11,7 +10,7 @@ export default class GoBoardPlugin extends Plugin {
 	private mapper!: Mapper;
 	private renderer!: Renderer;
 
-	async onload() {
+	onload() {
 
 		this.parser = new Parser();
 		this.mapper = new Mapper();

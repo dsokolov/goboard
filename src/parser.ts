@@ -1,4 +1,4 @@
-import { ParseError, ParseResult, Instruction, Position, Color, SinglePosition, IntervalPosition, BoardSize, Viewport } from "./models";
+import { ParseError, ParseResult, Instruction, Position, Color, SinglePosition, IntervalPosition, Viewport } from "./models";
 import { parseCoordinate } from "./utils";
 
 export class Parser {
