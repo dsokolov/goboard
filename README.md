@@ -1,4 +1,4 @@
-<img src="docs/images/macbook_pro_16.png" alt="Obsidian GoBoard Macbook" height="300" /> <img src="docs/images/google_pixel_8.png" alt="Obsidian GoBoard Google Pixel 8" height="150" />
+<img src="/docs/images/macbook_pro_16.png" alt="Obsidian GoBoard Macbook" height="300" /> <img src="/docs/images/google_pixel_8.png" alt="Obsidian GoBoard Google Pixel 8" height="150" />
 
 # GoBoard
 
@@ -39,8 +39,8 @@ W C3
 ```
 </pre>
 
-![First two moves on 9x9 goban (light theme)](docs/images/moves-first-two-light.png#gh-light-mode-only)
-![First two moves on 9x9 goban (dark theme)](docs/images/moves-first-two-dark.png#gh-dark-mode-only)
+![First two moves on 9x9 goban (light theme)](/docs/images/moves-first-two-light.png#gh-light-mode-only)
+![First two moves on 9x9 goban (dark theme)](/docs/images/moves-first-two-dark.png#gh-dark-mode-only)
 
 For more usage examples, see [examples.md](docs/examples.md).
 

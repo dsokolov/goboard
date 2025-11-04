@@ -10,8 +10,8 @@ To create an empty goban (Go board), simply create a code block in an Obsidian n
 ```
 </pre>
 
-![Empty goban diagram with default settings (light theme)](docs/images/empty-board-default-light.png#gh-light-mode-only)
-![Empty goban diagram with default settings (dark theme)](docs/images/empty-board-default-dark.png#gh-dark-mode-only)
+![Empty goban diagram with default settings (light theme)](/docs/images/empty-board-default-light.png#gh-light-mode-only)
+![Empty goban diagram with default settings (dark theme)](/docs/images/empty-board-default-dark.png#gh-dark-mode-only)
 
 ## Board size
 
@@ -24,8 +24,8 @@ size 9x9
 ```
 </pre>
 
-![Empty 9x9 goban diagram (light theme)](docs/images/empty-board-9x9-light.png#gh-light-mode-only)
-![Empty 9x9 goban diagram (dark theme)](docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
+![Empty 9x9 goban diagram (light theme)](/docs/images/empty-board-9x9-light.png#gh-light-mode-only)
+![Empty 9x9 goban diagram (dark theme)](/docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
 
 ## Placing a single stone
 
@@ -37,12 +37,10 @@ To place a single stone, use `<B|W> <coordinate>`, where `B` is a black stone an
 size 9x9
 B C3
 ```
-![One stone](docs/images/one-stone-dark.png#gh-dark-mode-only)
-![One stone](docs/images/one-stone-light.png#gh-light-mode-only)
 </pre>
 
-![Placing a single stone (light theme)](docs/images/one-stone-light.png#gh-light-mode-only)
-![Placing a single stone (dark theme)](docs/images/one-stone-dark.png#gh-dark-mode-only)
+![Placing a single stone](/docs/images/one-stone-light.png#gh-light-mode-only)
+![Placing a single stone](/docs/images/one-stone-dark.png#gh-dark-mode-only)
 
 ## Placing a group of stones
 
@@ -57,8 +55,8 @@ W A9-B7,D8-E6
 ```
 </pre>
 
-![Placing a group of stones (light theme)](docs/images/group-of-stones-light.png#gh-light-mode-only)
-![Placing a group of stones (dark theme)](docs/images/group-of-stones-dark.png#gh-dark-mode-only)
+![Placing a group of stones](/docs/images/group-of-stones-light.png#gh-light-mode-only)
+![Placing a group of stones](/docs/images/group-of-stones-dark.png#gh-dark-mode-only)
 
 ## Move numbering
 
@@ -73,10 +71,10 @@ W(2) C3
 ```
 </pre>
 
-![Move numbering on stones (light theme)](docs/images/mark-numbers-two-stones-light.png#gh-light-mode-only)
-![Move numbering on stones (dark theme)](docs/images/mark-numbers-two-stones-dark.png#gh-dark-mode-only)
+![Move numbering on stones](/docs/images/mark-numbers-two-stones-light.png#gh-light-mode-only)
+![Move numbering on stones](/docs/images/mark-numbers-two-stones-dark.png#gh-dark-mode-only)
 
-## Viewport
+## Viewport (viewport area)
 
 If there is no need to display the entire goban diagram (for example, only a small position in the corner is being considered), you can use the `viewport <coordinate1>-<coordinate2>` parameter:
 
@@ -90,5 +88,5 @@ W E3
 ```
 </pre>
 
-![Viewport (light theme)](docs/images/viewport-two-stones-light.png#gh-light-mode-only)
-![Viewport (dark theme)](docs/images/viewport-two-stones-dark.png#gh-dark-mode-only)
+![Viewport](/docs/images/viewport-two-stones-light.png#gh-light-mode-only)
+![Viewport](/docs/images/viewport-two-stones-dark.png#gh-dark-mode-only)
