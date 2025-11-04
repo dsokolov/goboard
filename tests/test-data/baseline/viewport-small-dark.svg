@@ -55,4 +55,27 @@
 /* Базовые стили камней */
 .go-stone {
     /* Базовые стили для всех камней */
+}
+
+/* Стили меток */
+.go-board-mark {
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Белая метка (для черных камней) - тёмная тема */
+/* В светлой теме: черный камень (#000000) → белая метка (#ffffff) */
+/* В темной теме: черный камень визуально белый (#ffffff) → черная метка для контраста */
+.go-board-mark-white {
+    fill: #333333;
+}
+
+/* Черная метка (для белых камней) - тёмная тема */
+/* В светлой теме: белый камень (#ffffff) → черная метка (#333333) */
+/* В темной теме: белый камень визуально черный (#000000) → белая метка для контраста */
+.go-board-mark-black {
+    fill: #ffffff;
 }</style></defs><rect x="0" y="0" width="80" height="80" class="go-board-background"/><line x1="40" y1="31" x2="40" y2="49" class="go-board-line"/><line x1="31" y1="40" x2="49" y2="40" class="go-board-line"/><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="40" y="59.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text></svg>

@@ -1,3 +1,6 @@
+# default
+```goboard
+```
 # 9x9
 Гобан 9х9
 ```goboard

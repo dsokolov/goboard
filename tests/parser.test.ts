@@ -1,5 +1,5 @@
 import { Parser } from '../src/parser';
-import { Instruction, Color, ParseResult, SinglePosition, IntervalPosition, ParseError } from '../src/models';
+import { Instruction, Color, ParseResult, SinglePosition, IntervalPosition, ParseError, MarkNone, MarkNumber } from '../src/models';
 import { testDataLoader } from './test-data-loader';
 
 describe('Parser', () => {
@@ -101,7 +101,7 @@ describe('Parser', () => {
       );
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, [new SinglePosition(0, 0)]),
+          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -116,7 +116,7 @@ describe('Parser', () => {
       );
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.White, [new SinglePosition(8, 8)]),
+          new Instruction(Color.White, new MarkNone(), [new SinglePosition(8, 8)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -129,9 +129,9 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, [new SinglePosition(0, 0)]),
-          new Instruction(Color.White, [new SinglePosition(0, 1)]),
-          new Instruction(Color.Black, [new SinglePosition(0, 2)]),
+          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
+          new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
+          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 2)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -145,7 +145,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -159,7 +159,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+          new Instruction(Color.Black, new MarkNone(), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -173,7 +173,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -187,10 +187,113 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
-          new Instruction(Color.White, [new SinglePosition(0, 1)]),
-          new Instruction(Color.Black, [new IntervalPosition(new SinglePosition(2, 0), new SinglePosition(4, 2)), new IntervalPosition(new SinglePosition(5, 0), new SinglePosition(5, 8))]),
-          new Instruction(Color.White, [new SinglePosition(3, 0), new SinglePosition(3, 1), new SinglePosition(3, 2)]),
+          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+          new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
+          new Instruction(Color.Black, new MarkNone(), [new IntervalPosition(new SinglePosition(2, 0), new SinglePosition(4, 2)), new IntervalPosition(new SinglePosition(5, 0), new SinglePosition(5, 8))]),
+          new Instruction(Color.White, new MarkNone(), [new SinglePosition(3, 0), new SinglePosition(3, 1), new SinglePosition(3, 2)]),
+        ]
+      );
+      expect(result.errors.length).toBe(0);
+    });
+  });
+
+  describe('parse moves with numbers', () => {
+    it('9x9 B(1) D4', () => {
+      const source = 'size 9x9\nB(1) D4';
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseResult);
+      expect(result.boardSize).toEqual({ width: 9, height: 9 });
+      expect(result.instructions).toEqual(
+        [
+          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(3, 3)]),
+        ]
+      );
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('9x9 W(2) C3', () => {
+      const source = 'size 9x9\nW(2) C3';
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseResult);
+      expect(result.boardSize).toEqual({ width: 9, height: 9 });
+      expect(result.instructions).toEqual(
+        [
+          new Instruction(Color.White, new MarkNumber(2), [new SinglePosition(2, 2)]),
+        ]
+      );
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('9x9 B(1) D4 W(2) C3', () => {
+      const source = 'size 9x9\nB(1) D4\nW(2) C3';
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseResult);
+      expect(result.boardSize).toEqual({ width: 9, height: 9 });
+      expect(result.instructions).toEqual(
+        [
+          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(3, 3)]),
+          new Instruction(Color.White, new MarkNumber(2), [new SinglePosition(2, 2)]),
+        ]
+      );
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('9x9 B(1) A1,A5 (comma-separated moves with number)', () => {
+      const source = 'size 9x9\nB(1) A1,A5';
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseResult);
+      expect(result.boardSize).toEqual({ width: 9, height: 9 });
+      expect(result.instructions).toEqual(
+        [
+          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+        ]
+      );
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('9x9 B(1) A1-A5 (dash-separated moves with number)', () => {
+      const source = 'size 9x9\nB(1) A1-A5';
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseResult);
+      expect(result.boardSize).toEqual({ width: 9, height: 9 });
+      expect(result.instructions).toEqual(
+        [
+          new Instruction(Color.Black, new MarkNumber(1), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+        ]
+      );
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('9x9 B(1) A1, A3-A5 (mixed moves with number)', () => {
+      const source = 'size 9x9\nB(1) A1, A3-A5';
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseResult);
+      expect(result.boardSize).toEqual({ width: 9, height: 9 });
+      expect(result.instructions).toEqual(
+        [
+          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+        ]
+      );
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('9x9 mixed moves with and without numbers', () => {
+      const source = 'size 9x9\nB(1) A1\nW A2\nB(3) A3';
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseResult);
+      expect(result.boardSize).toEqual({ width: 9, height: 9 });
+      expect(result.instructions).toEqual(
+        [
+          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0)]),
+          new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
+          new Instruction(Color.Black, new MarkNumber(3), [new SinglePosition(0, 2)]),
         ]
       );
       expect(result.errors.length).toBe(0);

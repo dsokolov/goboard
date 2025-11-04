@@ -232,6 +232,29 @@ function addStylesToSVG(svg: SVGElement, theme: 'light' | 'dark'): void {
 .go-stone {
     /* Базовые стили для всех камней */
 }
+
+/* Стили меток */
+.go-board-mark {
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Белая метка (для черных камней) - ${theme === 'light' ? 'светлая' : 'тёмная'} тема */
+/* В светлой теме: черный камень (#000000) → белая метка (#ffffff) */
+/* В темной теме: черный камень визуально белый (#ffffff) → черная метка для контраста */
+.go-board-mark-white {
+    fill: ${theme === 'light' ? '#ffffff' : '#333333'};
+}
+
+/* Черная метка (для белых камней) - ${theme === 'light' ? 'светлая' : 'тёмная'} тема */
+/* В светлой теме: белый камень (#ffffff) → черная метка (#333333) */
+/* В темной теме: белый камень визуально черный (#000000) → белая метка для контраста */
+.go-board-mark-black {
+    fill: ${theme === 'light' ? '#333333' : '#ffffff'};
+}
     `.trim();
     
     defs.appendChild(style);

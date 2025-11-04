@@ -130,6 +130,24 @@ export class Renderer {
             }
         }
 
+        // Рендеринг меток
+        for (let y = boundTop; y <= boundBottom; y++) {
+            for (let x = boundLeft; x <= boundRight; x++) {
+                const point = source.points[y][x];
+                if (point.mark) {
+                    const relX = x - boundLeft;
+                    const relY = y - boundTop;
+                    const invertedYLocal = (localRows - 1) - relY;
+                    const fontSize = this.getFontSizeFromCSS();
+                    const markText = point.mark; // Полная метка
+                    const text = this.renderMark(
+                        padding, padding, stepX, stepY, relX, invertedYLocal, markText, fontSize, point.content
+                    );
+                    svg.appendChild(text);
+                }
+            }
+        }
+
         // Координаты
         if (source.showCoordinates) {
             this.renderLeftNumbers(svg, padding, stepX, stepY, localRows, padding, boundTop);
@@ -187,6 +205,39 @@ export class Renderer {
         dot.setAttribute('r', '1.5');
         dot.classList.add('go-board-hoshi');
         return dot;
+    }
+
+    private renderMark(
+        paddingLeft: number,
+        paddingTop: number,
+        stepX: number,
+        stepY: number,
+        x: number,
+        y: number,
+        markText: string,
+        fontSize: number,
+        pointContent: PointContent
+    ) {
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        const cx = paddingLeft + x * stepX;
+        const cy = paddingTop + y * stepY;
+        
+        text.setAttribute('x', cx.toString());
+        text.setAttribute('y', cy.toString());
+        text.setAttribute('font-size', fontSize.toString());
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'middle');
+        text.classList.add('go-board-mark');
+        
+        // Контрастный цвет метки: на черном камне - белый, на белом камне - черный
+        if (pointContent === PointContent.Black) {
+            text.classList.add('go-board-mark-white');
+        } else if (pointContent === PointContent.White) {
+            text.classList.add('go-board-mark-black');
+        }
+        
+        text.textContent = markText;
+        return text;
     }
 
     private renderHorizontalLines(xStart: number, xEnd: number, yPos: number) {

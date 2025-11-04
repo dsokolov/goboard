@@ -1,5 +1,5 @@
 import { Mapper } from '../src/mapper';
-import { ParseResult, Instruction, Color, SinglePosition, IntervalPosition, Board, PointContent } from '../src/models';
+import { ParseResult, Instruction, Color, SinglePosition, IntervalPosition, Board, PointContent, MarkNone } from '../src/models';
 
 describe('Mapper', () => {
   let mapper: Mapper;
@@ -60,7 +60,7 @@ describe('Mapper', () => {
     });
 
     it('должен размещать черный камень в позиции A1 (0,0)', () => {
-      const instruction = new Instruction(Color.Black, [new SinglePosition(0, 0)]);
+      const instruction = new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]);
       const parseResult = new ParseResult([instruction], { width: 9, height: 9 });
       const board = mapper.map(parseResult);
 
@@ -77,7 +77,7 @@ describe('Mapper', () => {
     });
 
     it('должен размещать белый камень в позиции J9 (8,8)', () => {
-      const instruction = new Instruction(Color.White, [new SinglePosition(8, 8)]);
+      const instruction = new Instruction(Color.White, new MarkNone(), [new SinglePosition(8, 8)]);
       const parseResult = new ParseResult([instruction], { width: 9, height: 9 });
       const board = mapper.map(parseResult);
 
@@ -95,9 +95,9 @@ describe('Mapper', () => {
 
     it('должен размещать несколько камней разных цветов', () => {
       const instructions = [
-        new Instruction(Color.Black, [new SinglePosition(0, 0)]),
-        new Instruction(Color.White, [new SinglePosition(0, 1)]),
-        new Instruction(Color.Black, [new SinglePosition(0, 2)])
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
+        new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 2)])
       ];
       const parseResult = new ParseResult(instructions, { width: 9, height: 9 });
       const board = mapper.map(parseResult);
@@ -119,6 +119,7 @@ describe('Mapper', () => {
     it('должен обрабатывать интервальные позиции (A1-A5)', () => {
       const instruction = new Instruction(
         Color.Black, 
+        new MarkNone(),
         [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]
       );
       const parseResult = new ParseResult([instruction], { width: 9, height: 9 });
@@ -142,6 +143,7 @@ describe('Mapper', () => {
     it('должен обрабатывать смешанные одиночные и интервальные позиции', () => {
       const instruction = new Instruction(
         Color.Black, 
+        new MarkNone(),
         [
           new SinglePosition(0, 0),
           new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))
@@ -171,10 +173,10 @@ describe('Mapper', () => {
 
     it('должен обрабатывать сложную комбинацию камней', () => {
       const instructions = [
-        new Instruction(Color.Black, [new SinglePosition(0, 0)]),
-        new Instruction(Color.White, [new SinglePosition(0, 1)]),
-        new Instruction(Color.Black, [new SinglePosition(1, 1)]),
-        new Instruction(Color.White, [new SinglePosition(2, 2)])
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
+        new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
+        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(1, 1)]),
+        new Instruction(Color.White, new MarkNone(), [new SinglePosition(2, 2)])
       ];
       const parseResult = new ParseResult(instructions, { width: 3, height: 3 });
       const board = mapper.map(parseResult);
@@ -198,6 +200,7 @@ describe('Mapper', () => {
       // B3 = (1, 2), D5 = (3, 4) - это должен быть квадрат 3x3
       const instruction = new Instruction(
         Color.Black, 
+        new MarkNone(),
         [new IntervalPosition(new SinglePosition(1, 2), new SinglePosition(3, 4))]
       );
 

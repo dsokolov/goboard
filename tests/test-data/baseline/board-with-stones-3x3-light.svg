@@ -55,4 +55,27 @@
 /* Базовые стили камней */
 .go-stone {
     /* Базовые стили для всех камней */
+}
+
+/* Стили меток */
+.go-board-mark {
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Белая метка (для черных камней) - светлая тема */
+/* В светлой теме: черный камень (#000000) → белая метка (#ffffff) */
+/* В темной теме: черный камень визуально белый (#ffffff) → черная метка для контраста */
+.go-board-mark-white {
+    fill: #ffffff;
+}
+
+/* Черная метка (для белых камней) - светлая тема */
+/* В светлой теме: белый камень (#ffffff) → черная метка (#333333) */
+/* В темной теме: белый камень визуально черный (#000000) → белая метка для контраста */
+.go-board-mark-black {
+    fill: #333333;
 }</style></defs><rect x="0" y="0" width="250" height="250" class="go-board-background"/><line x1="40" y1="40" x2="40" y2="210" class="go-board-line"/><line x1="125" y1="40" x2="125" y2="210" class="go-board-line"/><line x1="210" y1="40" x2="210" y2="210" class="go-board-line"/><line x1="40" y1="40" x2="210" y2="40" class="go-board-line"/><line x1="40" y1="125" x2="210" y2="125" class="go-board-line"/><line x1="40" y1="210" x2="210" y2="210" class="go-board-line"/><circle cx="40" cy="210" r="39.1" class="go-stone go-stone-black"/><circle cx="210" cy="210" r="39.1" class="go-stone go-stone-white"/><circle cx="125" cy="125" r="39.1" class="go-stone go-stone-black"/><circle cx="40" cy="40" r="39.1" class="go-stone go-stone-white"/><circle cx="210" cy="40" r="39.1" class="go-stone go-stone-black"/><text x="20.8" y="210" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">1</text><text x="20.8" y="125" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="40" y="229.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">A</text><text x="125" y="229.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text><text x="210" y="229.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">C</text></svg>

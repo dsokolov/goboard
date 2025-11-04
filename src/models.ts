@@ -24,9 +24,22 @@ export enum Color {
     White = "White",
 }
 
+
+export class MarkNone {
+    readonly type = 'none' as const;
+}
+
+export class MarkNumber {
+    readonly type = 'number' as const;
+    constructor(public readonly n: number) {}
+}
+
+export type Mark = MarkNone | MarkNumber;
+
 export class Instruction {
     constructor(
         public readonly color: Color,
+        public readonly mark: Mark,
         public readonly positions: Position[]
     ) {}
 }
@@ -65,6 +78,7 @@ export enum PointContent {
 export class Point {
     constructor(
         public readonly content: PointContent,
+        public readonly mark: string | null,
         public readonly hasHoshi: boolean,
     ) {}
 }

@@ -88,3 +88,32 @@
 	stroke: none;
 }
 
+/* Стили меток */
+.go-board-mark {
+	font-size: var(--font-text-size);
+	font-family: var(--font-text, inherit);
+	font-weight: bold;
+	pointer-events: none;
+	user-select: none;
+}
+
+/* Белая метка (для черных камней) - светлая тема */
+.theme-light .go-board-mark-white {
+	fill: var(--background-primary);
+}
+
+/* Черная метка (для белых камней) - светлая тема */
+.theme-light .go-board-mark-black {
+	fill: var(--text-normal);
+}
+
+/* Белая метка (для черных камней) - темная тема */
+.theme-dark .go-board-mark-white {
+	fill: var(--text-normal);
+}
+
+/* Черная метка (для белых камней) - темная тема */
+.theme-dark .go-board-mark-black {
+	fill: var(--background-primary);
+}
+

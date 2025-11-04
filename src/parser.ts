@@ -1,4 +1,4 @@
-import { ParseError, ParseResult, Instruction, Position, Color, SinglePosition, IntervalPosition, Viewport } from "./models";
+import { ParseError, ParseResult, Instruction, Position, Color, SinglePosition, IntervalPosition, Viewport, MarkNone, MarkNumber } from "./models";
 import { parseCoordinate } from "./utils";
 
 export class Parser {
@@ -142,11 +142,11 @@ export class ViewportParser implements LineParser {
 
 export class MoveParser implements LineParser {
     isApplicable(line: string): boolean {
-        return line.trim().match(/^([BW])\s+(.+)$/i) !== null;
+        return line.trim().match(/^([BW])(?:\((\d+)\))?\s+(.+)$/i) !== null;
     }
     parse(line: string, lineNumber: number, currentResult: ParseResult): ParseResult {
         const trimmedLine = line.trim();
-        const moveMatch = trimmedLine.match(/^([BW])\s+(.+)$/i);
+        const moveMatch = trimmedLine.match(/^([BW])(?:\((\d+)\))?\s+(.+)$/i);
         if (!moveMatch) {
             // This shouldn't happen if isApplicable is correct, but handle it anyway
             const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid move format: ${trimmedLine}`)];
@@ -161,14 +161,18 @@ export class MoveParser implements LineParser {
         }
         
         const colorStr = moveMatch[1].toUpperCase();
-        const coordinatesStr = moveMatch[2];
+        const numberStr = moveMatch[2]; // May be undefined if no parentheses
+        const coordinatesStr = moveMatch[3];
         const color = colorStr === 'B' ? Color.Black : Color.White;
+        
+        // Create mark based on whether number is present
+        const mark = numberStr ? new MarkNumber(parseInt(numberStr, 10)) : new MarkNone();
         
         // Parse all positions for this instruction
         const parseResult = this.parsePositions(coordinatesStr, lineNumber, currentResult.errors);
         if (parseResult.positions.length > 0) {
             return new ParseResult(
-                [...currentResult.instructions, new Instruction(color, parseResult.positions)],
+                [...currentResult.instructions, new Instruction(color, mark, parseResult.positions)],
                 currentResult.boardSize,
                 currentResult.showCoordinates,
                 parseResult.errors,

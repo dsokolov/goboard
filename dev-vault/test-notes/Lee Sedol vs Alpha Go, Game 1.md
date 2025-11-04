@@ -1,10 +1,10 @@
 ```goboard
 size 19x19
-B R16
-W D16
-B Q3
-W D4
-B F17
-W C14
+B(1) R16
+W(2) D16
+B(3) Q3
+W(4) D4
+B(5) F17
+W(6) C14
 ```
 
