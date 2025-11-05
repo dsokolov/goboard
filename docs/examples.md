@@ -1,4 +1,4 @@
-# GoBoard examples
+# GoBoard Usage Examples
 
 ## Creating an empty goban
 
@@ -96,9 +96,12 @@ B D4
 ```
 </pre>
 
-## Viewport
+![Letter marks](/docs/images/mark-letter-light.png#gh-light-mode-only)
+![Letter marks](/docs/images/mark-letter-dark.png#gh-dark-mode-only)
 
-If there is no need to display the entire goban diagram (for example, only a small position in the corner is being considered), you can use the `viewport <coordinate1>-<coordinate2>` parameter:
+## Viewport (visible area)
+
+If you don't need to display the entire goban diagram (for example, only a small position in the corner is being considered), you can use the `viewport <coordinate1>-<coordinate2>` parameter:
 
 <!-- goboard: viewport-two-stones -->
 <pre>
@@ -110,5 +113,5 @@ W E3
 ```
 </pre>
 
-![Viewport](/docs/images/viewport-two-stones-light.png#gh-light-mode-only)
-![Viewport](/docs/images/viewport-two-stones-dark.png#gh-dark-mode-only)
+![Viewport (visible area)](/docs/images/viewport-two-stones-light.png#gh-light-mode-only)
+![Viewport (visible area)](/docs/images/viewport-two-stones-dark.png#gh-dark-mode-only)
