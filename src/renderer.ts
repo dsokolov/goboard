@@ -226,14 +226,18 @@ export class Renderer {
         text.setAttribute('y', cy.toString());
         text.setAttribute('font-size', fontSize.toString());
         text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('dominant-baseline', 'middle');
+        text.setAttribute('dominant-baseline', 'central');
         text.classList.add('go-board-mark');
         
         // Контрастный цвет метки: на черном камне - белый, на белом камне - черный
+        // На пустой клетке - цвет линий
         if (pointContent === PointContent.Black) {
             text.classList.add('go-board-mark-white');
         } else if (pointContent === PointContent.White) {
             text.classList.add('go-board-mark-black');
+        } else {
+            // Отметка на пустой клетке - используем цвет линий
+            text.classList.add('go-board-mark-empty');
         }
         
         text.textContent = markText;

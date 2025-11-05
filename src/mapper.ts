@@ -1,4 +1,4 @@
-import { BoardSize, ParseResult, Instruction, Color, SinglePosition, IntervalPosition, Board, Point, PointContent, Viewport } from "./models";
+import { BoardSize, ParseResult, Instruction, StoneColor, Stone, StoneNone, Color, SinglePosition, IntervalPosition, Board, Point, PointContent, Viewport } from "./models";
 
 export class Mapper {
     map(source: ParseResult): Board {
@@ -65,8 +65,9 @@ export class Mapper {
     }
     
     private applyInstruction(points: Point[][], instruction: Instruction): void {
-        const content = this.mapColorToContent(instruction.color);
-        const mark = instruction.mark.type === 'number' ? instruction.mark.n.toString() : null;
+        const content = this.mapStoneToContent(instruction.stone);
+        const mark = instruction.mark.type === 'number' ? instruction.mark.n.toString() :
+                     instruction.mark.type === 'letter' ? instruction.mark.letter : null;
         
         for (const position of instruction.positions) {
             if (position instanceof SinglePosition) {
@@ -105,10 +106,16 @@ export class Mapper {
         }
     }
     
-    private mapColorToContent(color: Color): PointContent {
-        return color === Color.Black ? PointContent.Black : 
-               color === Color.White ? PointContent.White : 
-               PointContent.Empty;
+    private mapStoneToContent(stone: Stone): PointContent {
+        if (stone instanceof StoneNone) {
+            return PointContent.Empty;
+        }
+        if (stone instanceof StoneColor) {
+            return stone.color === Color.Black ? PointContent.Black : 
+                   stone.color === Color.White ? PointContent.White : 
+                   PointContent.Empty;
+        }
+        return PointContent.Empty;
     }
 
     /**

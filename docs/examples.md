@@ -75,6 +75,27 @@ W(2) C3
 ![Move numbering on stones](/docs/images/mark-numbers-two-stones-light.png#gh-light-mode-only)
 ![Move numbering on stones](/docs/images/mark-numbers-two-stones-dark.png#gh-dark-mode-only)
 
+## Letter marks
+
+You can mark goban points (both with stones and without) with letters. The mark must be a single letter (A-Z) and is always displayed in uppercase. The following formats are supported:
+
+- `(A) <coordinate>` — mark on an empty cell
+- `B(A) <coordinate>` — black stone with a letter mark
+- `W(B) <coordinate>` — white stone with a letter mark
+
+Example:
+
+<!-- goboard: mark-letter -->
+<pre>
+```goboard
+size 9x9
+B D4
+(A) C3
+(B) C7
+(C) D3 
+```
+</pre>
+
 ## Viewport
 
 If there is no need to display the entire goban diagram (for example, only a small position in the corner is being considered), you can use the `viewport <coordinate1>-<coordinate2>` parameter:

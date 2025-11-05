@@ -1,5 +1,5 @@
 import { MoveParser } from '../src/parser';
-import { Instruction, Color, SinglePosition, IntervalPosition, ParseResult, MarkNone, MarkNumber } from '../src/models';
+import { Instruction, StoneColor, StoneNone, Color, SinglePosition, IntervalPosition, ParseResult, MarkNone, MarkNumber, MarkLetter } from '../src/models';
 
 describe('MoveParser', () => {
   let parser: MoveParser;
@@ -29,6 +29,16 @@ describe('MoveParser', () => {
       expect(parser.isApplicable('b A1')).toBe(true);
       expect(parser.isApplicable('b A1,A5')).toBe(true);
       expect(parser.isApplicable('b A1-A5')).toBe(true);
+      expect(parser.isApplicable('(A) A1')).toBe(true);
+      expect(parser.isApplicable('(B) A1')).toBe(true);
+      expect(parser.isApplicable('B(A) A1')).toBe(true);
+      expect(parser.isApplicable('W(B) A1')).toBe(true);
+      expect(parser.isApplicable('b(a) A1')).toBe(true);
+      expect(parser.isApplicable('w(b) A1')).toBe(true);
+      expect(parser.isApplicable('(A) A1,A5')).toBe(true);
+      expect(parser.isApplicable('(A) A1-A5')).toBe(true);
+      expect(parser.isApplicable('B(A) A1,A5')).toBe(true);
+      expect(parser.isApplicable('B(A) A1-A5')).toBe(true);
     });
 
     it('should return false for non-move line', () => {
@@ -44,7 +54,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -54,7 +64,7 @@ describe('MoveParser', () => {
       const result = parser.parse('W I9', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.White, new MarkNone(), [new SinglePosition(8, 8)]),
+        new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(8, 8)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -64,7 +74,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1,A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -74,7 +84,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNone(), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -84,7 +94,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1, A3-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -94,7 +104,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B A1, A3-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -113,10 +123,10 @@ describe('MoveParser', () => {
       const result4 = parser.parse('W D1, D2, D3', 4, initialResult4);
 
       expect(result4.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
-        new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
-        new Instruction(Color.Black, new MarkNone(), [new IntervalPosition(new SinglePosition(2, 0), new SinglePosition(4, 2)), new IntervalPosition(new SinglePosition(5, 0), new SinglePosition(5, 8))]),
-        new Instruction(Color.White, new MarkNone(), [new SinglePosition(3, 0), new SinglePosition(3, 1), new SinglePosition(3, 2)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+        new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(0, 1)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new IntervalPosition(new SinglePosition(2, 0), new SinglePosition(4, 2)), new IntervalPosition(new SinglePosition(5, 0), new SinglePosition(5, 8))]),
+        new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(3, 0), new SinglePosition(3, 1), new SinglePosition(3, 2)]),
       ]);
       expect(result4.errors.length).toBe(0);
     });
@@ -128,8 +138,8 @@ describe('MoveParser', () => {
       const initialResult2 = new ParseResult();
       const result2 = parser.parse('w A1', 1, initialResult2);
 
-      expect(result1.instructions[0].color).toBe(Color.Black);
-      expect(result2.instructions[0].color).toBe(Color.White);
+      expect(result1.instructions[0].stone).toEqual(new StoneColor(Color.Black));
+      expect(result2.instructions[0].stone).toEqual(new StoneColor(Color.White));
       expect(result1.errors.length).toBe(0);
       expect(result2.errors.length).toBe(0);
     });
@@ -139,7 +149,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B    A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -167,7 +177,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B(1) D4', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(3, 3)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(3, 3)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -177,7 +187,7 @@ describe('MoveParser', () => {
       const result = parser.parse('W(2) C3', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.White, new MarkNumber(2), [new SinglePosition(2, 2)]),
+        new Instruction(new StoneColor(Color.White), new MarkNumber(2), [new SinglePosition(2, 2)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -190,8 +200,8 @@ describe('MoveParser', () => {
       const result2 = parser.parse('W(2) C3', 2, initialResult2);
 
       expect(result2.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(3, 3)]),
-        new Instruction(Color.White, new MarkNumber(2), [new SinglePosition(2, 2)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(3, 3)]),
+        new Instruction(new StoneColor(Color.White), new MarkNumber(2), [new SinglePosition(2, 2)]),
       ]);
       expect(result2.errors.length).toBe(0);
     });
@@ -201,7 +211,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B(1) A1,A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -211,7 +221,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B(1) A1-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNumber(1), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -221,7 +231,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B(1) A1, A3-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -233,8 +243,8 @@ describe('MoveParser', () => {
       const initialResult2 = new ParseResult();
       const result2 = parser.parse('w(2) A1', 1, initialResult2);
 
-      expect(result1.instructions[0].color).toBe(Color.Black);
-      expect(result2.instructions[0].color).toBe(Color.White);
+      expect(result1.instructions[0].stone).toEqual(new StoneColor(Color.Black));
+      expect(result2.instructions[0].stone).toEqual(new StoneColor(Color.White));
       expect(result1.instructions[0].mark).toEqual(new MarkNumber(1));
       expect(result2.instructions[0].mark).toEqual(new MarkNumber(2));
       expect(result1.errors.length).toBe(0);
@@ -246,7 +256,7 @@ describe('MoveParser', () => {
       const result = parser.parse('B(1)    A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(0, 0)]),
       ]);
       expect(result.errors.length).toBe(0);
     });
@@ -262,9 +272,9 @@ describe('MoveParser', () => {
       const result3 = parser.parse('B(99) A3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0)]),
-        new Instruction(Color.White, new MarkNumber(10), [new SinglePosition(0, 1)]),
-        new Instruction(Color.Black, new MarkNumber(99), [new SinglePosition(0, 2)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(0, 0)]),
+        new Instruction(new StoneColor(Color.White), new MarkNumber(10), [new SinglePosition(0, 1)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(99), [new SinglePosition(0, 2)]),
       ]);
       expect(result3.errors.length).toBe(0);
     });
@@ -280,11 +290,213 @@ describe('MoveParser', () => {
       const result3 = parser.parse('B(3) A3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([
-        new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0)]),
-        new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
-        new Instruction(Color.Black, new MarkNumber(3), [new SinglePosition(0, 2)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(0, 0)]),
+        new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(0, 1)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(3), [new SinglePosition(0, 2)]),
       ]);
       expect(result3.errors.length).toBe(0);
+    });
+  });
+
+  describe('parse - move handling with letter marks', () => {
+    it('should parse letter mark only (A) A1', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('(A) A1', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(new StoneNone(), new MarkLetter('A'), [new SinglePosition(0, 0)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse letter mark with black stone B(A) A1', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('B(A) A1', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(new StoneColor(Color.Black), new MarkLetter('A'), [new SinglePosition(0, 0)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse letter mark with white stone W(B) C3', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('W(B) C3', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(new StoneColor(Color.White), new MarkLetter('B'), [new SinglePosition(2, 2)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse multiple letter marks', () => {
+      const initialResult1 = new ParseResult();
+      const result1 = parser.parse('(A) C3', 1, initialResult1);
+
+      const initialResult2 = new ParseResult(result1.instructions);
+      const result2 = parser.parse('(B) C7', 2, initialResult2);
+
+      const initialResult3 = new ParseResult(result2.instructions);
+      const result3 = parser.parse('(C) D3', 3, initialResult3);
+
+      expect(result3.instructions).toEqual([
+        new Instruction(new StoneNone(), new MarkLetter('A'), [new SinglePosition(2, 2)]),
+        new Instruction(new StoneNone(), new MarkLetter('B'), [new SinglePosition(2, 6)]),
+        new Instruction(new StoneNone(), new MarkLetter('C'), [new SinglePosition(3, 2)]),
+      ]);
+      expect(result3.errors.length).toBe(0);
+    });
+
+    it('should parse letter mark with comma-separated coordinates (A) A1,A5', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('(A) A1,A5', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(new StoneNone(), new MarkLetter('A'), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse letter mark with dash-separated interval (A) A1-A5', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('(A) A1-A5', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(new StoneNone(), new MarkLetter('A'), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse letter mark with mixed coordinates (A) A1, A3-A5', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('(A) A1, A3-A5', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(new StoneNone(), new MarkLetter('A'), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse color with letter mark B(A) A1,A5', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('B(A) A1,A5', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(new StoneColor(Color.Black), new MarkLetter('A'), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse color with letter mark and interval W(B) A1-A5', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('W(B) A1-A5', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(new StoneColor(Color.White), new MarkLetter('B'), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should handle case insensitive letter marks', () => {
+      const initialResult1 = new ParseResult();
+      const result1 = parser.parse('(a) A1', 1, initialResult1);
+
+      const initialResult2 = new ParseResult();
+      const result2 = parser.parse('B(z) A1', 1, initialResult2);
+
+      expect(result1.instructions[0].mark).toEqual(new MarkLetter('A'));
+      expect(result2.instructions[0].mark).toEqual(new MarkLetter('Z'));
+      expect(result1.errors.length).toBe(0);
+      expect(result2.errors.length).toBe(0);
+    });
+
+    it('should handle whitespace variations with letter marks', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('(A)    A1', 1, initialResult);
+
+      expect(result.instructions).toEqual([
+        new Instruction(new StoneNone(), new MarkLetter('A'), [new SinglePosition(0, 0)]),
+      ]);
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should handle mixed moves with colors, numbers, and letter marks', () => {
+      const initialResult1 = new ParseResult();
+      const result1 = parser.parse('B(1) D4', 1, initialResult1);
+
+      const initialResult2 = new ParseResult(result1.instructions);
+      const result2 = parser.parse('(A) C3', 2, initialResult2);
+
+      const initialResult3 = new ParseResult(result2.instructions);
+      const result3 = parser.parse('W(B) E5', 3, initialResult3);
+
+      const initialResult4 = new ParseResult(result3.instructions);
+      const result4 = parser.parse('B A1', 4, initialResult4);
+
+      expect(result4.instructions).toEqual([
+        new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(3, 3)]),
+        new Instruction(new StoneNone(), new MarkLetter('A'), [new SinglePosition(2, 2)]),
+        new Instruction(new StoneColor(Color.White), new MarkLetter('B'), [new SinglePosition(4, 4)]),
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0)]),
+      ]);
+      expect(result4.errors.length).toBe(0);
+    });
+
+    it('should handle letter marks with different letters', () => {
+      const initialResult1 = new ParseResult();
+      const result1 = parser.parse('(A) A1', 1, initialResult1);
+
+      const initialResult2 = new ParseResult(result1.instructions);
+      const result2 = parser.parse('(Z) A2', 2, initialResult2);
+
+      const initialResult3 = new ParseResult(result2.instructions);
+      const result3 = parser.parse('B(M) A3', 3, initialResult3);
+
+      expect(result3.instructions).toEqual([
+        new Instruction(new StoneNone(), new MarkLetter('A'), [new SinglePosition(0, 0)]),
+        new Instruction(new StoneNone(), new MarkLetter('Z'), [new SinglePosition(0, 1)]),
+        new Instruction(new StoneColor(Color.Black), new MarkLetter('M'), [new SinglePosition(0, 2)]),
+      ]);
+      expect(result3.errors.length).toBe(0);
+    });
+
+    it('should reject multiple letters in mark format B(ABC) A1', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('B(ABC) A1', 1, initialResult);
+
+      expect(result.instructions.length).toBe(0);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors.some(e => e.message.includes('Invalid mark format'))).toBe(true);
+    });
+
+    it('should reject multiple letters in mark format (ABC) A1', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('(ABC) A1', 1, initialResult);
+
+      expect(result.instructions.length).toBe(0);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors.some(e => e.message.includes('Invalid move format'))).toBe(true);
+    });
+
+    it('should reject mixed alphanumeric in mark format B(A1) A1', () => {
+      const initialResult = new ParseResult();
+      const result = parser.parse('B(A1) A1', 1, initialResult);
+
+      expect(result.instructions.length).toBe(0);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors.some(e => e.message.includes('Invalid mark format'))).toBe(true);
+    });
+
+    it('should accept single letter marks A-Z', () => {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      for (const letter of letters) {
+        const initialResult = new ParseResult();
+        const result = parser.parse(`(${letter}) A1`, 1, initialResult);
+        
+        expect(result.errors.length).toBe(0);
+        expect(result.instructions.length).toBe(1);
+        expect(result.instructions[0].mark).toEqual(new MarkLetter(letter.toUpperCase()));
+      }
     });
   });
 });

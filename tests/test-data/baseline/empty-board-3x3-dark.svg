@@ -2,7 +2,14 @@
 
 /* Стили для рендеринга диаграмм Го */
 
+
+
+
+
 /* Обеспечиваем наследование CSS переменных для SVG */
+
+
+
 
 /* CSS классы для элементов доски */
 .go-board-background {
@@ -27,6 +34,9 @@
 
 /* Стили камней для светлой темы */
 
+
+
+
 /* Стили камней для тёмной темы */
 .go-stone-black {
 	fill: #2a2a2a;
@@ -50,7 +60,9 @@
 
 /* Белая метка (для черных камней) - светлая тема */
 
+
 /* Черная метка (для белых камней) - светлая тема */
+
 
 /* Белая метка (для черных камней) - темная тема */
 .go-board-mark-white {
@@ -60,4 +72,12 @@
 /* Черная метка (для белых камней) - темная тема */
 .go-board-mark-black {
 	fill: #2a2a2a;
+}
+
+/* Метка на пустой клетке (использует цвет линий с контрастной обводкой) */
+.go-board-mark-empty {
+	fill: #cccccc;
+	stroke: #2a2a2a;
+	stroke-width: 2;
+	paint-order: stroke fill;
 }</style></defs><rect x="0" y="0" width="250" height="250" class="go-board-background"/><line x1="40" y1="40" x2="40" y2="210" class="go-board-line"/><line x1="125" y1="40" x2="125" y2="210" class="go-board-line"/><line x1="210" y1="40" x2="210" y2="210" class="go-board-line"/><line x1="40" y1="40" x2="210" y2="40" class="go-board-line"/><line x1="40" y1="125" x2="210" y2="125" class="go-board-line"/><line x1="40" y1="210" x2="210" y2="210" class="go-board-line"/><text x="20.8" y="210" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">1</text><text x="20.8" y="125" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="40" y="229.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">A</text><text x="125" y="229.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text><text x="210" y="229.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">C</text></svg>

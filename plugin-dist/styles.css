@@ -117,3 +117,11 @@
 	fill: var(--background-primary);
 }
 
+/* Метка на пустой клетке (использует цвет линий с контрастной обводкой) */
+.go-board-mark-empty {
+	fill: var(--text-normal);
+	stroke: var(--background-primary);
+	stroke-width: 2;
+	paint-order: stroke fill;
+}
+

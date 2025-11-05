@@ -24,6 +24,17 @@ export enum Color {
     White = "White",
 }
 
+export class StoneColor {
+    readonly type = 'color' as const;
+    constructor(public readonly color: Color) {}
+}
+
+export class StoneNone {
+    readonly type = 'none' as const;
+}
+
+export type Stone = StoneColor | StoneNone;
+
 
 export class MarkNone {
     readonly type = 'none' as const;
@@ -34,11 +45,16 @@ export class MarkNumber {
     constructor(public readonly n: number) {}
 }
 
-export type Mark = MarkNone | MarkNumber;
+export class MarkLetter {
+    readonly type = 'letter' as const;
+    constructor(public readonly letter: string) {}
+}
+
+export type Mark = MarkNone | MarkNumber | MarkLetter;
 
 export class Instruction {
     constructor(
-        public readonly color: Color,
+        public readonly stone: Stone,
         public readonly mark: Mark,
         public readonly positions: Position[]
     ) {}

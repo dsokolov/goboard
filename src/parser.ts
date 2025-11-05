@@ -1,4 +1,4 @@
-import { ParseError, ParseResult, Instruction, Position, Color, SinglePosition, IntervalPosition, Viewport, MarkNone, MarkNumber } from "./models";
+import { ParseError, ParseResult, Instruction, Position, StoneColor, StoneNone, Stone, Color, SinglePosition, IntervalPosition, Viewport, MarkNone, MarkNumber, MarkLetter } from "./models";
 import { parseCoordinate } from "./utils";
 
 export class Parser {
@@ -142,37 +142,79 @@ export class ViewportParser implements LineParser {
 
 export class MoveParser implements LineParser {
     isApplicable(line: string): boolean {
-        return line.trim().match(/^([BW])(?:\((\d+)\))?\s+(.+)$/i) !== null;
+        const trimmed = line.trim();
+        // Match: B A1, W A1, B(1) A1, B(A) A1, (A) A1, etc.
+        // For letters: only single letter [A-Za-z], not [A-Za-z]+
+        return trimmed.match(/^([BW])(?:\(([A-Za-z0-9]+)\))?\s+(.+)$/i) !== null ||
+               trimmed.match(/^\(([A-Za-z])\)\s+(.+)$/i) !== null;
     }
     parse(line: string, lineNumber: number, currentResult: ParseResult): ParseResult {
         const trimmedLine = line.trim();
-        const moveMatch = trimmedLine.match(/^([BW])(?:\((\d+)\))?\s+(.+)$/i);
-        if (!moveMatch) {
-            // This shouldn't happen if isApplicable is correct, but handle it anyway
-            const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid move format: ${trimmedLine}`)];
-            return new ParseResult(
-                currentResult.instructions,
-                currentResult.boardSize,
-                currentResult.showCoordinates,
-                errors,
-                currentResult.viewport,
-                currentResult.showHoshi
-            );
+        
+        // Try to match format with color: B A1, B(1) A1, B(A) A1, W(B) A1, etc.
+        let moveMatch = trimmedLine.match(/^([BW])(?:\(([A-Za-z0-9]+)\))?\s+(.+)$/i);
+        
+        let stone: Stone;
+        let mark: MarkNone | MarkNumber | MarkLetter;
+        let coordinatesStr: string;
+        
+        if (moveMatch) {
+            const colorStr = moveMatch[1].toUpperCase();
+            const markStr = moveMatch[2]; // May be undefined if no parentheses
+            coordinatesStr = moveMatch[3];
+            stone = colorStr === 'B' ? new StoneColor(Color.Black) : new StoneColor(Color.White);
+            
+            // Create mark based on what's in parentheses
+            if (markStr) {
+                // Check if it's a number or single letter (A-Z)
+                if (/^\d+$/.test(markStr)) {
+                    mark = new MarkNumber(parseInt(markStr, 10));
+                } else if (/^[A-Za-z]$/.test(markStr)) {
+                    // It's a single letter - validate it's exactly one letter
+                    mark = new MarkLetter(markStr.toUpperCase());
+                } else {
+                    // Invalid mark format - multiple letters or invalid characters
+                    const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid mark format: mark must be a single letter (A-Z) or a number, got: ${markStr}`)];
+                    return new ParseResult(
+                        currentResult.instructions,
+                        currentResult.boardSize,
+                        currentResult.showCoordinates,
+                        errors,
+                        currentResult.viewport,
+                        currentResult.showHoshi
+                    );
+                }
+            } else {
+                mark = new MarkNone();
+            }
+        } else {
+            // Try to match format without color: (A) A1, (B) A1, etc.
+            // Must be exactly one letter
+            moveMatch = trimmedLine.match(/^\(([A-Za-z])\)\s+(.+)$/i);
+            if (moveMatch) {
+                const letterStr = moveMatch[1];
+                coordinatesStr = moveMatch[2];
+                stone = new StoneNone(); // Use StoneNone when no color specified
+                mark = new MarkLetter(letterStr.toUpperCase());
+            } else {
+                // This shouldn't happen if isApplicable is correct, but handle it anyway
+                const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid move format: ${trimmedLine}`)];
+                return new ParseResult(
+                    currentResult.instructions,
+                    currentResult.boardSize,
+                    currentResult.showCoordinates,
+                    errors,
+                    currentResult.viewport,
+                    currentResult.showHoshi
+                );
+            }
         }
-        
-        const colorStr = moveMatch[1].toUpperCase();
-        const numberStr = moveMatch[2]; // May be undefined if no parentheses
-        const coordinatesStr = moveMatch[3];
-        const color = colorStr === 'B' ? Color.Black : Color.White;
-        
-        // Create mark based on whether number is present
-        const mark = numberStr ? new MarkNumber(parseInt(numberStr, 10)) : new MarkNone();
         
         // Parse all positions for this instruction
         const parseResult = this.parsePositions(coordinatesStr, lineNumber, currentResult.errors);
         if (parseResult.positions.length > 0) {
             return new ParseResult(
-                [...currentResult.instructions, new Instruction(color, mark, parseResult.positions)],
+                [...currentResult.instructions, new Instruction(stone, mark, parseResult.positions)],
                 currentResult.boardSize,
                 currentResult.showCoordinates,
                 parseResult.errors,
