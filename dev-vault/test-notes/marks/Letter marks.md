@@ -1,0 +1,7 @@
+```goboard
+size 9x9
+B D4
+(A) C3
+(B) C7
+(C) D3 
+```

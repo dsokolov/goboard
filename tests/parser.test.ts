@@ -1,5 +1,5 @@
 import { Parser } from '../src/parser';
-import { Instruction, Color, ParseResult, SinglePosition, IntervalPosition, ParseError, MarkNone, MarkNumber } from '../src/models';
+import { Instruction, StoneColor, Color, ParseResult, SinglePosition, IntervalPosition, ParseError, MarkNone, MarkNumber } from '../src/models';
 import { testDataLoader } from './test-data-loader';
 
 describe('Parser', () => {
@@ -101,7 +101,7 @@ describe('Parser', () => {
       );
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -116,7 +116,7 @@ describe('Parser', () => {
       );
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.White, new MarkNone(), [new SinglePosition(8, 8)]),
+          new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(8, 8)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -129,9 +129,9 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0)]),
-          new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
-          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 2)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0)]),
+          new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(0, 1)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 2)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -145,7 +145,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -159,7 +159,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNone(), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+          new Instruction(new StoneColor(Color.Black), new MarkNone(), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -173,7 +173,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+          new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -187,10 +187,10 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
-          new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
-          new Instruction(Color.Black, new MarkNone(), [new IntervalPosition(new SinglePosition(2, 0), new SinglePosition(4, 2)), new IntervalPosition(new SinglePosition(5, 0), new SinglePosition(5, 8))]),
-          new Instruction(Color.White, new MarkNone(), [new SinglePosition(3, 0), new SinglePosition(3, 1), new SinglePosition(3, 2)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+          new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(0, 1)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNone(), [new IntervalPosition(new SinglePosition(2, 0), new SinglePosition(4, 2)), new IntervalPosition(new SinglePosition(5, 0), new SinglePosition(5, 8))]),
+          new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(3, 0), new SinglePosition(3, 1), new SinglePosition(3, 2)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -206,7 +206,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(3, 3)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(3, 3)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -220,7 +220,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.White, new MarkNumber(2), [new SinglePosition(2, 2)]),
+          new Instruction(new StoneColor(Color.White), new MarkNumber(2), [new SinglePosition(2, 2)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -234,8 +234,8 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(3, 3)]),
-          new Instruction(Color.White, new MarkNumber(2), [new SinglePosition(2, 2)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(3, 3)]),
+          new Instruction(new StoneColor(Color.White), new MarkNumber(2), [new SinglePosition(2, 2)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -249,7 +249,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(0, 0), new SinglePosition(0, 4)]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -263,7 +263,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNumber(1), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
+          new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -277,7 +277,7 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
+          new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(0, 0), new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))]),
         ]
       );
       expect(result.errors.length).toBe(0);
@@ -291,9 +291,9 @@ describe('Parser', () => {
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
       expect(result.instructions).toEqual(
         [
-          new Instruction(Color.Black, new MarkNumber(1), [new SinglePosition(0, 0)]),
-          new Instruction(Color.White, new MarkNone(), [new SinglePosition(0, 1)]),
-          new Instruction(Color.Black, new MarkNumber(3), [new SinglePosition(0, 2)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNumber(1), [new SinglePosition(0, 0)]),
+          new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(0, 1)]),
+          new Instruction(new StoneColor(Color.Black), new MarkNumber(3), [new SinglePosition(0, 2)]),
         ]
       );
       expect(result.errors.length).toBe(0);

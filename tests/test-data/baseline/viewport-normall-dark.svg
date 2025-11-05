@@ -2,7 +2,14 @@
 
 /* Стили для рендеринга диаграмм Го */
 
+
+
+
+
 /* Обеспечиваем наследование CSS переменных для SVG */
+
+
+
 
 /* CSS классы для элементов доски */
 .go-board-background {
@@ -27,6 +34,9 @@
 
 /* Стили камней для светлой темы */
 
+
+
+
 /* Стили камней для тёмной темы */
 .go-stone-black {
 	fill: #2a2a2a;
@@ -50,7 +60,9 @@
 
 /* Белая метка (для черных камней) - светлая тема */
 
+
 /* Черная метка (для белых камней) - светлая тема */
+
 
 /* Белая метка (для черных камней) - темная тема */
 .go-board-mark-white {
@@ -60,4 +72,12 @@
 /* Черная метка (для белых камней) - темная тема */
 .go-board-mark-black {
 	fill: #2a2a2a;
+}
+
+/* Метка на пустой клетке (использует цвет линий с контрастной обводкой) */
+.go-board-mark-empty {
+	fill: #cccccc;
+	stroke: #2a2a2a;
+	stroke-width: 2;
+	paint-order: stroke fill;
 }</style></defs><rect x="0" y="0" width="170" height="170" class="go-board-background"/><line x1="40" y1="31" x2="40" y2="139" class="go-board-line"/><line x1="70" y1="31" x2="70" y2="139" class="go-board-line"/><line x1="100" y1="31" x2="100" y2="139" class="go-board-line"/><line x1="130" y1="31" x2="130" y2="139" class="go-board-line"/><line x1="31" y1="40" x2="139" y2="40" class="go-board-line"/><line x1="31" y1="70" x2="139" y2="70" class="go-board-line"/><line x1="31" y1="100" x2="139" y2="100" class="go-board-line"/><line x1="31" y1="130" x2="139" y2="130" class="go-board-line"/><circle cx="70" cy="100" r="1.5" class="go-board-hoshi"/><circle cx="130" cy="40" r="1.5" class="go-board-hoshi"/><text x="20.8" y="130" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="20.8" y="100" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="20.8" y="70" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">4</text><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">5</text><text x="40" y="149.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text><text x="70" y="149.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">C</text><text x="100" y="149.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">D</text><text x="130" y="149.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">E</text></svg>
