@@ -10,8 +10,8 @@
 ```
 </pre>
 
-![Диаграмма пустого гобана с настройками по умолчанию (light theme)](/docs/images/empty-board-default-light.png#gh-light-mode-only)
-![Диаграмма пустого гобана с настройками по умолчанию (dark theme)](/docs/images/empty-board-default-dark.png#gh-dark-mode-only)
+![Диаграмма пустого гобана с настройками по умолчанию](/docs/images/empty-board-default-light.png#gh-light-mode-only)
+![Диаграмма пустого гобана с настройками по умолчанию](/docs/images/empty-board-default-dark.png#gh-dark-mode-only)
 
 ## Размер гобана
 
@@ -24,8 +24,8 @@ size 9x9
 ```
 </pre>
 
-![Диаграмма пустого гобана размером 9x9 (light theme)](/docs/images/empty-board-9x9-light.png#gh-light-mode-only)
-![Диаграмма пустого гобана размером 9x9 (dark theme)](/docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
+![Диаграмма пустого гобана размером 9x9](/docs/images/empty-board-9x9-light.png#gh-light-mode-only)
+![Диаграмма пустого гобана размером 9x9](/docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
 
 ## Постановка одного камня
 

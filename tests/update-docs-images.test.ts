@@ -13,7 +13,6 @@ import { addStylesToSVG } from './render-utils';
  * Обрабатывает все markdown файлы из docs каталога
  * Находит специальные теги <!-- goboard: ... --> и соответствующие блоки кода
  * Рендерит изображения для светлой и тёмной тем
- * Обновляет ссылки на изображения в markdown файлах
  * 
  * Запуск: npm run update-docs
  */
@@ -106,16 +105,10 @@ async function processMarkdownFile(
             return;
         }
         
-        // Обрабатываем каждый блок
+        // Обрабатываем каждый блок: рендерим изображения
         for (const block of blocks) {
             await processGoboardBlock(block, parser, mapper, renderer, imagesDir);
         }
-        
-        // Обновляем ссылки на изображения в файле
-        const updatedContent = updateImageLinks(lines, blocks, imagesDir, mdFilePath);
-        
-        // Сохраняем обновленный файл
-        fs.writeFileSync(mdFilePath, updatedContent.join('\n'), 'utf-8');
         
     } catch (error) {
         console.error(`Ошибка при обработке файла ${mdFilePath}:`, error);
@@ -309,120 +302,6 @@ async function processGoboardBlock(
     } catch (error) {
         console.error(`Ошибка при обработке блока ${block.config.name}:`, error);
     }
-}
-
-/**
- * Обновляет ссылки на изображения в markdown файле
- */
-function updateImageLinks(lines: string[], blocks: GoboardBlock[], imagesDir: string, mdFilePath: string): string[] {
-    const updatedLines = [...lines];
-    
-    // Определяем путь к изображениям в зависимости от расположения файла
-    const mdFileDir = path.dirname(mdFilePath);
-    const projectRoot = path.resolve(__dirname, '..');
-    const docsDir = path.join(projectRoot, 'docs');
-    
-    // Проверяем, находится ли файл в docs директории
-    // path.relative возвращает путь относительно docsDir, если файл внутри docs - путь не начинается с ..
-    const relativePath = path.relative(docsDir, mdFileDir);
-    const isInDocs = relativePath !== '' && !relativePath.startsWith('..');
-    
-    // Если файл в корне проекта, используем docs/images
-    // Если файл в docs, используем images
-    const imagesBasePath = isInDocs ? 'images' : 'docs/images';
-    
-    // Обрабатываем блоки в обратном порядке, чтобы индексы не сбились
-    for (let blockIndex = blocks.length - 1; blockIndex >= 0; blockIndex--) {
-        const block = blocks[blockIndex];
-        const imageName = block.config.name;
-        
-        // Ищем ссылки на изображения после блока кода (до следующего заголовка или до конца файла)
-        const searchStartIndex = block.codeBlockEndIndex + 1;
-        let searchEndIndex = updatedLines.length;
-        
-        // Ищем следующий заголовок или конец файла
-        for (let i = searchStartIndex; i < updatedLines.length; i++) {
-            const trimmedLine = updatedLines[i].trim();
-            if (trimmedLine.startsWith('#')) {
-                searchEndIndex = i;
-                break;
-            }
-        }
-        
-        let foundLightLink = false;
-        let foundDarkLink = false;
-        let foundGenericLink = false;
-        let lightLinkIndex = -1;
-        let darkLinkIndex = -1;
-        let genericLinkIndex = -1;
-        
-        // Проверяем существующие ссылки
-        for (let i = searchStartIndex; i < searchEndIndex; i++) {
-            const line = updatedLines[i];
-            // Ищем ссылки на изображения с именем блока
-            if (line.match(/!\[.*\]\(.*\)/)) {
-                if (line.includes(`${imageName}-light.png`)) {
-                    foundLightLink = true;
-                    lightLinkIndex = i;
-                } else if (line.includes(`${imageName}-dark.png`)) {
-                    foundDarkLink = true;
-                    darkLinkIndex = i;
-                } else if (line.includes(`${imageName}.png`) && !line.includes('-light') && !line.includes('-dark')) {
-                    foundGenericLink = true;
-                    genericLinkIndex = i;
-                }
-            }
-        }
-        
-        // Обновляем или создаем ссылки
-        const lightImagePath = `${imagesBasePath}/${imageName}-light.png`;
-        const darkImagePath = `${imagesBasePath}/${imageName}-dark.png`;
-        
-        // Если найдена общая ссылка без суффикса, заменяем её на две ссылки
-        if (foundGenericLink && genericLinkIndex >= 0) {
-            const genericLine = updatedLines[genericLinkIndex];
-            const altTextMatch = genericLine.match(/!\[([^\]]*)\]/);
-            const altText = altTextMatch ? altTextMatch[1] : imageName;
-            
-            // Заменяем общую ссылку на светлую
-            updatedLines[genericLinkIndex] = `![${altText} (light theme)](${lightImagePath}#gh-light-mode-only)`;
-            // Добавляем тёмную ссылку после
-            updatedLines.splice(genericLinkIndex + 1, 0, `![${altText} (dark theme)](${darkImagePath}#gh-dark-mode-only)`);
-            foundLightLink = true;
-            foundDarkLink = true;
-            lightLinkIndex = genericLinkIndex;
-            darkLinkIndex = genericLinkIndex + 1;
-        } else {
-            // Обновляем или создаем ссылку на светлую тему
-            if (foundLightLink && lightLinkIndex >= 0) {
-                const lightLine = updatedLines[lightLinkIndex];
-                const altTextMatch = lightLine.match(/!\[([^\]]*)\]/);
-                const altText = altTextMatch ? altTextMatch[1].replace(/ \(light theme\)| \(dark theme\)/g, '') : imageName;
-                updatedLines[lightLinkIndex] = `![${altText} (light theme)](${lightImagePath}#gh-light-mode-only)`;
-            } else {
-                // Добавляем новую ссылку на светлую тему после блока кода
-                const insertIndex = block.codeBlockEndIndex + 1;
-                updatedLines.splice(insertIndex, 0, `![${imageName} (light theme)](${lightImagePath}#gh-light-mode-only)`);
-                lightLinkIndex = insertIndex;
-                // Корректируем индексы для следующей ссылки
-                if (foundDarkLink) darkLinkIndex++;
-            }
-            
-            // Обновляем или создаем ссылку на тёмную тему
-            if (foundDarkLink && darkLinkIndex >= 0) {
-                const darkLine = updatedLines[darkLinkIndex];
-                const altTextMatch = darkLine.match(/!\[([^\]]*)\]/);
-                const altText = altTextMatch ? altTextMatch[1].replace(/ \(light theme\)| \(dark theme\)/g, '') : imageName;
-                updatedLines[darkLinkIndex] = `![${altText} (dark theme)](${darkImagePath}#gh-dark-mode-only)`;
-            } else {
-                // Добавляем новую ссылку на тёмную тему после ссылки на светлую тему
-                const insertIndex = (foundLightLink && lightLinkIndex >= 0) ? lightLinkIndex + 1 : block.codeBlockEndIndex + 1;
-                updatedLines.splice(insertIndex, 0, `![${imageName} (dark theme)](${darkImagePath}#gh-dark-mode-only)`);
-            }
-        }
-    }
-    
-    return updatedLines;
 }
 
 /**

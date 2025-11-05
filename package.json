@@ -11,7 +11,9 @@
 		"test:watch": "jest --watch",
 		"test:coverage": "jest --coverage",
 		"update-baseline": "npx jest --config jest.baseline.config.js",
-		"update-docs": "npx jest --config jest.docs.config.js"
+		"update-docs": "npx jest --config jest.docs.config.js",
+		"lint": "eslint src/**/*.ts",
+		"lint:fix": "eslint src/**/*.ts --fix"
 	},
 	"keywords": [],
 	"author": "Dmitry I. Sokolov",
@@ -22,17 +24,18 @@
 		"@types/jsdom": "^27.0.0",
 		"@types/node": "^16.11.6",
 		"@types/sharp": "^0.31.1",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
 		"builtin-modules": "3.3.0",
 		"esbuild": "^0.25.11",
+		"eslint": "^9.39.1",
+		"eslint-plugin-obsidianmd": "^0.1.8",
 		"jest": "^30.2.0",
 		"jest-environment-jsdom": "^30.2.0",
 		"obsidian": "latest",
 		"sharp": "^0.34.4",
 		"ts-jest": "^29.4.4",
 		"tslib": "2.4.0",
-		"typescript": "4.7.4"
+		"typescript": "^5.6.3",
+		"typescript-eslint": "^8.46.3"
 	},
 	"dependencies": {
 		"jsdom": "^27.0.1"

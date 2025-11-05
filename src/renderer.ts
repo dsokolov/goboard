@@ -270,7 +270,7 @@ export class Renderer {
         return background;
     }
 
-    private renderLeftNumbers(svg: SVGElement, paddingLeft: number, stepX: number, stepY: number, localRows: number, paddingTop: number, globalRowStart: number) {
+    private renderLeftNumbers(svg: SVGElement, paddingLeft: number, _stepX: number, stepY: number, localRows: number, paddingTop: number, globalRowStart: number) {
         const fontSize = this.getFontSizeFromCSS();
         for (let i = 0; i < localRows; i++) {
             const invertedI = localRows - 1 - i;
@@ -284,7 +284,7 @@ export class Renderer {
         }
     }
 
-    private renderBottomLetters(svg: SVGElement, paddingLeft: number, stepY: number, stepX: number, localCols: number, totalHeight: number, paddingBottom: number, globalColStart: number) {
+    private renderBottomLetters(svg: SVGElement, paddingLeft: number, _stepY: number, stepX: number, localCols: number, totalHeight: number, paddingBottom: number, globalColStart: number) {
         const fontSize = this.getFontSizeFromCSS();
         for (let i = 0; i < localCols; i++) {
             const xPos = paddingLeft + i * stepX;

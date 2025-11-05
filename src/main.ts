@@ -17,7 +17,7 @@ export default class GoBoardPlugin extends Plugin {
 		this.renderer = new Renderer();
 		
 		
-		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, ctx) => {
+		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, _ctx) => {
 			const svg = this.renderBoard(source);
 			if (svg) {
 				const boardContainer = document.createElement('div');

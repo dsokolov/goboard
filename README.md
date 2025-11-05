@@ -25,14 +25,14 @@ size 9x9
 ```
 </pre>
 
-![Empty 9x9 goban (light theme)](docs/images/empty-board-9x9-light.png#gh-light-mode-only)
-![Empty 9x9 goban (dark theme)](docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
+![Empty 9x9 goban (light theme)](/docs/images/empty-board-9x9-light.png#gh-light-mode-only)
+![Empty 9x9 goban (dark theme)](/docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
 
 To place stones on the diagram, use `B <position>` and `W <position>` for black and white stones respectively. For example:
 
 <!-- goboard: moves-first-two -->
 <pre>
-```goboard
+```gboard
 size 9x9
 B G7
 W C3

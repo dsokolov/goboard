@@ -2,7 +2,7 @@
 
 ## Creating an empty goban
 
-To create an empty goban (Go board), simply create a code block in an Obsidian note, specifying `goboard` as the syntax, for example:
+To create an empty goban (Go board), simply create a code block in an Obsidian note, specifying `goboard` as the syntax, for example
 
 <!-- goboard: empty-board-default -->
 <pre>
@@ -10,8 +10,8 @@ To create an empty goban (Go board), simply create a code block in an Obsidian n
 ```
 </pre>
 
-![Empty goban diagram with default settings (light theme)](/docs/images/empty-board-default-light.png#gh-light-mode-only)
-![Empty goban diagram with default settings (dark theme)](/docs/images/empty-board-default-dark.png#gh-dark-mode-only)
+![Empty goban diagram with default settings](/docs/images/empty-board-default-light.png#gh-light-mode-only)
+![Empty goban diagram with default settings](/docs/images/empty-board-default-dark.png#gh-dark-mode-only)
 
 ## Board size
 
@@ -24,12 +24,12 @@ size 9x9
 ```
 </pre>
 
-![Empty 9x9 goban diagram (light theme)](/docs/images/empty-board-9x9-light.png#gh-light-mode-only)
-![Empty 9x9 goban diagram (dark theme)](/docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
+![Empty 9x9 goban diagram](/docs/images/empty-board-9x9-light.png#gh-light-mode-only)
+![Empty 9x9 goban diagram](/docs/images/empty-board-9x9-dark.png#gh-dark-mode-only)
 
 ## Placing a single stone
 
-To place a single stone, use `<B|W> <coordinate>`, where `B` is a black stone and `W` is a white stone. For example, placing a black stone at san-san:
+To place a single stone, use `<B|W> <coordinate>`, where `B` is a black stone and `W` is a white stone. For example placing a black stone at san-san:
 
 <!-- goboard: one-stone -->
 <pre>
@@ -46,6 +46,7 @@ B C3
 
 For brevity, you can place multiple stones in one line. Coordinates are written separated by commas (will create several separate stones or groups), by hyphens (will create a wall or dense rectangular group), or a combination of these methods. For example, let's place three black stones in a row, several separately, and arrange white stones in two rectangles.
 
+
 <!-- goboard: group-of-stones -->
 <pre>
 ```goboard
@@ -60,7 +61,7 @@ W A9-B7,D8-E6
 
 ## Move numbering
 
-Each placed stone can be marked with a natural number: `<B|W>[(number)] <coordinate>`. For example, placing at hoshi and attacking at san-san:
+Each placed stone can be marked with a natural number: `<B|W>[(number)] <coordinate>`. For example placing at hoshi and attacking at san-san:
 
 <!-- goboard: mark-numbers-two-stones -->
 <pre>
@@ -74,7 +75,7 @@ W(2) C3
 ![Move numbering on stones](/docs/images/mark-numbers-two-stones-light.png#gh-light-mode-only)
 ![Move numbering on stones](/docs/images/mark-numbers-two-stones-dark.png#gh-dark-mode-only)
 
-## Viewport (viewport area)
+## Viewport
 
 If there is no need to display the entire goban diagram (for example, only a small position in the corner is being considered), you can use the `viewport <coordinate1>-<coordinate2>` parameter:
 
