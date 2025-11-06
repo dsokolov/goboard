@@ -2,14 +2,7 @@
 
 /* Стили для рендеринга диаграмм Го */
 
-
-
-
-
 /* Обеспечиваем наследование CSS переменных для SVG */
-
-
-
 
 /* CSS классы для элементов доски */
 .go-board-background {
@@ -46,9 +39,6 @@
 
 /* Стили камней для тёмной темы */
 
-
-
-
 /* Стили меток */
 .go-board-mark {
 	font-size: 16px;
@@ -70,9 +60,7 @@
 
 /* Белая метка (для черных камней) - темная тема */
 
-
 /* Черная метка (для белых камней) - темная тема */
-
 
 /* Метка на пустой клетке (использует цвет линий с контрастной обводкой) */
 .go-board-mark-empty {
@@ -80,4 +68,25 @@
 	stroke: #f8f8f8;
 	stroke-width: 2;
 	paint-order: stroke fill;
+}
+
+/* Стили для настроек плагина */
+.go-board-settings-example {
+	margin-bottom: 2em;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 33.33%;
+	width: 33.33%;
+}
+
+.go-board-settings-example svg {
+	width: 100%;
+	height: auto;
+	max-width: 100%;
+}
+
+.go-board-settings-github-link {
+	margin-top: 2em;
+	padding-top: 2em;
+	border-top: 1px solid #ccc;
 }</style></defs><rect x="0" y="0" width="320" height="320" class="go-board-background"/><line x1="40" y1="40" x2="40" y2="280" class="go-board-line"/><line x1="70" y1="40" x2="70" y2="280" class="go-board-line"/><line x1="100" y1="40" x2="100" y2="280" class="go-board-line"/><line x1="130" y1="40" x2="130" y2="280" class="go-board-line"/><line x1="160" y1="40" x2="160" y2="280" class="go-board-line"/><line x1="190" y1="40" x2="190" y2="280" class="go-board-line"/><line x1="220" y1="40" x2="220" y2="280" class="go-board-line"/><line x1="250" y1="40" x2="250" y2="280" class="go-board-line"/><line x1="280" y1="40" x2="280" y2="280" class="go-board-line"/><line x1="40" y1="40" x2="280" y2="40" class="go-board-line"/><line x1="40" y1="70" x2="280" y2="70" class="go-board-line"/><line x1="40" y1="100" x2="280" y2="100" class="go-board-line"/><line x1="40" y1="130" x2="280" y2="130" class="go-board-line"/><line x1="40" y1="160" x2="280" y2="160" class="go-board-line"/><line x1="40" y1="190" x2="280" y2="190" class="go-board-line"/><line x1="40" y1="220" x2="280" y2="220" class="go-board-line"/><line x1="40" y1="250" x2="280" y2="250" class="go-board-line"/><line x1="40" y1="280" x2="280" y2="280" class="go-board-line"/><circle cx="100" cy="220" r="1.5" class="go-board-hoshi"/><circle cx="220" cy="220" r="1.5" class="go-board-hoshi"/><circle cx="160" cy="160" r="1.5" class="go-board-hoshi"/><circle cx="100" cy="100" r="1.5" class="go-board-hoshi"/><circle cx="220" cy="100" r="1.5" class="go-board-hoshi"/><circle cx="280" cy="40" r="13.8" class="go-stone go-stone-white"/><text x="20.8" y="280" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">1</text><text x="20.8" y="250" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="20.8" y="220" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="20.8" y="190" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">4</text><text x="20.8" y="160" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">5</text><text x="20.8" y="130" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">6</text><text x="20.8" y="100" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">7</text><text x="20.8" y="70" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">8</text><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">9</text><text x="40" y="299.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">A</text><text x="70" y="299.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text><text x="100" y="299.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">C</text><text x="130" y="299.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">D</text><text x="160" y="299.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">E</text><text x="190" y="299.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">F</text><text x="220" y="299.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">G</text><text x="250" y="299.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">H</text><text x="280" y="299.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">J</text></svg>

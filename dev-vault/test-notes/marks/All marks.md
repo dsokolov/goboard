@@ -1,3 +1,4 @@
+
 ```goboard
 size 9x9
 B(1) C3

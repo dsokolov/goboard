@@ -1,6 +1,0 @@
-size 3x3
-B A1
-W C1
-B B2
-W A3
-B C3

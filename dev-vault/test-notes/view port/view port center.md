@@ -1,3 +1,4 @@
+
 ```goboard
 size 9x9
 viewport C3-H6

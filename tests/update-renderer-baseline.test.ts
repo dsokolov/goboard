@@ -42,13 +42,18 @@ describe('Update Renderer Baseline', () => {
         const txtFiles = getTxtFiles(testDataDir);
         
         if (txtFiles.length === 0) {
+            console.log('Не найдено txt файлов для обработки');
             return;
         }
 
+        console.log(`Найдено ${txtFiles.length} файлов для обработки`);
+        
         // Обрабатываем каждый файл для обеих тем
         for (const txtFile of txtFiles) {
             await processFileForThemes(txtFile, parser, mapper, renderer, baselineDir);
         }
+        
+        console.log(`Обработка завершена. Обновлено файлов: ${txtFiles.length}`);
 
     });
 });
@@ -61,7 +66,8 @@ function getTxtFiles(dir: string): string[] {
         const files = fs.readdirSync(dir);
         return files
             .filter(file => file.endsWith('.txt'))
-            .map(file => path.join(dir, file));
+            .map(file => path.join(dir, file))
+            .filter(filePath => fs.existsSync(filePath)); // Проверяем существование файла
     } catch (error) {
         return [];
     }
@@ -75,6 +81,8 @@ async function processFileForThemes(txtFilePath: string, parser: Parser, mapper:
     const baseFileName = fileName.replace('.txt', '');
     
     try {
+        console.log(`Обработка файла: ${fileName}`);
+        
         // Шаг 1: Читаем содержимое файла
         const content = fs.readFileSync(txtFilePath, 'utf-8');
 
@@ -107,9 +115,12 @@ async function processFileForThemes(txtFilePath: string, parser: Parser, mapper:
         // Шаг 5.1: Конвертация SVG в PNG для тёмной темы
         const darkPngPath = path.join(baselineDir, `${baseFileName}-dark.png`);
         await convertSvgToPng(darkSvgPath, darkPngPath);
+        
+        console.log(`  ✓ Обновлены файлы для ${baseFileName} (light и dark темы)`);
 
     } catch (error) {
-        // Пропускаем файл при ошибке
+        // Пропускаем файл при ошибке и выводим предупреждение
+        console.warn(`  ✗ Пропущен файл ${fileName}: ${error instanceof Error ? error.message : String(error)}`);
     }
 
 }

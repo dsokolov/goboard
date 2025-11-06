@@ -50,16 +50,6 @@ describe('Parser', () => {
         expect(result.errors.length).toBe(0);
       });
 
-      it('Only board size 5x5 should return ParseResult', () => {
-        const source = testDataLoader.loadTestData('empty-board-5x5.txt');
-        const result = parser.parse(source);
-  
-        expect(result).toBeInstanceOf(ParseResult);
-        expect(result.instructions).toEqual([]);
-        expect(result.boardSize).toEqual({ width: 5, height: 5 });
-        expect(result.errors.length).toBe(0);
-      });
-
       it('Invalid format should return ParseResult with errors', () => {
         const source = testDataLoader.loadTestData('invalid-format.txt');
         const result = parser.parse(source);

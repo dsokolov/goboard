@@ -1,3 +1,4 @@
+
 ```goboard
 size 9x9
 viewport A1-A1

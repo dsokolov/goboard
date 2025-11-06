@@ -61,7 +61,7 @@ export default class GoBoardPlugin extends Plugin {
 
 	async loadSettings() {
 		try {
-			const loadedData = await this.loadData();
+			const loadedData = await this.loadData() as Partial<GoBoardPluginSettings> | null;
 			this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
 		} catch (error) {
 			console.error('Failed to load GoBoard settings, using defaults:', error);

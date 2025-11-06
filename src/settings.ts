@@ -52,7 +52,10 @@ export class GoBoardSettingTab extends PluginSettingTab {
 		// Reset container reference as it was removed from DOM
 		this.boardContainer = null;
 
-		containerEl.createEl('h2', { text: 'GoBoard Settings' });
+		// Use Setting API for heading instead of creating HTML directly
+		new Setting(containerEl)
+			.setName('Configuration')
+			.setHeading();
 
 		this.displayExampleBoard(containerEl);
 		this.displaySettings(containerEl);
@@ -76,13 +79,8 @@ export class GoBoardSettingTab extends PluginSettingTab {
 		} else {
 			// Create new container
 			const boardContainer = document.createElement('div');
-			boardContainer.classList.add('go-board-container');
+			boardContainer.classList.add('go-board-container', 'go-board-settings-example');
 			boardContainer.setAttribute('data-source', exampleSource);
-			boardContainer.style.marginBottom = '2em';
-			boardContainer.style.marginLeft = 'auto';
-			boardContainer.style.marginRight = 'auto';
-			boardContainer.style.maxWidth = '33.33%';
-			boardContainer.style.width = '33.33%';
 			boardContainer.appendChild(svg);
 			
 			if (containerEl) {
@@ -92,17 +90,12 @@ export class GoBoardSettingTab extends PluginSettingTab {
 			// Save container reference for subsequent updates
 			this.boardContainer = boardContainer;
 		}
-		
-		// Set SVG styles to preserve aspect ratio
-		svg.style.width = '100%';
-		svg.style.height = 'auto';
-		svg.style.maxWidth = '100%';
 	}
 
 	private displaySettings(containerEl: HTMLElement): void {
 		new Setting(containerEl)
 			.setName('Default board size')
-			.setDesc('Select the default board size for new boards')
+			.setDesc('Select the default board size for new boards.')
 			.addDropdown(dropdown => {
 				Object.entries(BOARD_SIZES).forEach(([key, size]) => {
 					dropdown.addOption(key, size.title);
@@ -118,7 +111,7 @@ export class GoBoardSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Display hoshi')
-			.setDesc('Show hoshi points on the board by default')
+			.setDesc('Show hoshi points on the board by default.')
 			.addToggle(toggle => {
 				toggle
 					.setValue(this.plugin.settings.showHoshi)
@@ -131,7 +124,7 @@ export class GoBoardSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Display coordinates')
-			.setDesc('Show coordinates on the board by default')
+			.setDesc('Show coordinates on the board by default.')
 			.addToggle(toggle => {
 				toggle
 					.setValue(this.plugin.settings.showCoordinates)
@@ -145,15 +138,13 @@ export class GoBoardSettingTab extends PluginSettingTab {
 
 	private displayGitHubLink(containerEl: HTMLElement): void {
 		const issuesContainer = containerEl.createDiv();
-		issuesContainer.style.marginTop = '2em';
-		issuesContainer.style.paddingTop = '2em';
-		issuesContainer.style.borderTop = '1px solid var(--background-modifier-border)';
+		issuesContainer.addClass('go-board-settings-github-link');
 		
 		const issuesText = issuesContainer.createEl('p');
 		issuesText.appendText('If you found a bug or have a suggestion, please don\'t hesitate to ');
 		
 		const issuesLink = issuesText.createEl('a', {
-			text: 'create an issue on GitHub',
+			text: 'Create an issue on GitHub',
 			href: this.buildGitHubIssueUrl(this.issueTemplateName)
 		});
 		issuesLink.setAttribute('target', '_blank');

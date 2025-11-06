@@ -315,7 +315,8 @@ function getTxtFiles(dir: string): string[] {
     const files = fs.readdirSync(dir);
     return files
       .filter(file => file.endsWith('.txt') && file !== 'empty-string.txt') // Пропускаем empty-string.txt, так как он не имеет baseline
-      .map(file => path.join(dir, file));
+      .map(file => path.join(dir, file))
+      .filter(filePath => fs.existsSync(filePath)); // Проверяем существование файла
   } catch (error) {
     return [];
   }
