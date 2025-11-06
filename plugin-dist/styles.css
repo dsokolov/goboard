@@ -125,3 +125,21 @@
 	paint-order: stroke fill;
 }
 
+/* Стили для блоков ошибок */
+.go-board-error {
+	margin: 0.5rem 0;
+	padding: 0.75rem 1rem;
+	/* Используем background-secondary-alt для фона, который контрастирует с основным */
+	background-color: var(--background-secondary-alt, var(--background-secondary));
+	/* Граница использует цвет, который контрастирует с фоном */
+	border: 1px solid var(--background-modifier-border);
+	border-left: 3px solid var(--text-error, var(--text-accent, var(--text-muted)));
+	border-radius: 4px;
+	/* text-normal всегда контрастирует с background-secondary-alt */
+	color: var(--text-normal);
+	font-size: var(--font-text-size);
+	font-family: var(--font-text, inherit);
+	line-height: 1.5;
+	word-wrap: break-word;
+}
+

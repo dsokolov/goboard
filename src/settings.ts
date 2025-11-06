@@ -62,10 +62,11 @@ export class GoBoardSettingTab extends PluginSettingTab {
 	private displayExampleBoard(containerEl?: HTMLElement): void {
 		const exampleSource = 'B(1) D3\nW(2) C5\n(A) C3\n(B) F3\n';
 		// Use current settings to display the board
-		const svg = this.plugin.renderBoard(exampleSource, this.plugin.settings);
-		if (!svg) {
+		const result = this.plugin.renderBoard(exampleSource, this.plugin.settings);
+		if (!result.svg) {
 			return;
 		}
+		const svg = result.svg;
 
 		// If container already exists and is in DOM, update it
 		if (this.boardContainer && this.boardContainer.parentElement) {
