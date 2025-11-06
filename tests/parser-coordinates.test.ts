@@ -26,7 +26,7 @@ describe('CoordinatesParser', () => {
 
   describe('parse - coordinates visibility handling', () => {
     it('should parse coordinates on', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('coordinates on', 1, initialResult);
 
       expect(result.showCoordinates).toBe(true);
@@ -34,7 +34,7 @@ describe('CoordinatesParser', () => {
     });
 
     it('should parse coordinates off', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('coordinates off', 1, initialResult);
 
       expect(result.showCoordinates).toBe(false);
@@ -42,7 +42,7 @@ describe('CoordinatesParser', () => {
     });
 
     it('should handle case insensitive "coordinates" keyword', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('COORDINATES ON', 1, initialResult);
 
       expect(result.showCoordinates).toBe(true);
@@ -50,10 +50,10 @@ describe('CoordinatesParser', () => {
     });
 
     it('should handle case insensitive "on" and "off"', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const resultOn = parser.parse('coordinates ON', 1, initialResult1);
 
-      const initialResult2 = new ParseResult();
+      const initialResult2 = ParseResult.create();
       const resultOff = parser.parse('coordinates OFF', 1, initialResult2);
 
       expect(resultOn.showCoordinates).toBe(true);
@@ -63,7 +63,7 @@ describe('CoordinatesParser', () => {
     });
 
     it('should handle whitespace variations', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('coordinates    on', 1, initialResult);
 
       expect(result.showCoordinates).toBe(true);

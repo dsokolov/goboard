@@ -25,7 +25,7 @@ describe('BoardSizeParser', () => {
 
   describe('parse - board size handling', () => {
     it('should parse valid board size 19x19', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size 19x19', 1, initialResult);
 
       expect(result.boardSize).toEqual({ width: 19, height: 19 });
@@ -33,7 +33,7 @@ describe('BoardSizeParser', () => {
     });
 
     it('should parse valid board size 13x13', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size 13x13', 1, initialResult);
 
       expect(result.boardSize).toEqual({ width: 13, height: 13 });
@@ -41,7 +41,7 @@ describe('BoardSizeParser', () => {
     });
 
     it('should parse valid board size 9x9', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size 9x9', 1, initialResult);
 
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
@@ -49,7 +49,7 @@ describe('BoardSizeParser', () => {
     });
 
     it('should parse valid board size 5x5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size 5x5', 1, initialResult);
 
       expect(result.boardSize).toEqual({ width: 5, height: 5 });
@@ -57,7 +57,7 @@ describe('BoardSizeParser', () => {
     });
 
     it('should parse valid board size 3x3', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size 3x3', 1, initialResult);
 
       expect(result.boardSize).toEqual({ width: 3, height: 3 });
@@ -65,7 +65,7 @@ describe('BoardSizeParser', () => {
     });
 
     it('should handle case insensitive "size" keyword', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('SIZE 19x19', 1, initialResult);
 
       expect(result.boardSize).toEqual({ width: 19, height: 19 });
@@ -73,7 +73,7 @@ describe('BoardSizeParser', () => {
     });
 
     it('should handle whitespace variations', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size   19x19', 1, initialResult);
 
       expect(result.boardSize).toEqual({ width: 19, height: 19 });
@@ -81,35 +81,35 @@ describe('BoardSizeParser', () => {
     });
 
     it('should return ParseResult with errors for invalid format (missing dimensions)', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
     it('should return ParseResult with errors for invalid format (missing x separator)', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size 1919', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
     it('should return ParseResult with errors for invalid format (non-numeric dimensions)', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size axb', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
     it('should return ParseResult with errors for invalid format (only one dimension)', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size 19', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
     it('should return ParseResult with errors for invalid board size (zero dimensions)', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size 0x0', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);
@@ -117,7 +117,7 @@ describe('BoardSizeParser', () => {
     });
 
     it('should return ParseResult with errors for invalid board size (negative dimensions)', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('size -5x5', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);

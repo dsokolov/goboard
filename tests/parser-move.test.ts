@@ -50,7 +50,7 @@ describe('MoveParser', () => {
 
   describe('parse - move handling', () => {
     it('should parse single black move B A1', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -60,7 +60,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse single white move W I9', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('W I9', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -70,7 +70,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse comma-separated moves B A1,A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B A1,A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -80,7 +80,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse dash-separated interval moves B A1-A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B A1-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -90,7 +90,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse mixed single and interval moves B A1, A3-A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B A1, A3-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -100,7 +100,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse complex mixed moves B A1, A3-A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B A1, A3-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -110,16 +110,16 @@ describe('MoveParser', () => {
     });
 
     it('should parse multiple separate moves', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B A1, A3-A5', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('W A2', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('B C1-E3, F1-F9', 3, initialResult3);
 
-      const initialResult4 = new ParseResult(result3.instructions);
+      const initialResult4 = new ParseResult(result3.instructions, result3.boardSize, result3.showCoordinates, result3.errors, result3.viewport, result3.showHoshi);
       const result4 = parser.parse('W D1, D2, D3', 4, initialResult4);
 
       expect(result4.instructions).toEqual([
@@ -132,10 +132,10 @@ describe('MoveParser', () => {
     });
 
     it('should handle case insensitive color', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('b A1', 1, initialResult1);
 
-      const initialResult2 = new ParseResult();
+      const initialResult2 = ParseResult.create();
       const result2 = parser.parse('w A1', 1, initialResult2);
 
       expect(result1.instructions[0].stone).toEqual(new StoneColor(Color.Black));
@@ -145,7 +145,7 @@ describe('MoveParser', () => {
     });
 
     it('should handle whitespace variations', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B    A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -155,7 +155,7 @@ describe('MoveParser', () => {
     });
 
     it('should return errors for invalid coordinates', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B XX99', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);
@@ -163,7 +163,7 @@ describe('MoveParser', () => {
     });
 
     it('should return errors for invalid interval format', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B A1-A2-A3', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);
@@ -173,7 +173,7 @@ describe('MoveParser', () => {
 
   describe('parse - move handling with numbers', () => {
     it('should parse single black move with number B(1) D4', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B(1) D4', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -183,7 +183,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse single white move with number W(2) C3', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('W(2) C3', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -193,10 +193,10 @@ describe('MoveParser', () => {
     });
 
     it('should parse multiple moves with numbers', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B(1) D4', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('W(2) C3', 2, initialResult2);
 
       expect(result2.instructions).toEqual([
@@ -207,7 +207,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse comma-separated moves with number B(1) A1,A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B(1) A1,A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -217,7 +217,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse dash-separated interval moves with number B(1) A1-A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B(1) A1-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -227,7 +227,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse mixed single and interval moves with number B(1) A1, A3-A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B(1) A1, A3-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -237,10 +237,10 @@ describe('MoveParser', () => {
     });
 
     it('should handle case insensitive color with numbers', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('b(1) A1', 1, initialResult1);
 
-      const initialResult2 = new ParseResult();
+      const initialResult2 = ParseResult.create();
       const result2 = parser.parse('w(2) A1', 1, initialResult2);
 
       expect(result1.instructions[0].stone).toEqual(new StoneColor(Color.Black));
@@ -252,7 +252,7 @@ describe('MoveParser', () => {
     });
 
     it('should handle whitespace variations with numbers', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B(1)    A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -262,13 +262,13 @@ describe('MoveParser', () => {
     });
 
     it('should handle numbers with different values', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B(1) A1', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('W(10) A2', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('B(99) A3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([
@@ -280,13 +280,13 @@ describe('MoveParser', () => {
     });
 
     it('should handle mixed moves with and without numbers', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B(1) A1', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('W A2', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('B(3) A3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([
@@ -300,7 +300,7 @@ describe('MoveParser', () => {
 
   describe('parse - move handling with letter marks', () => {
     it('should parse letter mark only (A) A1', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('(A) A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -310,7 +310,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse letter mark with black stone B(A) A1', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B(A) A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -320,7 +320,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse letter mark with white stone W(B) C3', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('W(B) C3', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -330,13 +330,13 @@ describe('MoveParser', () => {
     });
 
     it('should parse multiple letter marks', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('(A) C3', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('(B) C7', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('(C) D3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([
@@ -348,7 +348,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse letter mark with comma-separated coordinates (A) A1,A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('(A) A1,A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -358,7 +358,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse letter mark with dash-separated interval (A) A1-A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('(A) A1-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -368,7 +368,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse letter mark with mixed coordinates (A) A1, A3-A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('(A) A1, A3-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -378,7 +378,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse color with letter mark B(A) A1,A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B(A) A1,A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -388,7 +388,7 @@ describe('MoveParser', () => {
     });
 
     it('should parse color with letter mark and interval W(B) A1-A5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('W(B) A1-A5', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -398,10 +398,10 @@ describe('MoveParser', () => {
     });
 
     it('should handle case insensitive letter marks', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('(a) A1', 1, initialResult1);
 
-      const initialResult2 = new ParseResult();
+      const initialResult2 = ParseResult.create();
       const result2 = parser.parse('B(z) A1', 1, initialResult2);
 
       expect(result1.instructions[0].mark).toEqual(new MarkLetter('A'));
@@ -411,7 +411,7 @@ describe('MoveParser', () => {
     });
 
     it('should handle whitespace variations with letter marks', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('(A)    A1', 1, initialResult);
 
       expect(result.instructions).toEqual([
@@ -421,16 +421,16 @@ describe('MoveParser', () => {
     });
 
     it('should handle mixed moves with colors, numbers, and letter marks', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B(1) D4', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('(A) C3', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('W(B) E5', 3, initialResult3);
 
-      const initialResult4 = new ParseResult(result3.instructions);
+      const initialResult4 = new ParseResult(result3.instructions, result3.boardSize, result3.showCoordinates, result3.errors, result3.viewport, result3.showHoshi);
       const result4 = parser.parse('B A1', 4, initialResult4);
 
       expect(result4.instructions).toEqual([
@@ -443,13 +443,13 @@ describe('MoveParser', () => {
     });
 
     it('should handle letter marks with different letters', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const result1 = parser.parse('(A) A1', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('(Z) A2', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('B(M) A3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([
@@ -461,7 +461,7 @@ describe('MoveParser', () => {
     });
 
     it('should reject multiple letters in mark format B(ABC) A1', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B(ABC) A1', 1, initialResult);
 
       expect(result.instructions.length).toBe(0);
@@ -470,7 +470,7 @@ describe('MoveParser', () => {
     });
 
     it('should reject multiple letters in mark format (ABC) A1', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('(ABC) A1', 1, initialResult);
 
       expect(result.instructions.length).toBe(0);
@@ -479,7 +479,7 @@ describe('MoveParser', () => {
     });
 
     it('should reject mixed alphanumeric in mark format B(A1) A1', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('B(A1) A1', 1, initialResult);
 
       expect(result.instructions.length).toBe(0);
@@ -490,7 +490,7 @@ describe('MoveParser', () => {
     it('should accept single letter marks A-Z', () => {
       const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       for (const letter of letters) {
-        const initialResult = new ParseResult();
+        const initialResult = ParseResult.create();
         const result = parser.parse(`(${letter}) A1`, 1, initialResult);
         
         expect(result.errors.length).toBe(0);

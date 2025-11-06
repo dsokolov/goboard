@@ -3,22 +3,26 @@ import { Renderer } from './renderer';
 import { createRenderParams } from './models';
 import { Parser } from './parser';
 import { Mapper } from './mapper';
+import { GoBoardPluginSettings, DEFAULT_SETTINGS, GoBoardSettingTab } from './settings';
 
 export default class GoBoardPlugin extends Plugin {
 
 	private parser!: Parser;
 	private mapper!: Mapper;
 	private renderer!: Renderer;
+	settings: GoBoardPluginSettings = DEFAULT_SETTINGS;
 
-	onload() {
+	async onload() {
+		await this.loadSettings();
 
 		this.parser = new Parser();
 		this.mapper = new Mapper();
 		this.renderer = new Renderer();
 		
+		this.addSettingTab(new GoBoardSettingTab(this.app, this));
 		
 		this.registerMarkdownCodeBlockProcessor('goboard', (source, el, _ctx) => {
-			const svg = this.renderBoard(source);
+			const svg = this.renderBoard(source, this.settings);
 			if (svg) {
 				const boardContainer = document.createElement('div');
 				boardContainer.classList.add('go-board-container');
@@ -29,13 +33,27 @@ export default class GoBoardPlugin extends Plugin {
 		});
 	}
 
-	private renderBoard(source: string): SVGElement | null {
-		const parseResult = this.parser.parse(source);
+	async loadSettings() {
+		try {
+			const loadedData = await this.loadData();
+			this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
+		} catch (error) {
+			console.error('Failed to load GoBoard settings, using defaults:', error);
+			this.settings = Object.assign({}, DEFAULT_SETTINGS);
+		}
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
+	}
+
+	renderBoard(source: string, settings: GoBoardPluginSettings = DEFAULT_SETTINGS): SVGElement | null {
+		const parseResult = this.parser.parse(source, settings);
 		
-		// Проверяем наличие ошибок парсинга
+		// Check for parsing errors
 		if (parseResult.errors.length > 0) {
 			console.error('Go Board parse errors:', parseResult.errors.map(e => `Line ${e.line}: ${e.message}`).join('; '));
-			// Возвращаем null, чтобы не отображать некорректную доску
+			// Return null to avoid displaying incorrect board
 			return null;
 		}
 		
