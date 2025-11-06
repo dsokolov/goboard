@@ -1,5 +1,6 @@
 import { ParseError, ParseResult, Instruction, Position, StoneColor, StoneNone, Stone, Color, SinglePosition, IntervalPosition, Viewport, MarkNone, MarkNumber, MarkLetter } from "./models";
 import { parseCoordinate } from "./utils";
+import { GoBoardPluginSettings, DEFAULT_SETTINGS } from "./settings";
 
 export class Parser {
 
@@ -11,9 +12,9 @@ export class Parser {
         new HoshiParser(),
     ];
 
-    parse(source: string): ParseResult {
+    parse(source: string, settings: GoBoardPluginSettings = DEFAULT_SETTINGS): ParseResult {
         const lines = source.trim().split('\n');
-        let result: ParseResult = new ParseResult();
+        let result: ParseResult = ParseResult.create(settings);
         
         for (let lineNumber = 1; lineNumber <= lines.length; lineNumber++) {
             const line = lines[lineNumber - 1];

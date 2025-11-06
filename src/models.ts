@@ -1,3 +1,5 @@
+import { GoBoardPluginSettings, BOARD_SIZES, DEFAULT_SETTINGS } from './settings';
+
 export class SinglePosition {
     constructor(
         public readonly x: number, 
@@ -69,13 +71,26 @@ export class Viewport {
 
 export class ParseResult {
     constructor(
-        public readonly instructions: Instruction[] = [],
-        public readonly boardSize: BoardSize = { width: 19, height: 19 },
-        public readonly showCoordinates: boolean = true,
-        public readonly errors: ParseError[] = [],
-        public readonly viewport: Viewport | null = null,
-        public readonly showHoshi: boolean = true
+        public readonly instructions: Instruction[],
+        public readonly boardSize: BoardSize,
+        public readonly showCoordinates: boolean,
+        public readonly errors: ParseError[],
+        public readonly viewport: Viewport | null,
+        public readonly showHoshi: boolean
     ) {}
+
+    static create(settings: GoBoardPluginSettings | null = null): ParseResult {
+        const settingsToUse = settings || DEFAULT_SETTINGS;
+        const boardSizeOption = BOARD_SIZES[settingsToUse.defaultBoardSize];
+        return new ParseResult(
+            [],
+            { width: boardSizeOption.width, height: boardSizeOption.height },
+            settingsToUse.showCoordinates,
+            [],
+            null,
+            settingsToUse.showHoshi
+        );
+    }
 }
 
 export class ParseError {

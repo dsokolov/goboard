@@ -26,7 +26,7 @@ describe('HoshiParser', () => {
 
   describe('parse - hoshi visibility handling', () => {
     it('should parse hoshi on', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('hoshi on', 1, initialResult);
 
       expect(result.showHoshi).toBe(true);
@@ -34,7 +34,7 @@ describe('HoshiParser', () => {
     });
 
     it('should parse hoshi off', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('hoshi off', 1, initialResult);
 
       expect(result.showHoshi).toBe(false);
@@ -42,7 +42,7 @@ describe('HoshiParser', () => {
     });
 
     it('should handle case insensitive "hoshi" keyword', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('HOSHI ON', 1, initialResult);
 
       expect(result.showHoshi).toBe(true);
@@ -50,10 +50,10 @@ describe('HoshiParser', () => {
     });
 
     it('should handle case insensitive "on" and "off"', () => {
-      const initialResult1 = new ParseResult();
+      const initialResult1 = ParseResult.create();
       const resultOn = parser.parse('hoshi ON', 1, initialResult1);
 
-      const initialResult2 = new ParseResult();
+      const initialResult2 = ParseResult.create();
       const resultOff = parser.parse('hoshi OFF', 1, initialResult2);
 
       expect(resultOn.showHoshi).toBe(true);
@@ -63,7 +63,7 @@ describe('HoshiParser', () => {
     });
 
     it('should handle whitespace variations', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('hoshi    on', 1, initialResult);
 
       expect(result.showHoshi).toBe(true);

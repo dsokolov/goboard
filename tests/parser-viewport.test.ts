@@ -24,7 +24,7 @@ describe('ViewportParser', () => {
 
   describe('parse - viewport handling', () => {
     it('should parse valid viewport A1-H9', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('viewport A1-H9', 1, initialResult);
 
       expect(result.viewport).not.toBeNull();
@@ -33,7 +33,7 @@ describe('ViewportParser', () => {
     });
 
     it('should parse small viewport B2-B2', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('viewport B2-B2', 1, initialResult);
 
       expect(result.viewport).not.toBeNull();
@@ -42,7 +42,7 @@ describe('ViewportParser', () => {
     });
 
     it('should parse full viewport A1-H9', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('viewport A1-H9', 1, initialResult);
 
       expect(result.viewport).not.toBeNull();
@@ -51,7 +51,7 @@ describe('ViewportParser', () => {
     });
 
     it('should parse normal viewport B2-E5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('viewport B2-E5', 1, initialResult);
 
       expect(result.viewport).not.toBeNull();
@@ -60,7 +60,7 @@ describe('ViewportParser', () => {
     });
 
     it('should parse viewport A1-F5', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('viewport A1-F5', 1, initialResult);
 
       expect(result.viewport).not.toBeNull();
@@ -69,7 +69,7 @@ describe('ViewportParser', () => {
     });
 
     it('should handle case insensitive "viewport" keyword', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('VIEWPORT A1-H9', 1, initialResult);
 
       expect(result.viewport).not.toBeNull();
@@ -78,7 +78,7 @@ describe('ViewportParser', () => {
     });
 
     it('should handle whitespace variations', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('viewport   A1   -   H9', 1, initialResult);
 
       expect(result.viewport).not.toBeNull();
@@ -87,7 +87,7 @@ describe('ViewportParser', () => {
     });
 
     it('should return ParseResult with errors for invalid format', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('viewport invalid string', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);
@@ -95,7 +95,7 @@ describe('ViewportParser', () => {
     });
 
     it('should return ParseResult with errors for invalid coordinates', () => {
-      const initialResult = new ParseResult();
+      const initialResult = ParseResult.create();
       const result = parser.parse('viewport XX99-ZZ99', 1, initialResult);
 
       expect(result.errors.length).toBeGreaterThan(0);
