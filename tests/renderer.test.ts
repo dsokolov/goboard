@@ -389,15 +389,11 @@ async function compareThemeWithBaseline(
   const normalizedBaseline = normalizeSvgString(baselineSvgString);
   
   if (normalizedCurrent !== normalizedBaseline) {
-    // Находим различия для более информативного сообщения
-    const differences = findSvgDifferences(normalizedCurrent, normalizedBaseline);
-    
-    
     // Сохраняем текущий результат для отладки
     const debugPath = baselineSvgPath.replace('.svg', '-current.svg');
     fs.writeFileSync(debugPath, currentSvgString, 'utf-8');
     
-    throw new Error(`SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы не соответствует бейзлайну. Файл: ${baseFileName}. Различия: ${differences}. Текущий результат: ${debugPath}`);
+    throw new Error(`SVG для ${theme === 'light' ? 'светлой' : 'тёмной'} темы не соответствует бейзлайну. Файл: ${baseFileName}-${theme}.svg. Текущий результат сохранен в: ${debugPath}`);
   }
 
 }

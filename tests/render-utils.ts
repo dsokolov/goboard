@@ -85,6 +85,12 @@ function processCssForSvg(css: string, theme: Theme): string {
     result = result.replace(/\.go-board-svg\s*\*[^{]*\{[^}]*\}/g, '');
     result = result.replace(/\.go-board-container\s+svg,\s*\.go-board-svg[^{]*\{[^}]*\}/g, '');
     
+    // Убираем стили для блоков ошибок (они не нужны для SVG, только для HTML)
+    // Удаляем комментарий отдельно
+    result = result.replace(/\/\*\s*Стили для блоков ошибок\s*\*\/\s*/g, '');
+    // Удаляем блок стилей (многострочный, используем [\s\S] для захвата всех символов включая переносы строк)
+    result = result.replace(/\.go-board-error[\s\S]*?\{[\s\S]*?\}/g, '');
+    
     // Убираем лишние пустые строки
     result = result.replace(/\n{3,}/g, '\n\n');
     
