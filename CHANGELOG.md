@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.0
+
+* Added support for coordinates display control: `coordinates <on, off, top, left, bottom, right>` parameter
+* #4 Added plugin settings page with options for default board size, coordinate display, and hoshi marks
+* #4 Improved error processing and display for invalid diagram syntax
+* Updated documentation and images
+
 ## 0.8.0
 
 * #9 Added support for move number marks on stones: `B(1)`, `W(2)`, etc.
