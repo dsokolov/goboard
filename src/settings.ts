@@ -154,13 +154,21 @@ export class GoBoardSettingTab extends PluginSettingTab {
 		const coordinateSetting = new Setting(containerEl)
 			.setName('Default coordinate state')
 			.setDesc('Select which sides of the board should show coordinates by default.');
+		
+		// Добавляем класс для стилизации - находим последний setting-item элемент
+		const settingItems = containerEl.querySelectorAll('.setting-item');
+		if (settingItems.length > 0) {
+			const lastSettingItem = settingItems[settingItems.length - 1] as HTMLElement;
+			lastSettingItem.classList.add('go-board-coordinate-setting');
+		}
 
-		// Создаем контейнер для чекбоксов в одну строку
+		// Создаем контейнер для переключателей вертикально
 		const checkboxesContainer = coordinateSetting.controlEl.createDiv();
+		checkboxesContainer.classList.add('go-board-coordinate-toggles');
 		checkboxesContainer.style.display = 'flex';
-		checkboxesContainer.style.gap = '16px';
-		checkboxesContainer.style.flexWrap = 'wrap';
-		checkboxesContainer.style.alignItems = 'center';
+		checkboxesContainer.style.flexDirection = 'column';
+		checkboxesContainer.style.gap = '12px';
+		checkboxesContainer.style.alignItems = 'flex-start';
 
 		const sides = [
 			{ key: 'top', label: 'Top' },
@@ -170,37 +178,64 @@ export class GoBoardSettingTab extends PluginSettingTab {
 		];
 
 		sides.forEach(({ key, label }) => {
-			const checkboxWrapper = checkboxesContainer.createDiv();
-			checkboxWrapper.style.display = 'flex';
-			checkboxWrapper.style.alignItems = 'center';
-			checkboxWrapper.style.gap = '6px';
+			const toggleWrapper = checkboxesContainer.createDiv();
+			toggleWrapper.classList.add('go-board-coordinate-toggle-wrapper');
+			toggleWrapper.style.display = 'flex';
+			toggleWrapper.style.alignItems = 'center';
+			toggleWrapper.style.gap = '12px';
 
-			const checkbox = checkboxWrapper.createEl('input', {
-				type: 'checkbox',
-				attr: { id: `coordinate-${key}` }
-			});
-			checkbox.checked = coordinateSides.includes(key);
-			checkbox.style.cursor = 'pointer';
-
-			const labelEl = checkboxWrapper.createEl('label', {
+			const labelEl = toggleWrapper.createEl('label', {
 				text: label,
 				attr: { for: `coordinate-${key}` }
 			});
 			labelEl.style.cursor = 'pointer';
 			labelEl.style.margin = '0';
 			labelEl.style.userSelect = 'none';
+			labelEl.style.flex = '1';
 
-			checkbox.addEventListener('change', async () => {
-				await updateCoordinateSide(key, checkbox.checked);
-				// Обновляем состояние всех чекбоксов после изменения
+			const toggleContainer = toggleWrapper.createDiv();
+			toggleContainer.classList.add('go-board-coordinate-toggle');
+			toggleContainer.setAttribute('data-key', key);
+			toggleContainer.setAttribute('role', 'switch');
+			toggleContainer.setAttribute('aria-checked', coordinateSides.includes(key) ? 'true' : 'false');
+			toggleContainer.setAttribute('tabindex', '0');
+			
+			if (coordinateSides.includes(key)) {
+				toggleContainer.classList.add('is-enabled');
+			}
+
+			const toggleSlider = toggleContainer.createDiv();
+			toggleSlider.classList.add('go-board-coordinate-toggle-slider');
+
+			const handleToggle = async (event?: Event) => {
+				if (event) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+				const isEnabled = toggleContainer.classList.contains('is-enabled');
+				const newState = !isEnabled;
+				
+				await updateCoordinateSide(key, newState);
+				
+				// Обновляем состояние всех переключателей после изменения
 				sides.forEach(({ key: k }) => {
-					const cb = checkboxesContainer.querySelector(`#coordinate-${k}`) as HTMLInputElement;
-					if (cb) {
+					const toggle = checkboxesContainer.querySelector(`[data-key="${k}"]`) as HTMLElement;
+					if (toggle) {
 						const currentSides = this.plugin.settings.coordinateSides || [];
-						cb.checked = currentSides.includes(k);
+						const shouldBeEnabled = currentSides.includes(k);
+						toggle.classList.toggle('is-enabled', shouldBeEnabled);
+						toggle.setAttribute('aria-checked', shouldBeEnabled ? 'true' : 'false');
 					}
 				});
+			};
+
+			toggleContainer.addEventListener('click', handleToggle);
+			toggleContainer.addEventListener('keydown', (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					handleToggle(e);
+				}
 			});
+			labelEl.addEventListener('click', handleToggle);
 		});
 	}
 

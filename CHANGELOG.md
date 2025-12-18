@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.1
+
+* Fixed mobile layout: coordinate toggles now display vertically on all devices
+
 ## 0.9.0
 
 * Added support for coordinates display control: `coordinates <on, off, top, left, bottom, right>` parameter
