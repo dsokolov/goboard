@@ -1,5 +1,5 @@
 import { HoshiParser } from '../src/parser';
-import { ParseResult } from '../src/models';
+import { ParseResult, COORDINATE_SIDES } from '../src/models';
 
 describe('HoshiParser', () => {
   let parser: HoshiParser;
@@ -74,7 +74,7 @@ describe('HoshiParser', () => {
       const initialResult = new ParseResult(
         [],
         { width: 9, height: 9 },
-        false,
+        new Set<string>(),
         [],
         null,
         false
@@ -82,7 +82,7 @@ describe('HoshiParser', () => {
       const result = parser.parse('hoshi on', 1, initialResult);
 
       expect(result.boardSize).toEqual({ width: 9, height: 9 });
-      expect(result.showCoordinates).toBe(false);
+      expect(result.coordinateSides.size).toBe(0);
       expect(result.showHoshi).toBe(true);
       expect(result.errors.length).toBe(0);
     });

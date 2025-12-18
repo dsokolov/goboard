@@ -99,6 +99,45 @@ B D4
 ![Letter marks](/docs/images/mark-letter-light.png#gh-light-mode-only)
 ![Letter marks](/docs/images/mark-letter-dark.png#gh-dark-mode-only)
 
+## Displaying coordinates
+
+To control coordinate display, use the `coordinates <on, off, top, left, bottom, right>` parameter. For example:
+
+<!-- goboard: coordinates-all -->
+<pre>
+```goboard
+size 9x9
+coordinates on
+```
+</pre>
+
+![All coordinates are displayed](/docs/images/coordinates-all-light.png#gh-light-mode-only)
+![All coordinates are displayed](/docs/images/coordinates-all-dark.png#gh-dark-mode-only)
+
+<!-- goboard: coordinates-off -->
+<pre>
+```goboard
+size 9x9
+coordinates off
+```
+</pre>
+
+![No coordinates are displayed](/docs/images/coordinates-off-light.png#gh-light-mode-only)
+![No coordinates are displayed](/docs/images/coordinates-off-dark.png#gh-dark-mode-only)
+
+<!-- goboard: coordinates-left-bottom -->
+<pre>
+```goboard
+size 9x9
+coordinates left, bottom
+```
+</pre>
+
+![Coordinates only on the left and bottom](/docs/images/coordinates-left-bottom-light.png#gh-light-mode-only)
+![Coordinates only on the left and bottom](/docs/images/coordinates-left-bottom-dark.png#gh-dark-mode-only)
+
+If the `coordinates` value is not specified, coordinates will be displayed according to the default settings from the plugin settings.
+
 ## Viewport (visible area)
 
 If you don't need to display the entire goban diagram (for example, only a small position in the corner is being considered), you can use the `viewport <coordinate1>-<coordinate2>` parameter:

@@ -99,6 +99,45 @@ B D4
 ![Метки-буквы](/docs/images/mark-letter-light.png#gh-light-mode-only)
 ![Метки-буквы](/docs/images/mark-letter-dark.png#gh-dark-mode-only)
 
+## Отображение координат (сoordinates)
+
+Для управления отображением координат используйте параметр `coordinates <on, off, top, left, bottom, right>`. Например:
+
+<!-- goboard: coordinates-all -->
+<pre>
+```goboard
+size 9x9
+coordinates on
+```
+</pre>
+
+![Отображаются все координаты](/docs/images/coordinates-all-light.png#gh-light-mode-only)
+![Отображаются все координаты](/docs/images/coordinates-all-dark.png#gh-dark-mode-only)
+
+<!-- goboard: coordinates-off -->
+<pre>
+```goboard
+size 9x9
+coordinates off
+```
+</pre>
+
+![Никакие координаты не отображаются](/docs/images/coordinates-off-light.png#gh-light-mode-only)
+![Никакие координаты не отображаются](/docs/images/coordinates-off-dark.png#gh-dark-mode-only)
+
+<!-- goboard: coordinates-left-bottom -->
+<pre>
+```goboard
+size 9x9
+coordinates left, bottom
+```
+</pre>
+
+![Координаты только слева и снизу](/docs/images/coordinates-left-bottom-light.png#gh-light-mode-only)
+![Координаты только слева и снизу](/docs/images/coordinates-left-bottom-dark.png#gh-dark-mode-only)
+
+Если значение `coordinates`, то координаты будут отображаться согласно дефолтным настройкам из настроек плагина.
+
 ## Область видимости (viewport)
 
 Если нет необходимости отображать всю диаграмму гобана (например, рассматривается только небольшая позиция в углу), то можно использовать параметр `viewport <координата1>-<координата2>`:

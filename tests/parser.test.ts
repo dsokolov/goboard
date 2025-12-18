@@ -58,23 +58,23 @@ describe('Parser', () => {
         expect(result.errors.length).toBeGreaterThan(0);
       });
 
-      it('Coordinates ON should set showCoordinates=true', () => {
+      it('Coordinates ON should set all coordinate sides', () => {
         const source = testDataLoader.loadTestData('coordinates-on.txt');
         const result = parser.parse(source);
 
         expect(result).toBeInstanceOf(ParseResult);
         expect(result.boardSize).toEqual({ width: 19, height: 19 });
-        expect(result.showCoordinates).toBe(true);
+        expect(result.coordinateSides.size).toBe(4);
         expect(result.errors.length).toBe(0);
       });
 
-      it('Coordinates OFF should set showCoordinates=false', () => {
+      it('Coordinates OFF should set no coordinate sides', () => {
         const source = testDataLoader.loadTestData('coordinates-off.txt');
         const result = parser.parse(source);
 
         expect(result).toBeInstanceOf(ParseResult);
         expect(result.boardSize).toEqual({ width: 19, height: 19 });
-        expect(result.showCoordinates).toBe(false);
+        expect(result.coordinateSides.size).toBe(0);
         expect(result.errors.length).toBe(0);
       });
 

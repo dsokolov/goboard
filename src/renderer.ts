@@ -1,4 +1,4 @@
-import { Board, PointContent, RenderParams } from "./models";
+import { Board, PointContent, RenderParams, COORDINATE_SIDES } from "./models";
 import { indexToLetter } from "./utils";
 
 type TextAnchor = 'start' | 'middle' | 'end';
@@ -44,7 +44,13 @@ export class Renderer {
         const boundBottom = Math.min(fullBottom, Math.max(source.boundBottom, fullTop));
         
         // Увеличенные отступы для координат, чтобы камни не закрывали подписи
-        const padding = source.showCoordinates ? fontSize * 2.5 : 20;
+        // Padding зависит от того, какие стороны выбраны для координат
+        const hasLeft = source.coordinateSides.has(COORDINATE_SIDES.LEFT);
+        const hasRight = source.coordinateSides.has(COORDINATE_SIDES.RIGHT);
+        const hasTop = source.coordinateSides.has(COORDINATE_SIDES.TOP);
+        const hasBottom = source.coordinateSides.has(COORDINATE_SIDES.BOTTOM);
+        const hasAnyCoordinates = hasLeft || hasRight || hasTop || hasBottom;
+        const padding = hasAnyCoordinates ? fontSize * 2.5 : 20;
         
         // Рассчитываем размер ячейки на основе полного размера доски
         // Сначала находим размер для полной доски
@@ -149,8 +155,16 @@ export class Renderer {
         }
 
         // Координаты
-        if (source.showCoordinates) {
+        if (hasLeft) {
             this.renderLeftNumbers(svg, padding, stepX, stepY, localRows, padding, boundTop);
+        }
+        if (hasRight) {
+            this.renderRightNumbers(svg, totalWidth, padding, stepX, stepY, localRows, padding, boundTop);
+        }
+        if (hasTop) {
+            this.renderTopLetters(svg, padding, stepX, stepY, localCols, padding, boundLeft);
+        }
+        if (hasBottom) {
             this.renderBottomLetters(svg, padding, stepY, stepX, localCols, totalHeight, padding, boundLeft);
         }
 
@@ -296,6 +310,31 @@ export class Renderer {
             const gap = Math.max(8, fontSize * 1.2);
             const y = totalHeight - paddingBottom + gap;
             const text = this.renderCoordinateSymbol(xPos, y, label, fontSize, 'middle', 'hanging');
+            svg.appendChild(text);
+        }
+    }
+
+    private renderTopLetters(svg: SVGElement, paddingLeft: number, stepX: number, _stepY: number, localCols: number, paddingTop: number, globalColStart: number) {
+        const fontSize = this.getFontSizeFromCSS();
+        for (let i = 0; i < localCols; i++) {
+            const xPos = paddingLeft + i * stepX;
+            const label = indexToLetter(globalColStart + i);
+            const gap = Math.max(8, fontSize * 1.2);
+            const y = paddingTop - gap;
+            const text = this.renderCoordinateSymbol(xPos, y, label, fontSize, 'middle', 'bottom');
+            svg.appendChild(text);
+        }
+    }
+
+    private renderRightNumbers(svg: SVGElement, totalWidth: number, paddingRight: number, _stepX: number, stepY: number, localRows: number, paddingTop: number, globalRowStart: number) {
+        const fontSize = this.getFontSizeFromCSS();
+        for (let i = 0; i < localRows; i++) {
+            const invertedI = localRows - 1 - i;
+            const yPos = paddingTop + invertedI * stepY;
+            const label = (globalRowStart + i + 1).toString();
+            const gap = Math.max(8, fontSize * 1.2);
+            const x = totalWidth - paddingRight + gap;
+            const text = this.renderCoordinateSymbol(x, yPos, label, fontSize, 'start', 'middle');
             svg.appendChild(text);
         }
     }

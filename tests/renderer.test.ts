@@ -33,7 +33,7 @@ describe('Renderer', () => {
         [new Point(PointContent.Empty, null, false), new Point(PointContent.Black, null, true), new Point(PointContent.Empty, null, false)],
         [new Point(PointContent.Empty, null, false), new Point(PointContent.Empty, null, false), new Point(PointContent.Empty, null, false)]
       ];
-      const board = new Board(points, true, 0, points[0].length - 1, 0, points.length - 1);
+      const board = new Board(points, new Set(['top', 'bottom', 'left', 'right']), 0, points[0].length - 1, 0, points.length - 1);
       
       // Рендерим SVG
       const renderParams = createRenderParams({ width: 100, height: 100 });
@@ -76,7 +76,7 @@ describe('Renderer', () => {
       const points: Point[][] = Array(19).fill(null).map(() => 
         Array(19).fill(null).map(() => new Point(PointContent.Empty, null, false))
       );
-      const board = new Board(points, true, 0, points[0].length - 1, 0, points.length - 1);
+      const board = new Board(points, new Set(['top', 'bottom', 'left', 'right']), 0, points[0].length - 1, 0, points.length - 1);
       
       // Рендерим SVG с небольшим базовым размером
       const renderParams = createRenderParams({ width: 200, height: 200 });
@@ -98,7 +98,7 @@ describe('Renderer', () => {
         [new Point(PointContent.Empty, null, false), new Point(PointContent.Black, null, true), new Point(PointContent.Empty, null, false)],
         [new Point(PointContent.Empty, null, false), new Point(PointContent.Empty, null, false), new Point(PointContent.Empty, null, false)]
       ];
-      const board = new Board(points, true, 0, points[0].length - 1, 0, points.length - 1);
+      const board = new Board(points, new Set(['top', 'bottom', 'left', 'right']), 0, points[0].length - 1, 0, points.length - 1);
       
       // Рендерим SVG для светлой темы
       const renderParams = createRenderParams({ width: 100, height: 100 });
@@ -122,10 +122,10 @@ describe('Renderer', () => {
       const parseResult = parser.parse(source);
       
       expect(parseResult).toBeInstanceOf(ParseResult);
-      expect(parseResult.showCoordinates).toBe(true);
+      expect(parseResult.coordinateSides.size).toBe(4);
       
       const board = mapper.map(parseResult);
-      expect(board.showCoordinates).toBe(true);
+      expect(board.coordinateSides.size).toBe(4);
       
       const renderParams = createRenderParams();
       const svg = renderer.render(board, renderParams);
@@ -144,10 +144,10 @@ describe('Renderer', () => {
       const parseResult = parser.parse(source);
       
       expect(parseResult).toBeInstanceOf(ParseResult);
-      expect(parseResult.showCoordinates).toBe(false);
+      expect(parseResult.coordinateSides.size).toBe(0);
       
       const board = mapper.map(parseResult);
-      expect(board.showCoordinates).toBe(false);
+      expect(board.coordinateSides.size).toBe(0);
       
       const renderParams = createRenderParams();
       const svg = renderer.render(board, renderParams);

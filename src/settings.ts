@@ -1,6 +1,8 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import GoBoardPlugin from './main';
 import { detectOS } from './osUtils';
+// Не импортируем COORDINATE_SIDES, чтобы избежать циклической зависимости с models.ts
+// Используем строковые литералы напрямую
 
 export interface BoardSizeOption {
 	title: string;
@@ -17,13 +19,15 @@ export const BOARD_SIZES: Record<'9x9' | '13x13' | '19x19', BoardSizeOption> = {
 export interface GoBoardPluginSettings {
 	defaultBoardSize: '9x9' | '13x13' | '19x19';
 	showHoshi: boolean;
-	showCoordinates: boolean;
+	// Для обратной совместимости сохраняем оба поля
+	showCoordinates?: boolean; // Старое поле, будет конвертировано в coordinateSides
+	coordinateSides?: string[]; // Новое поле - массив сторон для сериализации в JSON
 }
 
 export const DEFAULT_SETTINGS: GoBoardPluginSettings = {
 	defaultBoardSize: '19x19',
 	showHoshi: true,
-	showCoordinates: true,
+	coordinateSides: ['top', 'bottom', 'left', 'right'], // Используем строковые литералы, чтобы избежать циклической зависимости
 };
 
 interface ObsidianAppWithVersion extends App {
@@ -122,18 +126,82 @@ export class GoBoardSettingTab extends PluginSettingTab {
 					});
 			});
 
-		new Setting(containerEl)
-			.setName('Display coordinates')
-			.setDesc('Show coordinates on the board by default.')
-			.addToggle(toggle => {
-				toggle
-					.setValue(this.plugin.settings.showCoordinates)
-					.onChange(async (value: boolean) => {
-						this.plugin.settings.showCoordinates = value;
-						await this.plugin.saveSettings();
-						this.displayExampleBoard(this.containerEl);
-					});
+		// Координаты - группа чекбоксов для каждой стороны в одной строке
+		const coordinateSides = this.plugin.settings.coordinateSides || 
+			(this.plugin.settings.showCoordinates 
+				? ['top', 'bottom', 'left', 'right']
+				: []);
+
+		const updateCoordinateSide = async (side: string, value: boolean) => {
+			const currentSides = this.plugin.settings.coordinateSides || 
+				(this.plugin.settings.showCoordinates !== undefined && typeof this.plugin.settings.showCoordinates === 'boolean'
+					? (this.plugin.settings.showCoordinates 
+						? ['top', 'bottom', 'left', 'right']
+						: [])
+					: ['top', 'bottom', 'left', 'right']);
+			
+			const newSides = value 
+				? [...currentSides.filter(s => s !== side), side]
+				: currentSides.filter(s => s !== side);
+			
+			this.plugin.settings.coordinateSides = newSides;
+			// Удаляем старое поле для обратной совместимости
+			delete this.plugin.settings.showCoordinates;
+			await this.plugin.saveSettings();
+			this.displayExampleBoard(this.containerEl);
+		};
+
+		const coordinateSetting = new Setting(containerEl)
+			.setName('Default coordinate state')
+			.setDesc('Select which sides of the board should show coordinates by default.');
+
+		// Создаем контейнер для чекбоксов в одну строку
+		const checkboxesContainer = coordinateSetting.controlEl.createDiv();
+		checkboxesContainer.style.display = 'flex';
+		checkboxesContainer.style.gap = '16px';
+		checkboxesContainer.style.flexWrap = 'wrap';
+		checkboxesContainer.style.alignItems = 'center';
+
+		const sides = [
+			{ key: 'top', label: 'Top' },
+			{ key: 'bottom', label: 'Bottom' },
+			{ key: 'left', label: 'Left' },
+			{ key: 'right', label: 'Right' }
+		];
+
+		sides.forEach(({ key, label }) => {
+			const checkboxWrapper = checkboxesContainer.createDiv();
+			checkboxWrapper.style.display = 'flex';
+			checkboxWrapper.style.alignItems = 'center';
+			checkboxWrapper.style.gap = '6px';
+
+			const checkbox = checkboxWrapper.createEl('input', {
+				type: 'checkbox',
+				attr: { id: `coordinate-${key}` }
 			});
+			checkbox.checked = coordinateSides.includes(key);
+			checkbox.style.cursor = 'pointer';
+
+			const labelEl = checkboxWrapper.createEl('label', {
+				text: label,
+				attr: { for: `coordinate-${key}` }
+			});
+			labelEl.style.cursor = 'pointer';
+			labelEl.style.margin = '0';
+			labelEl.style.userSelect = 'none';
+
+			checkbox.addEventListener('change', async () => {
+				await updateCoordinateSide(key, checkbox.checked);
+				// Обновляем состояние всех чекбоксов после изменения
+				sides.forEach(({ key: k }) => {
+					const cb = checkboxesContainer.querySelector(`#coordinate-${k}`) as HTMLInputElement;
+					if (cb) {
+						const currentSides = this.plugin.settings.coordinateSides || [];
+						cb.checked = currentSides.includes(k);
+					}
+				});
+			});
+		});
 	}
 
 	private displayGitHubLink(containerEl: HTMLElement): void {

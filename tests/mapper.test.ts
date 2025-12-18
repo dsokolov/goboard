@@ -1,5 +1,5 @@
 import { Mapper } from '../src/mapper';
-import { ParseResult, Instruction, StoneColor, Color, SinglePosition, IntervalPosition, Board, PointContent, MarkNone } from '../src/models';
+import { ParseResult, Instruction, StoneColor, Color, SinglePosition, IntervalPosition, Board, PointContent, MarkNone, COORDINATE_SIDES } from '../src/models';
 
 describe('Mapper', () => {
   let mapper: Mapper;
@@ -10,7 +10,7 @@ describe('Mapper', () => {
 
   describe('map', () => {
     it('должен создавать пустую доску 3x3', () => {
-      const parseResult = new ParseResult([], { width: 3, height: 3 }, true, [], null, true);
+      const parseResult = new ParseResult([], { width: 3, height: 3 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       expect(board).toBeInstanceOf(Board);
@@ -28,7 +28,7 @@ describe('Mapper', () => {
     });
 
     it('должен создавать пустую доску 9x9', () => {
-      const parseResult = new ParseResult([], { width: 9, height: 9 }, true, [], null, true);
+      const parseResult = new ParseResult([], { width: 9, height: 9 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       expect(board).toBeInstanceOf(Board);
@@ -44,7 +44,7 @@ describe('Mapper', () => {
     });
 
     it('должен создавать пустую доску 19x19', () => {
-      const parseResult = new ParseResult([], { width: 19, height: 19 }, true, [], null, true);
+      const parseResult = new ParseResult([], { width: 19, height: 19 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       expect(board).toBeInstanceOf(Board);
@@ -61,7 +61,7 @@ describe('Mapper', () => {
 
     it('должен размещать черный камень в позиции A1 (0,0)', () => {
       const instruction = new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0)]);
-      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, true, [], null, true);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       expect(board.points[0][0].content).toBe(PointContent.Black);
@@ -78,7 +78,7 @@ describe('Mapper', () => {
 
     it('должен размещать белый камень в позиции J9 (8,8)', () => {
       const instruction = new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(8, 8)]);
-      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, true, [], null, true);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       expect(board.points[8][8].content).toBe(PointContent.White);
@@ -99,7 +99,7 @@ describe('Mapper', () => {
         new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(0, 1)]),
         new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 2)])
       ];
-      const parseResult = new ParseResult(instructions, { width: 9, height: 9 }, true, [], null, true);
+      const parseResult = new ParseResult(instructions, { width: 9, height: 9 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       expect(board.points[0][0].content).toBe(PointContent.Black);
@@ -122,7 +122,7 @@ describe('Mapper', () => {
         new MarkNone(),
         [new IntervalPosition(new SinglePosition(0, 0), new SinglePosition(0, 4))]
       );
-      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, true, [], null, true);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       // Проверяем, что все позиции от A1 до A5 заполнены черными камнями
@@ -149,7 +149,7 @@ describe('Mapper', () => {
           new IntervalPosition(new SinglePosition(0, 2), new SinglePosition(0, 4))
         ]
       );
-      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, true, [], null, true);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       // Проверяем одиночную позицию A1
@@ -178,7 +178,7 @@ describe('Mapper', () => {
         new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(1, 1)]),
         new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(2, 2)])
       ];
-      const parseResult = new ParseResult(instructions, { width: 3, height: 3 }, true, [], null, true);
+      const parseResult = new ParseResult(instructions, { width: 3, height: 3 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       expect(board.points[0][0].content).toBe(PointContent.Black);
@@ -204,7 +204,7 @@ describe('Mapper', () => {
         [new IntervalPosition(new SinglePosition(1, 2), new SinglePosition(3, 4))]
       );
 
-      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, true, [], null, true);
+      const parseResult = new ParseResult([instruction], { width: 9, height: 9 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       // Подсчитываем количество черных камней
@@ -244,7 +244,7 @@ describe('Mapper', () => {
     });
 
     it('должен корректно размещать хоси на доске 9x9', () => {
-      const parseResult = new ParseResult([], { width: 9, height: 9 }, true, [], null, true);
+      const parseResult = new ParseResult([], { width: 9, height: 9 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       // Проверяем конкретные позиции хоси для доски 9x9:
@@ -275,7 +275,7 @@ describe('Mapper', () => {
     });
 
     it('должен корректно размещать хоси на доске 13x13', () => {
-      const parseResult = new ParseResult([], { width: 13, height: 13 }, true, [], null, true);
+      const parseResult = new ParseResult([], { width: 13, height: 13 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       // Для 13x13 хоси находятся на позициях 3, 6, 9 (в обеих осях)
@@ -288,7 +288,7 @@ describe('Mapper', () => {
     });
 
     it('должен корректно размещать хоси на доске 19x19', () => {
-      const parseResult = new ParseResult([], { width: 19, height: 19 }, true, [], null, true);
+      const parseResult = new ParseResult([], { width: 19, height: 19 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, true);
       const board = mapper.map(parseResult);
 
       // Для 19x19 хоси находятся на позициях 3, 9, 15 (в обеих осях)
@@ -301,7 +301,7 @@ describe('Mapper', () => {
     });
 
     it('должен не размещать хоси когда showHoshi=false', () => {
-      const parseResult = new ParseResult([], { width: 9, height: 9 }, true, [], null, false);
+      const parseResult = new ParseResult([], { width: 9, height: 9 }, new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]), [], null, false);
       const board = mapper.map(parseResult);
 
       // Проверяем, что нет хоси

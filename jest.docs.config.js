@@ -8,5 +8,8 @@ module.exports = {
       '!src/**/*.d.ts',
     ],
     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
+    moduleNameMapper: {
+      '^obsidian$': '<rootDir>/tests/mocks/obsidian.ts',
+    },
   };
 

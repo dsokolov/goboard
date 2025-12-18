@@ -1,6 +1,6 @@
 import { Plugin } from 'obsidian';
 import { Renderer } from './renderer';
-import { createRenderParams, ParseError } from './models';
+import { createRenderParams, ParseError, COORDINATE_SIDES } from './models';
 import { Parser } from './parser';
 import { Mapper } from './mapper';
 import { GoBoardPluginSettings, DEFAULT_SETTINGS, GoBoardSettingTab } from './settings';
@@ -63,6 +63,33 @@ export default class GoBoardPlugin extends Plugin {
 		try {
 			const loadedData = await this.loadData() as Partial<GoBoardPluginSettings> | null;
 			this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
+			
+			// Миграция: конвертируем старое поле showCoordinates в coordinateSides
+			if (loadedData && loadedData.showCoordinates !== undefined && typeof loadedData.showCoordinates === 'boolean') {
+				if (!this.settings.coordinateSides || !Array.isArray(this.settings.coordinateSides) || this.settings.coordinateSides.length === 0) {
+					this.settings.coordinateSides = loadedData.showCoordinates
+						? [COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]
+						: [];
+					// Удаляем старое поле после миграции
+					delete this.settings.showCoordinates;
+					// Сохраняем мигрированные настройки
+					await this.saveSettings();
+				}
+			}
+			
+			// Убеждаемся, что coordinateSides всегда определен и является валидным массивом
+			if (!this.settings.coordinateSides || !Array.isArray(this.settings.coordinateSides)) {
+				this.settings.coordinateSides = [COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT];
+			}
+			
+			// Валидация: проверяем, что все значения в массиве являются валидными сторонами
+			const validSides: string[] = [COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT];
+			this.settings.coordinateSides = this.settings.coordinateSides.filter((side: string) => validSides.includes(side));
+			
+			// Если после фильтрации массив пуст, используем значения по умолчанию
+			if (this.settings.coordinateSides.length === 0) {
+				this.settings.coordinateSides = [COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT];
+			}
 		} catch (error) {
 			console.error('Failed to load GoBoard settings, using defaults:', error);
 			this.settings = Object.assign({}, DEFAULT_SETTINGS);

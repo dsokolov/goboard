@@ -216,7 +216,8 @@ function findNextGoboardCodeBlock(lines: string[], startIndex: number): { conten
         }
         
         // Если мы в блоке <pre>, ищем начало goboard блока
-        if (inPreBlock && trimmedLine.includes('```goboard')) {
+        // Обрабатываем ТОЛЬКО блоки с ```goboard
+        if (inPreBlock && !inGoboardBlock && trimmedLine.includes('```goboard')) {
             inGoboardBlock = true;
             goboardStartIndex = i;
             

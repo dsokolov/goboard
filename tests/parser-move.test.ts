@@ -113,13 +113,13 @@ describe('MoveParser', () => {
       const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B A1, A3-A5', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.coordinateSides, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('W A2', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.coordinateSides, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('B C1-E3, F1-F9', 3, initialResult3);
 
-      const initialResult4 = new ParseResult(result3.instructions, result3.boardSize, result3.showCoordinates, result3.errors, result3.viewport, result3.showHoshi);
+      const initialResult4 = new ParseResult(result3.instructions, result3.boardSize, result3.coordinateSides, result3.errors, result3.viewport, result3.showHoshi);
       const result4 = parser.parse('W D1, D2, D3', 4, initialResult4);
 
       expect(result4.instructions).toEqual([
@@ -196,7 +196,7 @@ describe('MoveParser', () => {
       const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B(1) D4', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.coordinateSides, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('W(2) C3', 2, initialResult2);
 
       expect(result2.instructions).toEqual([
@@ -265,10 +265,10 @@ describe('MoveParser', () => {
       const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B(1) A1', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.coordinateSides, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('W(10) A2', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.coordinateSides, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('B(99) A3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([
@@ -283,10 +283,10 @@ describe('MoveParser', () => {
       const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B(1) A1', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.coordinateSides, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('W A2', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.coordinateSides, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('B(3) A3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([
@@ -333,10 +333,10 @@ describe('MoveParser', () => {
       const initialResult1 = ParseResult.create();
       const result1 = parser.parse('(A) C3', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.coordinateSides, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('(B) C7', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.coordinateSides, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('(C) D3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([
@@ -424,13 +424,13 @@ describe('MoveParser', () => {
       const initialResult1 = ParseResult.create();
       const result1 = parser.parse('B(1) D4', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.coordinateSides, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('(A) C3', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.coordinateSides, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('W(B) E5', 3, initialResult3);
 
-      const initialResult4 = new ParseResult(result3.instructions, result3.boardSize, result3.showCoordinates, result3.errors, result3.viewport, result3.showHoshi);
+      const initialResult4 = new ParseResult(result3.instructions, result3.boardSize, result3.coordinateSides, result3.errors, result3.viewport, result3.showHoshi);
       const result4 = parser.parse('B A1', 4, initialResult4);
 
       expect(result4.instructions).toEqual([
@@ -446,10 +446,10 @@ describe('MoveParser', () => {
       const initialResult1 = ParseResult.create();
       const result1 = parser.parse('(A) A1', 1, initialResult1);
 
-      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.showCoordinates, result1.errors, result1.viewport, result1.showHoshi);
+      const initialResult2 = new ParseResult(result1.instructions, result1.boardSize, result1.coordinateSides, result1.errors, result1.viewport, result1.showHoshi);
       const result2 = parser.parse('(Z) A2', 2, initialResult2);
 
-      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.showCoordinates, result2.errors, result2.viewport, result2.showHoshi);
+      const initialResult3 = new ParseResult(result2.instructions, result2.boardSize, result2.coordinateSides, result2.errors, result2.viewport, result2.showHoshi);
       const result3 = parser.parse('B(M) A3', 3, initialResult3);
 
       expect(result3.instructions).toEqual([

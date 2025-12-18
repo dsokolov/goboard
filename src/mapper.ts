@@ -7,7 +7,7 @@ export class Mapper {
             throw new Error(`Parse errors: ${source.errors.map(e => e.message).join(', ')}`);
         }
         
-        const { boardSize, instructions, showCoordinates, showHoshi } = source;
+        const { boardSize, instructions, coordinateSides, showHoshi } = source;
         const points: Point[][] = [];
         
         // Создаем пустую доску
@@ -30,7 +30,7 @@ export class Mapper {
         const viewport = source.viewport;
         const bounds = this.mapViewport(boardSize, viewport);
 
-        return new Board(points, showCoordinates, bounds.boundLeft, bounds.boundRight, bounds.boundTop, bounds.boundBottom);
+        return new Board(points, coordinateSides, bounds.boundLeft, bounds.boundRight, bounds.boundTop, bounds.boundBottom);
     }
     
     private mapViewport(boardSize: BoardSize, viewport: Viewport | null): {

@@ -26,7 +26,11 @@ export class PluginSettingTab {
 }
 
 export class Setting {
-	constructor(containerEl: HTMLElement) {}
+	controlEl: HTMLElement;
+	
+	constructor(containerEl: HTMLElement) {
+		this.controlEl = document.createElement('div');
+	}
 	
 	setName(name: string): this {
 		return this;
@@ -36,7 +40,15 @@ export class Setting {
 		return this;
 	}
 	
+	setHeading(): this {
+		return this;
+	}
+	
 	addDropdown(callback: (dropdown: any) => void): this {
+		return this;
+	}
+	
+	addToggle(callback: (toggle: any) => void): this {
 		return this;
 	}
 }

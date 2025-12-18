@@ -58,13 +58,19 @@ Running tests:
 npm test
 ```
 
+Running linter:
+
+```
+npm run lint
+```
+
 Updating test baselines:
 
 ```
 npm run update-baseline
 ```
 
-Updating documentation images
+Updating documentation images:
 
 ```
 npm run update-docs
