@@ -4,6 +4,14 @@ import { detectOS } from './osUtils';
 // Не импортируем COORDINATE_SIDES, чтобы избежать циклической зависимости с models.ts
 // Используем строковые литералы напрямую
 
+/**
+ * Устанавливает CSS свойства элемента через объект.
+ * Используется вместо прямого присваивания element.style.* для лучшей темизации и поддержки.
+ */
+function setCssProps(element: HTMLElement, props: Partial<CSSStyleDeclaration>): void {
+	Object.assign(element.style, props);
+}
+
 export interface BoardSizeOption {
 	title: string;
 	width: number;
@@ -165,10 +173,12 @@ export class GoBoardSettingTab extends PluginSettingTab {
 		// Создаем контейнер для переключателей вертикально
 		const checkboxesContainer = coordinateSetting.controlEl.createDiv();
 		checkboxesContainer.classList.add('go-board-coordinate-toggles');
-		checkboxesContainer.style.display = 'flex';
-		checkboxesContainer.style.flexDirection = 'column';
-		checkboxesContainer.style.gap = '12px';
-		checkboxesContainer.style.alignItems = 'flex-start';
+		setCssProps(checkboxesContainer, {
+			display: 'flex',
+			flexDirection: 'column',
+			gap: '12px',
+			alignItems: 'flex-start'
+		});
 
 		const sides = [
 			{ key: 'top', label: 'Top' },
@@ -180,18 +190,22 @@ export class GoBoardSettingTab extends PluginSettingTab {
 		sides.forEach(({ key, label }) => {
 			const toggleWrapper = checkboxesContainer.createDiv();
 			toggleWrapper.classList.add('go-board-coordinate-toggle-wrapper');
-			toggleWrapper.style.display = 'flex';
-			toggleWrapper.style.alignItems = 'center';
-			toggleWrapper.style.gap = '12px';
+			setCssProps(toggleWrapper, {
+				display: 'flex',
+				alignItems: 'center',
+				gap: '12px'
+			});
 
 			const labelEl = toggleWrapper.createEl('label', {
 				text: label,
 				attr: { for: `coordinate-${key}` }
 			});
-			labelEl.style.cursor = 'pointer';
-			labelEl.style.margin = '0';
-			labelEl.style.userSelect = 'none';
-			labelEl.style.flex = '1';
+			setCssProps(labelEl, {
+				cursor: 'pointer',
+				margin: '0',
+				userSelect: 'none',
+				flex: '1'
+			});
 
 			const toggleContainer = toggleWrapper.createDiv();
 			toggleContainer.classList.add('go-board-coordinate-toggle');
@@ -219,8 +233,8 @@ export class GoBoardSettingTab extends PluginSettingTab {
 				
 				// Обновляем состояние всех переключателей после изменения
 				sides.forEach(({ key: k }) => {
-					const toggle = checkboxesContainer.querySelector(`[data-key="${k}"]`) as HTMLElement;
-					if (toggle) {
+					const toggle = checkboxesContainer.querySelector(`[data-key="${k}"]`);
+					if (toggle instanceof HTMLElement) {
 						const currentSides = this.plugin.settings.coordinateSides || [];
 						const shouldBeEnabled = currentSides.includes(k);
 						toggle.classList.toggle('is-enabled', shouldBeEnabled);
@@ -229,13 +243,17 @@ export class GoBoardSettingTab extends PluginSettingTab {
 				});
 			};
 
-			toggleContainer.addEventListener('click', handleToggle);
+			toggleContainer.addEventListener('click', () => {
+				void handleToggle();
+			});
 			toggleContainer.addEventListener('keydown', (e) => {
 				if (e.key === 'Enter' || e.key === ' ') {
-					handleToggle(e);
+					void handleToggle(e);
 				}
 			});
-			labelEl.addEventListener('click', handleToggle);
+			labelEl.addEventListener('click', () => {
+				void handleToggle();
+			});
 		});
 	}
 
