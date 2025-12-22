@@ -2,7 +2,14 @@
 
 /* Стили для рендеринга диаграмм Го */
 
+
+
+
+
 /* Обеспечиваем наследование CSS переменных для SVG */
+
+
+
 
 /* CSS классы для элементов доски */
 .go-board-background {
@@ -39,6 +46,9 @@
 
 /* Стили камней для тёмной темы */
 
+
+
+
 /* Стили меток */
 .go-board-mark {
 	font-size: 16px;
@@ -60,7 +70,9 @@
 
 /* Белая метка (для черных камней) - темная тема */
 
+
 /* Черная метка (для белых камней) - темная тема */
+
 
 /* Метка на пустой клетке (использует цвет линий с контрастной обводкой) */
 .go-board-mark-empty {
@@ -69,6 +81,8 @@
 	stroke-width: 2;
 	paint-order: stroke fill;
 }
+
+
 
 /* Стили для настроек плагина */
 .go-board-settings-example {
@@ -89,4 +103,63 @@
 	margin-top: 2em;
 	padding-top: 2em;
 	border-top: 1px solid #ccc;
-}</style></defs><rect x="0" y="0" width="480" height="480" class="go-board-background"/><line x1="40" y1="40" x2="40" y2="440" class="go-board-line"/><line x1="73.33333333333334" y1="40" x2="73.33333333333334" y2="440" class="go-board-line"/><line x1="106.66666666666667" y1="40" x2="106.66666666666667" y2="440" class="go-board-line"/><line x1="140" y1="40" x2="140" y2="440" class="go-board-line"/><line x1="173.33333333333334" y1="40" x2="173.33333333333334" y2="440" class="go-board-line"/><line x1="206.66666666666669" y1="40" x2="206.66666666666669" y2="440" class="go-board-line"/><line x1="240" y1="40" x2="240" y2="440" class="go-board-line"/><line x1="273.33333333333337" y1="40" x2="273.33333333333337" y2="440" class="go-board-line"/><line x1="306.6666666666667" y1="40" x2="306.6666666666667" y2="440" class="go-board-line"/><line x1="340" y1="40" x2="340" y2="440" class="go-board-line"/><line x1="373.33333333333337" y1="40" x2="373.33333333333337" y2="440" class="go-board-line"/><line x1="406.6666666666667" y1="40" x2="406.6666666666667" y2="440" class="go-board-line"/><line x1="440" y1="40" x2="440" y2="440" class="go-board-line"/><line x1="40" y1="40" x2="440" y2="40" class="go-board-line"/><line x1="40" y1="73.33333333333334" x2="440" y2="73.33333333333334" class="go-board-line"/><line x1="40" y1="106.66666666666667" x2="440" y2="106.66666666666667" class="go-board-line"/><line x1="40" y1="140" x2="440" y2="140" class="go-board-line"/><line x1="40" y1="173.33333333333334" x2="440" y2="173.33333333333334" class="go-board-line"/><line x1="40" y1="206.66666666666669" x2="440" y2="206.66666666666669" class="go-board-line"/><line x1="40" y1="240" x2="440" y2="240" class="go-board-line"/><line x1="40" y1="273.33333333333337" x2="440" y2="273.33333333333337" class="go-board-line"/><line x1="40" y1="306.6666666666667" x2="440" y2="306.6666666666667" class="go-board-line"/><line x1="40" y1="340" x2="440" y2="340" class="go-board-line"/><line x1="40" y1="373.33333333333337" x2="440" y2="373.33333333333337" class="go-board-line"/><line x1="40" y1="406.6666666666667" x2="440" y2="406.6666666666667" class="go-board-line"/><line x1="40" y1="440" x2="440" y2="440" class="go-board-line"/><circle cx="140" cy="340" r="1.5" class="go-board-hoshi"/><circle cx="240" cy="340" r="1.5" class="go-board-hoshi"/><circle cx="340" cy="340" r="1.5" class="go-board-hoshi"/><circle cx="140" cy="240" r="1.5" class="go-board-hoshi"/><circle cx="240" cy="240" r="1.5" class="go-board-hoshi"/><circle cx="340" cy="240" r="1.5" class="go-board-hoshi"/><circle cx="140" cy="140" r="1.5" class="go-board-hoshi"/><circle cx="240" cy="140" r="1.5" class="go-board-hoshi"/><circle cx="340" cy="140" r="1.5" class="go-board-hoshi"/><text x="20.8" y="440" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">1</text><text x="20.8" y="406.6666666666667" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="20.8" y="373.33333333333337" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="20.8" y="340" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">4</text><text x="20.8" y="306.6666666666667" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">5</text><text x="20.8" y="273.33333333333337" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">6</text><text x="20.8" y="240" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">7</text><text x="20.8" y="206.66666666666669" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">8</text><text x="20.8" y="173.33333333333334" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">9</text><text x="20.8" y="140" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">10</text><text x="20.8" y="106.66666666666667" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">11</text><text x="20.8" y="73.33333333333334" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">12</text><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">13</text><text x="40" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">A</text><text x="73.33333333333334" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text><text x="106.66666666666667" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">C</text><text x="140" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">D</text><text x="173.33333333333334" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">E</text><text x="206.66666666666669" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">F</text><text x="240" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">G</text><text x="273.33333333333337" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">H</text><text x="306.6666666666667" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">J</text><text x="340" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">K</text><text x="373.33333333333337" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">L</text><text x="406.6666666666667" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">M</text><text x="440" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">N</text></svg>
+}
+
+/* Стили для настройки координат - заголовок прилипает к верху */
+.go-board-coordinate-setting .setting-item-info {
+	align-self: flex-start;
+}
+
+/* Стили для переключателей координат */
+.go-board-coordinate-toggles {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.go-board-coordinate-toggle-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+}
+
+/* Переключатель в стиле Obsidian */
+.go-board-coordinate-toggle {
+	position: relative;
+	width: 44px;
+	height: 24px;
+	flex-shrink: 0;
+	cursor: pointer;
+	border-radius: 12px;
+	background-color: #ccc;
+	transition: background-color 0.2s ease;
+	box-sizing: border-box;
+	outline: none;
+}
+
+.go-board-coordinate-toggle:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
+.go-board-coordinate-toggle.is-enabled {
+	background-color: var(--interactive-accent);
+}
+
+.go-board-coordinate-toggle-slider {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 20px;
+	height: 20px;
+	background-color: #f8f8f8;
+	border-radius: 50%;
+	transition: transform 0.2s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.go-board-coordinate-toggle.is-enabled .go-board-coordinate-toggle-slider {
+	transform: translateX(20px);
+}</style></defs><rect x="0" y="0" width="480" height="480" class="go-board-background"/><line x1="40" y1="40" x2="40" y2="440" class="go-board-line"/><line x1="73.33333333333334" y1="40" x2="73.33333333333334" y2="440" class="go-board-line"/><line x1="106.66666666666667" y1="40" x2="106.66666666666667" y2="440" class="go-board-line"/><line x1="140" y1="40" x2="140" y2="440" class="go-board-line"/><line x1="173.33333333333334" y1="40" x2="173.33333333333334" y2="440" class="go-board-line"/><line x1="206.66666666666669" y1="40" x2="206.66666666666669" y2="440" class="go-board-line"/><line x1="240" y1="40" x2="240" y2="440" class="go-board-line"/><line x1="273.33333333333337" y1="40" x2="273.33333333333337" y2="440" class="go-board-line"/><line x1="306.6666666666667" y1="40" x2="306.6666666666667" y2="440" class="go-board-line"/><line x1="340" y1="40" x2="340" y2="440" class="go-board-line"/><line x1="373.33333333333337" y1="40" x2="373.33333333333337" y2="440" class="go-board-line"/><line x1="406.6666666666667" y1="40" x2="406.6666666666667" y2="440" class="go-board-line"/><line x1="440" y1="40" x2="440" y2="440" class="go-board-line"/><line x1="40" y1="40" x2="440" y2="40" class="go-board-line"/><line x1="40" y1="73.33333333333334" x2="440" y2="73.33333333333334" class="go-board-line"/><line x1="40" y1="106.66666666666667" x2="440" y2="106.66666666666667" class="go-board-line"/><line x1="40" y1="140" x2="440" y2="140" class="go-board-line"/><line x1="40" y1="173.33333333333334" x2="440" y2="173.33333333333334" class="go-board-line"/><line x1="40" y1="206.66666666666669" x2="440" y2="206.66666666666669" class="go-board-line"/><line x1="40" y1="240" x2="440" y2="240" class="go-board-line"/><line x1="40" y1="273.33333333333337" x2="440" y2="273.33333333333337" class="go-board-line"/><line x1="40" y1="306.6666666666667" x2="440" y2="306.6666666666667" class="go-board-line"/><line x1="40" y1="340" x2="440" y2="340" class="go-board-line"/><line x1="40" y1="373.33333333333337" x2="440" y2="373.33333333333337" class="go-board-line"/><line x1="40" y1="406.6666666666667" x2="440" y2="406.6666666666667" class="go-board-line"/><line x1="40" y1="440" x2="440" y2="440" class="go-board-line"/><circle cx="140" cy="340" r="1.5" class="go-board-hoshi"/><circle cx="240" cy="340" r="1.5" class="go-board-hoshi"/><circle cx="340" cy="340" r="1.5" class="go-board-hoshi"/><circle cx="140" cy="240" r="1.5" class="go-board-hoshi"/><circle cx="240" cy="240" r="1.5" class="go-board-hoshi"/><circle cx="340" cy="240" r="1.5" class="go-board-hoshi"/><circle cx="140" cy="140" r="1.5" class="go-board-hoshi"/><circle cx="240" cy="140" r="1.5" class="go-board-hoshi"/><circle cx="340" cy="140" r="1.5" class="go-board-hoshi"/><text x="20.8" y="440" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">1</text><text x="20.8" y="406.6666666666667" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="20.8" y="373.33333333333337" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="20.8" y="340" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">4</text><text x="20.8" y="306.6666666666667" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">5</text><text x="20.8" y="273.33333333333337" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">6</text><text x="20.8" y="240" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">7</text><text x="20.8" y="206.66666666666669" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">8</text><text x="20.8" y="173.33333333333334" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">9</text><text x="20.8" y="140" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">10</text><text x="20.8" y="106.66666666666667" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">11</text><text x="20.8" y="73.33333333333334" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">12</text><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">13</text><text x="459.2" y="440" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">1</text><text x="459.2" y="406.6666666666667" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="459.2" y="373.33333333333337" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="459.2" y="340" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">4</text><text x="459.2" y="306.6666666666667" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">5</text><text x="459.2" y="273.33333333333337" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">6</text><text x="459.2" y="240" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">7</text><text x="459.2" y="206.66666666666669" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">8</text><text x="459.2" y="173.33333333333334" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">9</text><text x="459.2" y="140" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">10</text><text x="459.2" y="106.66666666666667" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">11</text><text x="459.2" y="73.33333333333334" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">12</text><text x="459.2" y="40" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">13</text><text x="40" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">A</text><text x="73.33333333333334" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">B</text><text x="106.66666666666667" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">C</text><text x="140" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">D</text><text x="173.33333333333334" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">E</text><text x="206.66666666666669" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">F</text><text x="240" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">G</text><text x="273.33333333333337" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">H</text><text x="306.6666666666667" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">J</text><text x="340" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">K</text><text x="373.33333333333337" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">L</text><text x="406.6666666666667" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">M</text><text x="440" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">N</text><text x="40" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">A</text><text x="73.33333333333334" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text><text x="106.66666666666667" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">C</text><text x="140" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">D</text><text x="173.33333333333334" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">E</text><text x="206.66666666666669" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">F</text><text x="240" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">G</text><text x="273.33333333333337" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">H</text><text x="306.6666666666667" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">J</text><text x="340" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">K</text><text x="373.33333333333337" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">L</text><text x="406.6666666666667" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">M</text><text x="440" y="459.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">N</text></svg>
