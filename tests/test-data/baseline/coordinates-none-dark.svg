@@ -84,82 +84,28 @@
 
 
 
-/* Стили для настроек плагина */
-.go-board-settings-example {
-	margin-bottom: 2em;
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 33.33%;
-	width: 33.33%;
-}
 
-.go-board-settings-example svg {
-	width: 100%;
-	height: auto;
-	max-width: 100%;
-}
 
-.go-board-settings-github-link {
-	margin-top: 2em;
-	padding-top: 2em;
-	border-top: 1px solid #ccc;
-}
 
-/* Стили для настройки координат - заголовок прилипает к верху */
+
+
+
 .go-board-coordinate-setting .setting-item-info {
 	align-self: flex-start;
 }
 
-/* Стили для переключателей координат */
-.go-board-coordinate-toggles {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 12px;
-}
 
-.go-board-coordinate-toggle-wrapper {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	width: 100%;
-}
 
-/* Переключатель в стиле Obsidian */
-.go-board-coordinate-toggle {
-	position: relative;
-	width: 44px;
-	height: 24px;
-	flex-shrink: 0;
-	cursor: pointer;
-	border-radius: 12px;
-	background-color: #ccc;
-	transition: background-color 0.2s ease;
-	box-sizing: border-box;
-	outline: none;
-}
 
-.go-board-coordinate-toggle:focus-visible {
-	outline: 2px solid var(--interactive-accent);
-	outline-offset: 2px;
-}
 
-.go-board-coordinate-toggle.is-enabled {
-	background-color: var(--interactive-accent);
-}
 
-.go-board-coordinate-toggle-slider {
-	position: absolute;
-	top: 2px;
-	left: 2px;
-	width: 20px;
-	height: 20px;
-	background-color: #2a2a2a;
-	border-radius: 50%;
-	transition: transform 0.2s ease;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
 
-.go-board-coordinate-toggle.is-enabled .go-board-coordinate-toggle-slider {
-	transform: translateX(20px);
-}</style></defs><rect x="0" y="0" width="320" height="320" class="go-board-background"/><line x1="20" y1="20" x2="20" y2="300" class="go-board-line"/><line x1="55" y1="20" x2="55" y2="300" class="go-board-line"/><line x1="90" y1="20" x2="90" y2="300" class="go-board-line"/><line x1="125" y1="20" x2="125" y2="300" class="go-board-line"/><line x1="160" y1="20" x2="160" y2="300" class="go-board-line"/><line x1="195" y1="20" x2="195" y2="300" class="go-board-line"/><line x1="230" y1="20" x2="230" y2="300" class="go-board-line"/><line x1="265" y1="20" x2="265" y2="300" class="go-board-line"/><line x1="300" y1="20" x2="300" y2="300" class="go-board-line"/><line x1="20" y1="20" x2="300" y2="20" class="go-board-line"/><line x1="20" y1="55" x2="300" y2="55" class="go-board-line"/><line x1="20" y1="90" x2="300" y2="90" class="go-board-line"/><line x1="20" y1="125" x2="300" y2="125" class="go-board-line"/><line x1="20" y1="160" x2="300" y2="160" class="go-board-line"/><line x1="20" y1="195" x2="300" y2="195" class="go-board-line"/><line x1="20" y1="230" x2="300" y2="230" class="go-board-line"/><line x1="20" y1="265" x2="300" y2="265" class="go-board-line"/><line x1="20" y1="300" x2="300" y2="300" class="go-board-line"/><circle cx="90" cy="230" r="1.5" class="go-board-hoshi"/><circle cx="230" cy="230" r="1.5" class="go-board-hoshi"/><circle cx="160" cy="160" r="1.5" class="go-board-hoshi"/><circle cx="90" cy="90" r="1.5" class="go-board-hoshi"/><circle cx="230" cy="90" r="1.5" class="go-board-hoshi"/></svg>
+
+
+
+
+
+
+
+
+.go-board-coordinate-toggle.is-enabled</style></defs><rect x="0" y="0" width="320" height="320" class="go-board-background"/><line x1="20" y1="20" x2="20" y2="300" class="go-board-line"/><line x1="55" y1="20" x2="55" y2="300" class="go-board-line"/><line x1="90" y1="20" x2="90" y2="300" class="go-board-line"/><line x1="125" y1="20" x2="125" y2="300" class="go-board-line"/><line x1="160" y1="20" x2="160" y2="300" class="go-board-line"/><line x1="195" y1="20" x2="195" y2="300" class="go-board-line"/><line x1="230" y1="20" x2="230" y2="300" class="go-board-line"/><line x1="265" y1="20" x2="265" y2="300" class="go-board-line"/><line x1="300" y1="20" x2="300" y2="300" class="go-board-line"/><line x1="20" y1="20" x2="300" y2="20" class="go-board-line"/><line x1="20" y1="55" x2="300" y2="55" class="go-board-line"/><line x1="20" y1="90" x2="300" y2="90" class="go-board-line"/><line x1="20" y1="125" x2="300" y2="125" class="go-board-line"/><line x1="20" y1="160" x2="300" y2="160" class="go-board-line"/><line x1="20" y1="195" x2="300" y2="195" class="go-board-line"/><line x1="20" y1="230" x2="300" y2="230" class="go-board-line"/><line x1="20" y1="265" x2="300" y2="265" class="go-board-line"/><line x1="20" y1="300" x2="300" y2="300" class="go-board-line"/><circle cx="90" cy="230" r="1.5" class="go-board-hoshi"/><circle cx="230" cy="230" r="1.5" class="go-board-hoshi"/><circle cx="160" cy="160" r="1.5" class="go-board-hoshi"/><circle cx="90" cy="90" r="1.5" class="go-board-hoshi"/><circle cx="230" cy="90" r="1.5" class="go-board-hoshi"/></svg>

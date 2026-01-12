@@ -91,6 +91,47 @@ function processCssForSvg(css: string, theme: Theme): string {
     // Удаляем блок стилей (многострочный, используем [\s\S] для захвата всех символов включая переносы строк)
     result = result.replace(/\.go-board-error[\s\S]*?\{[\s\S]*?\}/g, '');
     
+    // Убираем стили для настроек плагина (они не нужны для SVG, только для HTML UI)
+    // Удаляем комментарии для настроек
+    result = result.replace(/\/\*\s*Стили для настроек плагина\s*\*\/\s*/g, '');
+    result = result.replace(/\/\*\s*Стили для настройки координат[^]*?\*\/\s*/g, '');
+    result = result.replace(/\/\*\s*Стили для переключателей координат\s*\*\/\s*/g, '');
+    result = result.replace(/\/\*\s*Переключатель в стиле Obsidian\s*\*\/\s*/g, '');
+    
+    // Функция для удаления CSS блока с правильным подсчётом скобок
+    const removeCssBlock = (css: string, selectorPattern: RegExp): string => {
+        let changed = true;
+        while (changed) {
+            const before = css;
+            selectorPattern.lastIndex = 0; // Сбрасываем позицию поиска
+            const match = selectorPattern.exec(css);
+            if (match) {
+                const start = match.index;
+                let depth = 1;
+                let pos = start + match[0].length;
+                // Ищем соответствующую закрывающую скобку
+                while (depth > 0 && pos < css.length) {
+                    if (css[pos] === '{') depth++;
+                    if (css[pos] === '}') depth--;
+                    pos++;
+                }
+                if (depth === 0) {
+                    // Удаляем блок от начала селектора до закрывающей скобки
+                    css = css.substring(0, start) + css.substring(pos);
+                }
+            }
+            if (before === css) {
+                changed = false;
+            }
+        }
+        return css;
+    };
+    
+    // Удаляем блоки настроек
+    result = removeCssBlock(result, /\.go-board-settings-[\w-]+(?:\s+[\w\s-]+)*\s*\{/g);
+    result = removeCssBlock(result, /\.go-board-coordinate-toggle(?::[\w-]+|\.is-enabled)?(?:\s+[\w\s-]+)*\s*\{/g);
+    result = removeCssBlock(result, /\.go-board-coordinate-toggle-slider\s*\{/g);
+    
     // Убираем лишние пустые строки
     result = result.replace(/\n{3,}/g, '\n\n');
     
