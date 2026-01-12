@@ -1,0 +1,5 @@
+---
+description: Obsidian plugin guidelines
+alwaysApply: true
+---
+Всегда следуй гайдлайнам на разработку плагинов Obsidian. Гайдлайны расположены по адресу https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines

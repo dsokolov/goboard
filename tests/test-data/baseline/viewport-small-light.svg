@@ -84,82 +84,28 @@
 
 
 
-/* Стили для настроек плагина */
-.go-board-settings-example {
-	margin-bottom: 2em;
-	margin-left: auto;
-	margin-right: auto;
-	max-width: 33.33%;
-	width: 33.33%;
-}
 
-.go-board-settings-example svg {
-	width: 100%;
-	height: auto;
-	max-width: 100%;
-}
 
-.go-board-settings-github-link {
-	margin-top: 2em;
-	padding-top: 2em;
-	border-top: 1px solid #ccc;
-}
 
-/* Стили для настройки координат - заголовок прилипает к верху */
+
+
+
 .go-board-coordinate-setting .setting-item-info {
 	align-self: flex-start;
 }
 
-/* Стили для переключателей координат */
-.go-board-coordinate-toggles {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 12px;
-}
 
-.go-board-coordinate-toggle-wrapper {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	width: 100%;
-}
 
-/* Переключатель в стиле Obsidian */
-.go-board-coordinate-toggle {
-	position: relative;
-	width: 44px;
-	height: 24px;
-	flex-shrink: 0;
-	cursor: pointer;
-	border-radius: 12px;
-	background-color: #ccc;
-	transition: background-color 0.2s ease;
-	box-sizing: border-box;
-	outline: none;
-}
 
-.go-board-coordinate-toggle:focus-visible {
-	outline: 2px solid var(--interactive-accent);
-	outline-offset: 2px;
-}
 
-.go-board-coordinate-toggle.is-enabled {
-	background-color: var(--interactive-accent);
-}
 
-.go-board-coordinate-toggle-slider {
-	position: absolute;
-	top: 2px;
-	left: 2px;
-	width: 20px;
-	height: 20px;
-	background-color: #f8f8f8;
-	border-radius: 50%;
-	transition: transform 0.2s ease;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
 
-.go-board-coordinate-toggle.is-enabled .go-board-coordinate-toggle-slider {
-	transform: translateX(20px);
-}</style></defs><rect x="0" y="0" width="80" height="80" class="go-board-background"/><line x1="40" y1="31" x2="40" y2="49" class="go-board-line"/><line x1="31" y1="40" x2="49" y2="40" class="go-board-line"/><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="59.2" y="40" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="40" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">B</text><text x="40" y="59.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text></svg>
+
+
+
+
+
+
+
+
+.go-board-coordinate-toggle.is-enabled</style></defs><rect x="0" y="0" width="80" height="80" class="go-board-background"/><line x1="40" y1="31" x2="40" y2="49" class="go-board-line"/><line x1="31" y1="40" x2="49" y2="40" class="go-board-line"/><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="59.2" y="40" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="40" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">B</text><text x="40" y="59.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text></svg>

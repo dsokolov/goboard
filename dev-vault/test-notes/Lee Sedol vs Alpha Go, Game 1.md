@@ -1,3 +1,4 @@
+
 ```goboard
 size 19x19
 B(1) R16
