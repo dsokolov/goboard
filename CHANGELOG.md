@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0
+
+* Code fixes to comply with Obsidian plugin repository guidelines
+
 ## 0.9.1
 
 * Fixed mobile layout: coordinate toggles now display vertically on all devices
