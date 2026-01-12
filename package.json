@@ -1,6 +1,6 @@
 {
 	"name": "goboard",
-	"version": "0.10",
+	"version": "0.10.1",
 	"description": "Render Go game diagrams from Markdown code blocks",
 	"main": "build/main.js",
 	"scripts": {
