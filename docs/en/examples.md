@@ -1,5 +1,7 @@
 # GoBoard Usage Examples
 
+Language:&nbsp;**English**&nbsp;•&nbsp;[Русский](../ru/examples.md)&nbsp;•&nbsp;[中文](../zh/examples.md)
+
 ## Creating an empty goban
 
 To create an empty goban (Go board), simply create a code block in an Obsidian note, specifying `goboard` as the syntax, for example
