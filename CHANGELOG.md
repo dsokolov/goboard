@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+* Initial stable release
+
 ## 0.10.0
 
 * Code fixes to comply with Obsidian plugin repository guidelines
