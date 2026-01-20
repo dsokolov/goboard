@@ -1,0 +1,43 @@
+{
+  "settings": {
+    "defaultBoardSize": {
+      "name": "Default board size",
+      "desc": "Select the default board size for new boards."
+    },
+    "displayHoshi": {
+      "name": "Display hoshi",
+      "desc": "Show hoshi points on the board by default."
+    },
+    "coordinateEdges": {
+      "top": {
+        "name": "Top edge",
+        "desc": "Show coordinates on the top edge of the board."
+      },
+      "right": {
+        "name": "Right edge",
+        "desc": "Show coordinates on the right edge of the board."
+      },
+      "bottom": {
+        "name": "Bottom edge",
+        "desc": "Show coordinates on the bottom edge of the board."
+      },
+      "left": {
+        "name": "Left edge",
+        "desc": "Show coordinates on the left edge of the board."
+      }
+    }
+  },
+  "errors": {
+    "parseError": "Line {{line}}: {{message}}",
+    "renderingError": "Rendering error: {{message}}"
+  },
+  "examples": {
+    "linkText": "Plugin usage examples",
+    "url": "https://github.com/dsokolov/goboard/blob/main/docs/en/examples.md"
+  },
+  "github": {
+    "issuePrompt": "If you found a bug or have a suggestion, please don't hesitate to ",
+    "createIssue": "Create an issue on GitHub",
+    "issuePromptEnd": "."
+  }
+}

@@ -1,8 +1,7 @@
 import {App, PluginSettingTab, Setting} from 'obsidian';
 import GoBoardPlugin from './main';
 import {detectOS} from './osUtils';
-// Не импортируем COORDINATE_SIDES, чтобы избежать циклической зависимости с models.ts
-// Используем строковые литералы напрямую
+import {t} from './i18n';
 
 
 export interface BoardSizeOption {
@@ -94,8 +93,8 @@ export class GoBoardSettingTab extends PluginSettingTab {
 
     private displaySettings(containerEl: HTMLElement): void {
         new Setting(containerEl)
-            .setName('Default board size')
-            .setDesc('Select the default board size for new boards.')
+            .setName(t('settings.defaultBoardSize.name'))
+            .setDesc(t('settings.defaultBoardSize.desc'))
             .addDropdown(dropdown => {
                 Object.entries(BOARD_SIZES).forEach(([key, size]) => {
                     dropdown.addOption(key, size.title);
@@ -110,8 +109,8 @@ export class GoBoardSettingTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName('Display hoshi')
-            .setDesc('Show hoshi points on the board by default.')
+            .setName(t('settings.displayHoshi.name'))
+            .setDesc(t('settings.displayHoshi.desc'))
             .addToggle(toggle => {
                 toggle
                     .setValue(this.plugin.settings.showHoshi)
@@ -130,8 +129,8 @@ export class GoBoardSettingTab extends PluginSettingTab {
                 : []);
 
         new Setting(containerEl)
-            .setName('Top edge')
-            .setDesc(`Show coordinates on the top edge of the board.`)
+            .setName(t('settings.coordinateEdges.top.name'))
+            .setDesc(t('settings.coordinateEdges.top.desc'))
             .addToggle(toggle => {
                 toggle
                     .setValue(coordinateSides.includes('top'))
@@ -142,8 +141,8 @@ export class GoBoardSettingTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName('Right edge')
-            .setDesc(`Show coordinates on the right edge of the board.`)
+            .setName(t('settings.coordinateEdges.right.name'))
+            .setDesc(t('settings.coordinateEdges.right.desc'))
             .addToggle(toggle => {
                 toggle
                     .setValue(coordinateSides.includes('right'))
@@ -154,8 +153,8 @@ export class GoBoardSettingTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName('Bottom edge')
-            .setDesc(`Show coordinates on the bottom edge of the board.`)
+            .setName(t('settings.coordinateEdges.bottom.name'))
+            .setDesc(t('settings.coordinateEdges.bottom.desc'))
             .addToggle(toggle => {
                 toggle
                     .setValue(coordinateSides.includes('bottom'))
@@ -166,8 +165,8 @@ export class GoBoardSettingTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
-            .setName('Left edge')
-            .setDesc(`Show coordinates on the left edge of the board.`)
+            .setName(t('settings.coordinateEdges.left.name'))
+            .setDesc(t('settings.coordinateEdges.left.desc'))
             .addToggle(toggle => {
                 toggle
                     .setValue(coordinateSides.includes('left'))
@@ -197,20 +196,33 @@ export class GoBoardSettingTab extends PluginSettingTab {
     }
 
     private displayGitHubLink(containerEl: HTMLElement): void {
+        // Examples link
+        const examplesContainer = containerEl.createDiv();
+        examplesContainer.addClass('go-board-settings-examples-link');
+
+        const examplesText = examplesContainer.createEl('p');
+        const examplesLink = examplesText.createEl('a', {
+            text: t('examples.linkText'),
+            href: t('examples.url')
+        });
+        examplesLink.setAttribute('target', '_blank');
+        examplesLink.setAttribute('rel', 'noopener noreferrer');
+
+        // GitHub issues link
         const issuesContainer = containerEl.createDiv();
         issuesContainer.addClass('go-board-settings-github-link');
 
         const issuesText = issuesContainer.createEl('p');
-        issuesText.appendText('If you found a bug or have a suggestion, please don\'t hesitate to ');
+        issuesText.appendText(t('github.issuePrompt'));
 
         const issuesLink = issuesText.createEl('a', {
-            text: 'Create an issue on GitHub',
+            text: t('github.createIssue'),
             href: this.buildGitHubIssueUrl(this.issueTemplateName)
         });
         issuesLink.setAttribute('target', '_blank');
         issuesLink.setAttribute('rel', 'noopener noreferrer');
 
-        issuesText.appendText('.');
+        issuesText.appendText(t('github.issuePromptEnd'));
     }
 
     private buildGitHubIssueUrl(templateName?: string): string {

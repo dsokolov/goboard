@@ -82,8 +82,11 @@ function processCssForSvg(css: string, theme: Theme): string {
     result = result.replace(/\.go-board-container\s+svg[^{]*\{[^}]*\}/g, '');
     
     // Убираем стили наследования CSS переменных (не нужны в SVG)
+    // Сначала убираем комментарии перед блоками
+    result = result.replace(/\/\*\s*Обеспечиваем наследование CSS переменных для SVG\s*\*\/\s*/g, '');
     result = result.replace(/\.go-board-svg\s*\*[^{]*\{[^}]*\}/g, '');
     result = result.replace(/\.go-board-container\s+svg,\s*\.go-board-svg[^{]*\{[^}]*\}/g, '');
+    result = result.replace(/\.go-board-svg\s*\{[^}]*\}/g, '');
     
     // Убираем стили для блоков ошибок (они не нужны для SVG, только для HTML)
     // Удаляем комментарий отдельно
@@ -129,6 +132,7 @@ function processCssForSvg(css: string, theme: Theme): string {
     
     // Удаляем блоки настроек
     result = removeCssBlock(result, /\.go-board-settings-[\w-]+(?:\s+[\w\s-]+)*\s*\{/g);
+    result = removeCssBlock(result, /\.go-board-coordinate-setting(?:\s+[\w\s-]+)*\s*\{/g);
     result = removeCssBlock(result, /\.go-board-coordinate-toggle(?::[\w-]+|\.is-enabled)?(?:\s+[\w\s-]+)*\s*\{/g);
     result = removeCssBlock(result, /\.go-board-coordinate-toggle-slider\s*\{/g);
     

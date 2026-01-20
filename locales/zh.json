@@ -1,0 +1,43 @@
+{
+  "settings": {
+    "defaultBoardSize": {
+      "name": "默认棋盘大小",
+      "desc": "为新棋盘选择默认大小。"
+    },
+    "displayHoshi": {
+      "name": "显示星位",
+      "desc": "默认在棋盘上显示星位点。"
+    },
+    "coordinateEdges": {
+      "top": {
+        "name": "上边缘",
+        "desc": "在棋盘的上边缘显示坐标。"
+      },
+      "right": {
+        "name": "右边缘",
+        "desc": "在棋盘的右边缘显示坐标。"
+      },
+      "bottom": {
+        "name": "下边缘",
+        "desc": "在棋盘的下边缘显示坐标。"
+      },
+      "left": {
+        "name": "左边缘",
+        "desc": "在棋盘的左边缘显示坐标。"
+      }
+    }
+  },
+  "errors": {
+    "parseError": "第 {{line}} 行：{{message}}",
+    "renderingError": "渲染错误：{{message}}"
+  },
+  "examples": {
+    "linkText": "插件使用示例",
+    "url": "https://github.com/dsokolov/goboard/blob/main/docs/zh/examples.md"
+  },
+  "github": {
+    "issuePrompt": "如果您发现了错误或有建议，请不要犹豫，",
+    "createIssue": "在 GitHub 上创建 issue",
+    "issuePromptEnd": "。"
+  }
+}

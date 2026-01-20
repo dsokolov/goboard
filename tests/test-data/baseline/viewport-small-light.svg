@@ -6,7 +6,6 @@
 
 
 
-/* Обеспечиваем наследование CSS переменных для SVG */
 
 
 
@@ -80,32 +79,4 @@
 	stroke: #f8f8f8;
 	stroke-width: 2;
 	paint-order: stroke fill;
-}
-
-
-
-
-
-
-
-
-
-.go-board-coordinate-setting .setting-item-info {
-	align-self: flex-start;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.go-board-coordinate-toggle.is-enabled</style></defs><rect x="0" y="0" width="80" height="80" class="go-board-background"/><line x1="40" y1="31" x2="40" y2="49" class="go-board-line"/><line x1="31" y1="40" x2="49" y2="40" class="go-board-line"/><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="59.2" y="40" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="40" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">B</text><text x="40" y="59.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text></svg>
+}</style></defs><rect x="0" y="0" width="80" height="80" class="go-board-background"/><line x1="40" y1="31" x2="40" y2="49" class="go-board-line"/><line x1="31" y1="40" x2="49" y2="40" class="go-board-line"/><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="59.2" y="40" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">2</text><text x="40" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">B</text><text x="40" y="59.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">B</text></svg>

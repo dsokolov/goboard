@@ -4,6 +4,7 @@ import { createRenderParams, ParseError, COORDINATE_SIDES } from './models';
 import { Parser } from './parser';
 import { Mapper } from './mapper';
 import { GoBoardPluginSettings, DEFAULT_SETTINGS, GoBoardSettingTab } from './settings';
+import { initI18n, t } from './i18n';
 
 type RenderResult = {
 	svg: SVGElement | null;
@@ -19,6 +20,9 @@ export default class GoBoardPlugin extends Plugin {
 	settings: GoBoardPluginSettings = DEFAULT_SETTINGS;
 
 	async onload() {
+		// Initialize i18n first (same approach as Tasks plugin)
+		await initI18n(this.app);
+		
 		await this.loadSettings();
 
 		this.parser = new Parser();
@@ -44,7 +48,7 @@ export default class GoBoardPlugin extends Plugin {
 				result.parseErrors.forEach(error => {
 					const errorBlock = document.createElement('div');
 					errorBlock.classList.add('go-board-error');
-					errorBlock.textContent = `Строка ${error.line}: ${error.message}`;
+					errorBlock.textContent = t('errors.parseError', { line: error.line, message: error.message });
 					el.appendChild(errorBlock);
 				});
 			}
@@ -53,7 +57,7 @@ export default class GoBoardPlugin extends Plugin {
 			if (result.exceptionError) {
 				const errorBlock = document.createElement('div');
 				errorBlock.classList.add('go-board-error');
-				errorBlock.textContent = result.exceptionError;
+				errorBlock.textContent = t('errors.renderingError', { message: result.exceptionError });
 				el.appendChild(errorBlock);
 			}
 		});
