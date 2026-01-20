@@ -20,6 +20,7 @@ export default tseslint.config(
 				console: "readonly",
 				getComputedStyle: "readonly",
 				window: "readonly",
+				localStorage: "readonly",
 				HTMLElement: "readonly",
 				SVGElement: "readonly",
 				Element: "readonly",
