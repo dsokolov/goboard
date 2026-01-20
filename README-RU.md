@@ -1,8 +1,10 @@
-<img src="/docs/images/macbook_pro_16.png" alt="Obsidian GoBoard Macbook" height="300" /> <img src="/docs/images/google_pixel_8.png" alt="Obsidian GoBoard Google Pixel 8" height="150" />
+![GoBoard](./docs/images/goboard_logo.png)
 
 # GoBoard
 
 GoBoard - это плагин для [Obsidian](https://obsidian.md/), рисующий диаграммы [игры Го](https://ru.wikipedia.org/wiki/%D0%93%D0%BE) (так же известна как Вэйци или Падук).
+
+![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22goboard%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
 
 ## Установка
 
