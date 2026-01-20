@@ -4,17 +4,26 @@
 
 GoBoard is a plugin for [Obsidian](https://obsidian.md/) that renders [Go game](https://en.wikipedia.org/wiki/Go_(game)) diagrams (also known as Weiqi or Baduk).
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-0.10.1-green.svg)
-![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22goboard%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/github/v/release/dsokolov/goboard)](https://github.com/dsokolov/goboard/releases/latest)
+[![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=downloads&query=%24%5B%22goboard%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)](https://obsidian.md/plugins?id=goboard)
+
+Language:&nbsp;**English**&nbsp;•&nbsp;[Русский](README-ru.md)&nbsp;•&nbsp;[中文](README-zh.md)
 
 ## Installation
 
-Currently, the GoBoard plugin is available for beta testing through [BRAT](https://github.com/TfTHacker/obsidian42-brat).
+If you don't have Obsidian installed yet - [download it](https://obsidian.md/download).
 
-1. If you don't have BRAT yet, [install it](https://obsidian.md/plugins?search=BRAT).
-1. In the BRAT plugin settings, add the repository `https://github.com/dsokolov/goboard`, following the [instructions](https://github.com/TfTHacker/obsidian42-brat).
-1. Done, now you can draw diagrams!
+To install [click here](https://obsidian.md/plugins?id=goboard), or follow these steps:
+
+1. In the Obsidian application, open the community plugins settings: `Settings -> Community plugins`.
+2. If you haven't done this yet, you'll need to enable support for third-party plugins `Turn on community plugins`.
+3. Go to plugin selection by clicking `Browse`.
+4. In the search bar, enter `GoBoard`.
+5. Select the plugin, click `Install`, and after installation is complete - `Enable`.
+6. Done, now you can draw diagrams!
+
+Other installation methods are described in [installation.md](./docs/en/installation.md)
 
 ## Usage
 
@@ -36,7 +45,7 @@ To place stones on the diagram, use `B <position>` and `W <position>` for black 
 
 <!-- goboard: moves-first-two -->
 <pre>
-```gboard
+```goboard
 size 9x9
 B G7
 W C3
@@ -46,39 +55,11 @@ W C3
 ![First two moves on 9x9 goban (light theme)](/docs/images/moves-first-two-light.png#gh-light-mode-only)
 ![First two moves on 9x9 goban (dark theme)](/docs/images/moves-first-two-dark.png#gh-dark-mode-only)
 
-For more usage examples, see [examples.md](docs/examples.md).
+For more usage examples, see [examples.md](docs/en/examples.md).
 
 ## Building the project
 
-Build the project, including copying the distribution to the development vault:
-
-```
-npm run build
-```
-
-Running tests:
-
-```
-npm test
-```
-
-Running linter:
-
-```
-npm run lint
-```
-
-Updating test baselines:
-
-```
-npm run update-baseline
-```
-
-Updating documentation images:
-
-```
-npm run update-docs
-```
+See [build.md](/docs/en/build.md)
 
 ## Issues and suggestions
 
