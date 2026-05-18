@@ -31,8 +31,8 @@ Please follow the [Obsidian plugin guidelines](https://docs.obsidian.md/Plugins/
 
 Releases are **not** built or uploaded manually. When a version is ready:
 
-1. Bump the version with `npm version patch` (or `minor` / `major`) — this updates `package.json`, `manifest.json`, and `versions.json`.
-2. Push the commit and tag: `git push && git push --tags`
+1. Bump the version with `npm version patch` (or `minor` / `major`) — this updates `package.json`, `manifest.json`, and `versions.json`, and creates an **annotated git tag without a `v` prefix** (e.g. `1.0.2`, same as in `manifest.json`). See [`.npmrc`](.npmrc).
+2. Push the commit and tag: `git push origin main && git push origin --tags`
 3. The [Release workflow](.github/workflows/release.yml) builds the plugin, attaches `main.js`, `manifest.json`, and `styles.css` to the GitHub release, and creates [build provenance attestations](https://docs.github.com/en/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
 
 Before publishing a release, run a **preview scan** in the [Obsidian Community developer dashboard](https://community.obsidian.md/account/profile) on the release tag.
