@@ -1,6 +1,14 @@
 // Настройка для тестового окружения
 import '@testing-library/jest-dom';
 
+// Obsidian globals for Jest/jsdom
+const testGlobal = globalThis as typeof globalThis & {
+	activeDocument: Document;
+	activeWindow: Window;
+};
+testGlobal.activeDocument = document;
+testGlobal.activeWindow = window;
+
 // Полифилл для XMLSerializer в Node.js окружении
 if (typeof XMLSerializer === 'undefined') {
   global.XMLSerializer = class XMLSerializer {

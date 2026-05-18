@@ -17,6 +17,8 @@ export default tseslint.config(
 			},
 			globals: {
 				document: "readonly",
+				activeDocument: "readonly",
+				activeWindow: "readonly",
 				console: "readonly",
 				getComputedStyle: "readonly",
 				window: "readonly",
@@ -72,9 +74,20 @@ export default tseslint.config(
 				"object": "HTMLElement",
 				"property": "outerHTML",
 				"message": "Using outerHTML is a security risk. Use DOM API or Obsidian helper functions instead."
+			}, {
+				"object": "activeDocument",
+				"property": "innerHTML",
+				"message": "Using innerHTML is a security risk. Use DOM API or Obsidian helper functions instead."
+			}, {
+				"object": "activeDocument",
+				"property": "outerHTML",
+				"message": "Using outerHTML is a security risk. Use DOM API or Obsidian helper functions instead."
 			}],
 			"no-restricted-syntax": ["error", {
 				"selector": "MemberExpression[object.name='document'][property.name='insertAdjacentHTML']",
+				"message": "Using insertAdjacentHTML is a security risk. Use DOM API or Obsidian helper functions instead."
+			}, {
+				"selector": "MemberExpression[object.name='activeDocument'][property.name='insertAdjacentHTML']",
 				"message": "Using insertAdjacentHTML is a security risk. Use DOM API or Obsidian helper functions instead."
 			}, {
 				"selector": "MemberExpression[object.type='Identifier'][property.name='insertAdjacentHTML']",

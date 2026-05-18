@@ -77,7 +77,7 @@ export class GoBoardSettingTab extends PluginSettingTab {
             this.boardContainer.appendChild(svg);
         } else {
             // Create new container
-            const boardContainer = document.createElement('div');
+            const boardContainer = activeDocument.createElement('div');
             boardContainer.classList.add('go-board-container', 'go-board-settings-example');
             boardContainer.setAttribute('data-source', exampleSource);
             boardContainer.appendChild(svg);
@@ -101,8 +101,11 @@ export class GoBoardSettingTab extends PluginSettingTab {
                 });
                 dropdown
                     .setValue(this.plugin.settings.defaultBoardSize)
-                    .onChange(async (value: '9x9' | '13x13' | '19x19') => {
-                        this.plugin.settings.defaultBoardSize = value;
+                    .onChange(async (value: string) => {
+                        if (!(value in BOARD_SIZES)) {
+                            return;
+                        }
+                        this.plugin.settings.defaultBoardSize = value as keyof typeof BOARD_SIZES;
                         await this.plugin.saveSettings();
                         this.displayExampleBoard(this.containerEl);
                     });

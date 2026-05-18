@@ -4,6 +4,12 @@ Language:&nbsp;**English**&nbsp;•&nbsp;[Русский](../ru/build.md)&nbsp;�
 
 This document describes building the GoBoard plugin from source.
 
+## Requirements
+
+- [Node.js](https://nodejs.org/) 24 LTS or newer (see `.nvmrc` in the repository root)
+
+## Build
+
 Build the project, including copying the distribution to the development vault:
 
 ```

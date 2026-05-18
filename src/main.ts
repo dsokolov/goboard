@@ -36,7 +36,7 @@ export default class GoBoardPlugin extends Plugin {
 			
 			// Отображаем доску, если она есть
 			if (result.svg) {
-				const boardContainer = document.createElement('div');
+				const boardContainer = activeDocument.createElement('div');
 				boardContainer.classList.add('go-board-container');
 				boardContainer.setAttribute('data-source', source);
 				boardContainer.appendChild(result.svg);
@@ -46,7 +46,7 @@ export default class GoBoardPlugin extends Plugin {
 			// Отображаем ошибки парсинга, если они есть
 			if (result.parseErrors.length > 0) {
 				result.parseErrors.forEach(error => {
-					const errorBlock = document.createElement('div');
+					const errorBlock = activeDocument.createElement('div');
 					errorBlock.classList.add('go-board-error');
 					errorBlock.textContent = t('errors.parseError', { line: error.line, message: error.message });
 					el.appendChild(errorBlock);
@@ -55,7 +55,7 @@ export default class GoBoardPlugin extends Plugin {
 			
 			// Отображаем ошибку исключения, если она есть
 			if (result.exceptionError) {
-				const errorBlock = document.createElement('div');
+				const errorBlock = activeDocument.createElement('div');
 				errorBlock.classList.add('go-board-error');
 				errorBlock.textContent = t('errors.renderingError', { message: result.exceptionError });
 				el.appendChild(errorBlock);

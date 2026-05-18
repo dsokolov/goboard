@@ -8,7 +8,7 @@ export class Renderer {
 
     private getFontSizeFromCSS(): number {
         // Получаем размер шрифта из CSS переменных Obsidian
-        const root = document.documentElement;
+        const root = activeDocument.documentElement;
         const computedStyle = getComputedStyle(root);
         
         // Пытаемся получить размер шрифта из CSS переменной
@@ -21,14 +21,14 @@ export class Renderer {
         }
         
         // Fallback: получаем размер шрифта из body
-        const bodyStyle = getComputedStyle(document.body);
+        const bodyStyle = getComputedStyle(activeDocument.body);
         const bodyFontSize = parseFloat(bodyStyle.fontSize);
         return isNaN(bodyFontSize) ? 16 : bodyFontSize;
     }
 
 
     render(source: Board, params: RenderParams): SVGElement {
-        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const svg = activeDocument.createElementNS('http://www.w3.org/2000/svg', 'svg');
         
         // Получаем размер шрифта из CSS для адаптивного размера доски
         const fontSize = this.getFontSizeFromCSS();
@@ -180,7 +180,7 @@ export class Renderer {
         y: number,
         cell: PointContent
     ) {
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const circle = activeDocument.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = paddingLeft + x * stepX;
         const cy = paddingTop + y * stepY;
         circle.setAttribute('cx', cx.toString());
@@ -209,7 +209,7 @@ export class Renderer {
         x: number,
         y: number
     ) {
-        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        const dot = activeDocument.createElementNS('http://www.w3.org/2000/svg', 'circle');
         const cx = paddingLeft + x * stepX;
         const cy = paddingTop + y * stepY;
         
@@ -232,7 +232,7 @@ export class Renderer {
         fontSize: number,
         pointContent: PointContent
     ) {
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        const text = activeDocument.createElementNS('http://www.w3.org/2000/svg', 'text');
         const cx = paddingLeft + x * stepX;
         const cy = paddingTop + y * stepY;
         
@@ -259,7 +259,7 @@ export class Renderer {
     }
 
     private renderHorizontalLines(xStart: number, xEnd: number, yPos: number) {
-        const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        const hLine = activeDocument.createElementNS('http://www.w3.org/2000/svg', 'line');
         hLine.setAttribute('x1', xStart.toString());
         hLine.setAttribute('y1', yPos.toString());
         hLine.setAttribute('x2', xEnd.toString());
@@ -269,7 +269,7 @@ export class Renderer {
     }
 
     private renderVerticalLines(yStart: number, yEnd: number, xPos: number) {
-        const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        const vLine = activeDocument.createElementNS('http://www.w3.org/2000/svg', 'line');
         vLine.setAttribute('x1', xPos.toString());
         vLine.setAttribute('y1', yStart.toString());
         vLine.setAttribute('x2', xPos.toString());
@@ -279,7 +279,7 @@ export class Renderer {
     }
 
     private renderBackground(totalWidth: number, totalHeight: number) {
-        const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        const background = activeDocument.createElementNS('http://www.w3.org/2000/svg', 'rect');
         background.setAttribute('x', '0');
         background.setAttribute('y', '0');
         background.setAttribute('width', totalWidth.toString());
@@ -347,7 +347,7 @@ export class Renderer {
         textAnchor: TextAnchor,
         dominantBaseline: DominantBaseline
     ): SVGElement {
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        const text = activeDocument.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', x.toString());
         text.setAttribute('y', y.toString());
         text.setAttribute('font-size', fontSize.toString());
