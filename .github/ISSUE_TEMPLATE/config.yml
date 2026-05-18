@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://github.com/dsokolov/goboard/blob/main/docs/en/examples.md
+    about: Usage examples and syntax reference
+  - name: Discussions
+    url: https://github.com/dsokolov/goboard/discussions
+    about: Ask questions or share ideas

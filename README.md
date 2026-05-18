@@ -55,11 +55,11 @@ W C3
 ![First two moves on 9x9 goban (light theme)](/docs/images/moves-first-two-light.png#gh-light-mode-only)
 ![First two moves on 9x9 goban (dark theme)](/docs/images/moves-first-two-dark.png#gh-dark-mode-only)
 
-For more usage examples, see [examples.md](docs/en/examples.md).
+For more usage examples, see [examples.md](https://github.com/dsokolov/goboard/blob/main/docs/en/examples.md).
 
 ## Building the project
 
-See [build.md](/docs/en/build.md)
+See [build.md](https://github.com/dsokolov/goboard/blob/main/docs/en/build.md)
 
 ## Issues and suggestions
 

@@ -55,11 +55,11 @@ W C3
 ![9x9 棋盘上的前两步](/docs/images/moves-first-two-light.png#gh-light-mode-only)
 ![9x9 棋盘上的前两步](/docs/images/moves-first-two-dark.png#gh-dark-mode-only)
 
-更多使用示例，请参阅 [examples.md](docs/zh/examples.md)。
+更多使用示例，请参阅 [examples.md](https://github.com/dsokolov/goboard/blob/main/docs/zh/examples.md)。
 
 ## 构建项目
 
-请参阅 [build.md](/docs/zh/build.md)
+请参阅 [build.md](https://github.com/dsokolov/goboard/blob/main/docs/zh/build.md)
 
 ## 问题与建议
 

@@ -55,11 +55,11 @@ W C3
 ![Первые две постановки на гобане 9x9](/docs/images/moves-first-two-light.png#gh-light-mode-only)
 ![Первые две постановки на гобане 9x9](/docs/images/moves-first-two-dark.png#gh-dark-mode-only)
 
-Больше примеров использования смотрите в [examples.md](docs/ru/examples.md).
+Больше примеров использования смотрите в [examples.md](https://github.com/dsokolov/goboard/blob/main/docs/ru/examples.md).
 
 ## Сборка проекта
 
-См [build.md](/docs/ru/build.md)
+См [build.md](https://github.com/dsokolov/goboard/blob/main/docs/ru/build.md)
 
 ## Замечания и предложения
 
