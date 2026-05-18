@@ -1,4 +1,8 @@
 // Мок для obsidian модуля
+export function getLanguage(): string {
+	return 'en';
+}
+
 export class App {
 	version?: string;
 }
