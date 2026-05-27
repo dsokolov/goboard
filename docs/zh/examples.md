@@ -194,3 +194,18 @@ W E3
 
 ![视口（可见区域）](/docs/images/viewport-two-stones-light.png#gh-light-mode-only)
 ![视口（可见区域）](/docs/images/viewport-two-stones-dark.png#gh-dark-mode-only)
+
+按已放置棋子自动裁剪：`viewport auto`。可见区域适配包含所有黑白棋子的最小矩形。若无棋子，则显示整个棋盘。
+
+<!-- goboard: viewport-auto -->
+<pre>
+```goboard
+size 9x9
+viewport auto
+B C4
+W E3
+```
+</pre>
+
+![自动视口](/docs/images/viewport-auto-light.png#gh-light-mode-only)
+![自动视口](/docs/images/viewport-auto-dark.png#gh-dark-mode-only)

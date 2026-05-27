@@ -1,5 +1,5 @@
 import { Mapper } from '../src/mapper';
-import { ParseResult, Instruction, StoneColor, Color, SinglePosition, IntervalPosition, Board, PointContent, MarkNone, COORDINATE_SIDES, makeHoshiPointKey } from '../src/models';
+import { ParseResult, Instruction, StoneColor, Color, SinglePosition, IntervalPosition, Board, PointContent, MarkNone, COORDINATE_SIDES, makeHoshiPointKey, Viewport } from '../src/models';
 
 describe('Mapper', () => {
   let mapper: Mapper;
@@ -378,6 +378,65 @@ describe('Mapper', () => {
           expect(board.points[y][x].hasHoshi).toBe(false);
         }
       }
+    });
+
+    it('viewport auto обрезает область по размещённым камням', () => {
+      const instructions = [
+        new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(2, 3)]),
+        new Instruction(new StoneColor(Color.White), new MarkNone(), [new SinglePosition(4, 2)]),
+      ];
+      const parseResult = new ParseResult(
+        instructions,
+        { width: 9, height: 9 },
+        new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]),
+        [],
+        Viewport.auto(),
+        true,
+        null,
+      );
+      const board = mapper.map(parseResult);
+
+      expect(board.boundLeft).toBe(2);
+      expect(board.boundRight).toBe(4);
+      expect(board.boundTop).toBe(2);
+      expect(board.boundBottom).toBe(3);
+    });
+
+    it('viewport auto без камней показывает всю доску', () => {
+      const parseResult = new ParseResult(
+        [],
+        { width: 9, height: 9 },
+        new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]),
+        [],
+        Viewport.auto(),
+        true,
+        null,
+      );
+      const board = mapper.map(parseResult);
+
+      expect(board.boundLeft).toBe(0);
+      expect(board.boundRight).toBe(8);
+      expect(board.boundTop).toBe(0);
+      expect(board.boundBottom).toBe(8);
+    });
+
+    it('viewport auto с одним камнем в углу даёт область 1×1', () => {
+      const instruction = new Instruction(new StoneColor(Color.Black), new MarkNone(), [new SinglePosition(0, 0)]);
+      const parseResult = new ParseResult(
+        [instruction],
+        { width: 9, height: 9 },
+        new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]),
+        [],
+        Viewport.auto(),
+        true,
+        null,
+      );
+      const board = mapper.map(parseResult);
+
+      expect(board.boundLeft).toBe(0);
+      expect(board.boundRight).toBe(0);
+      expect(board.boundTop).toBe(0);
+      expect(board.boundBottom).toBe(0);
     });
 
     it('кастомные хоси отображаются на любом размере доски', () => {

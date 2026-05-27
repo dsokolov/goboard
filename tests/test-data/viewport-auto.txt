@@ -1,0 +1,4 @@
+size 9x9
+viewport auto
+B C4
+W E3

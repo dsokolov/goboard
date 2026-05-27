@@ -195,3 +195,18 @@ W E3
 
 ![Viewport (visible area)](/docs/images/viewport-two-stones-light.png#gh-light-mode-only)
 ![Viewport (visible area)](/docs/images/viewport-two-stones-dark.png#gh-dark-mode-only)
+
+Automatic cropping to placed stones: `viewport auto`. The visible area fits the smallest rectangle that contains all black and white stones. If there are no stones, the full board is shown.
+
+<!-- goboard: viewport-auto -->
+<pre>
+```goboard
+size 9x9
+viewport auto
+B C4
+W E3
+```
+</pre>
+
+![Auto viewport](/docs/images/viewport-auto-light.png#gh-light-mode-only)
+![Auto viewport](/docs/images/viewport-auto-dark.png#gh-dark-mode-only)

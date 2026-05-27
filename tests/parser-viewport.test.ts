@@ -86,6 +86,30 @@ describe('ViewportParser', () => {
       expect(result.errors.length).toBe(0);
     });
 
+    it('should parse viewport auto', () => {
+      const initialResult = ParseResult.create();
+      const result = parser.parse('viewport auto', 1, initialResult);
+
+      expect(result.viewport).toEqual(Viewport.auto());
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should parse viewport AUTO case-insensitively', () => {
+      const initialResult = ParseResult.create();
+      const result = parser.parse('viewport AUTO', 1, initialResult);
+
+      expect(result.viewport).toEqual(Viewport.auto());
+      expect(result.errors.length).toBe(0);
+    });
+
+    it('should return ParseResult with errors for viewport auto with extra tokens', () => {
+      const initialResult = ParseResult.create();
+      const result = parser.parse('viewport auto foo', 1, initialResult);
+
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors.some(e => e.message.includes('viewport'))).toBe(true);
+    });
+
     it('should return ParseResult with errors for invalid format', () => {
       const initialResult = ParseResult.create();
       const result = parser.parse('viewport invalid string', 1, initialResult);

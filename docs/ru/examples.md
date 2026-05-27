@@ -195,3 +195,18 @@ W E3
 
 ![Область видимости](/docs/images/viewport-two-stones-light.png#gh-light-mode-only)
 ![Область видимости](/docs/images/viewport-two-stones-dark.png#gh-dark-mode-only)
+
+Автоматическая обрезка по размещённым камням: `viewport auto`. Область видимости подстраивается под минимальный прямоугольник, охватывающий все чёрные и белые камни. Если камней нет, отображается вся доска.
+
+<!-- goboard: viewport-auto -->
+<pre>
+```goboard
+size 9x9
+viewport auto
+B C4
+W E3
+```
+</pre>
+
+![Автообрезка viewport](/docs/images/viewport-auto-light.png#gh-light-mode-only)
+![Автообрезка viewport](/docs/images/viewport-auto-dark.png#gh-dark-mode-only)

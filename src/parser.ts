@@ -124,6 +124,17 @@ export class ViewportParser implements LineParser {
     }
     parse(line: string, lineNumber: number, currentResult: ParseResult): ParseResult {
         const trimmedLine = line.trim();
+        if (/^viewport\s+auto\s*$/i.test(trimmedLine)) {
+            return new ParseResult(
+                currentResult.instructions,
+                currentResult.boardSize,
+                currentResult.coordinateSides,
+                currentResult.errors,
+                Viewport.auto(),
+                currentResult.showHoshi,
+                currentResult.customHoshiPoints
+            );
+        }
         const viewportMatch = trimmedLine.match(/^viewport\s+([^\s]+)\s*-\s*([^\s]+)$/i);
         if (!viewportMatch) {
             const errors = [...currentResult.errors, new ParseError(lineNumber, 'Invalid viewport format')];

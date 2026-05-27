@@ -110,8 +110,13 @@ export class Instruction {
 export class Viewport {
     constructor(
         public readonly start: SinglePosition,
-        public readonly end: SinglePosition
+        public readonly end: SinglePosition,
+        public readonly auto: boolean = false,
     ) {}
+
+    static auto(): Viewport {
+        return new Viewport(new SinglePosition(0, 0), new SinglePosition(0, 0), true);
+    }
 }
 
 export type HoshiPointKey = `${number},${number}`;

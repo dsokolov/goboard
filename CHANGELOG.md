@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* #16 Auto viewport: `viewport auto` crops the diagram to placed stones; empty board shows full grid
 * #17 Custom hoshi: `hoshi` DSL supports on/off aliases and comma-separated coordinate lists for star points
 
 ## 1.0.0

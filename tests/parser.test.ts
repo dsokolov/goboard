@@ -1,5 +1,5 @@
 import { Parser } from '../src/parser';
-import { Instruction, StoneColor, Color, ParseResult, SinglePosition, IntervalPosition, ParseError, MarkNone, MarkNumber } from '../src/models';
+import { Instruction, StoneColor, Color, ParseResult, SinglePosition, IntervalPosition, ParseError, MarkNone, MarkNumber, Viewport } from '../src/models';
 import { testDataLoader } from './test-data-loader';
 
 describe('Parser', () => {
@@ -335,7 +335,7 @@ describe('Parser', () => {
 
       expect(result).toBeInstanceOf(ParseResult);
       expect(result.viewport).not.toBeNull();
-      expect(result.viewport).toEqual({ start: new SinglePosition(1, 1), end: new SinglePosition(1, 1) });
+      expect(result.viewport).toEqual(new Viewport(new SinglePosition(1, 1), new SinglePosition(1, 1)));
     });
 
     it('Full viewport should return ParseResult with viewport', () => {
@@ -344,7 +344,7 @@ describe('Parser', () => {
 
       expect(result).toBeInstanceOf(ParseResult);
       expect(result.viewport).not.toBeNull();
-      expect(result.viewport).toEqual({ start: new SinglePosition(0, 0), end: new SinglePosition(7, 8) });
+      expect(result.viewport).toEqual(new Viewport(new SinglePosition(0, 0), new SinglePosition(7, 8)));
     });
 
     it('Normal viewport should return ParseResult with viewport', () => {
@@ -353,7 +353,17 @@ describe('Parser', () => {
 
       expect(result).toBeInstanceOf(ParseResult);
       expect(result.viewport).not.toBeNull();
-      expect(result.viewport).toEqual({ start: new SinglePosition(1, 1), end: new SinglePosition(4, 4) });
+      expect(result.viewport).toEqual(new Viewport(new SinglePosition(1, 1), new SinglePosition(4, 4)));
+    });
+
+    it('Auto viewport should return ParseResult with viewport.auto', () => {
+      const source = testDataLoader.loadTestData('viewport-auto.txt');
+      const result = parser.parse(source);
+
+      expect(result).toBeInstanceOf(ParseResult);
+      expect(result.viewport).not.toBeNull();
+      expect(result.viewport?.auto).toBe(true);
+      expect(result.errors.length).toBe(0);
     });
 
   });

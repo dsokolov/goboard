@@ -28,7 +28,9 @@ export class Mapper {
         
         // Рассчитываем границы отображения (bounds)
         const viewport = source.viewport;
-        const bounds = this.mapViewport(boardSize, viewport);
+        const bounds = viewport?.auto
+            ? this.computeAutoViewportBounds(points, boardSize)
+            : this.mapViewport(boardSize, viewport);
 
         return new Board(points, coordinateSides, bounds.boundLeft, bounds.boundRight, bounds.boundTop, bounds.boundBottom);
     }
@@ -62,6 +64,43 @@ export class Mapper {
         }
 
         return { boundLeft, boundRight, boundTop, boundBottom };
+    }
+
+    private computeAutoViewportBounds(points: Point[][], boardSize: BoardSize): {
+        boundLeft: number;
+        boundRight: number;
+        boundTop: number;
+        boundBottom: number;
+    } {
+        const fullBounds = this.mapViewport(boardSize, null);
+        let minX: number | null = null;
+        let maxX: number | null = null;
+        let minY: number | null = null;
+        let maxY: number | null = null;
+
+        for (let y = 0; y < points.length; y++) {
+            for (let x = 0; x < points[y].length; x++) {
+                const content = points[y][x].content;
+                if (content !== PointContent.Black && content !== PointContent.White) {
+                    continue;
+                }
+                if (minX === null || x < minX) minX = x;
+                if (maxX === null || x > maxX) maxX = x;
+                if (minY === null || y < minY) minY = y;
+                if (maxY === null || y > maxY) maxY = y;
+            }
+        }
+
+        if (minX === null || maxX === null || minY === null || maxY === null) {
+            return fullBounds;
+        }
+
+        return {
+            boundLeft: minX,
+            boundRight: maxX,
+            boundTop: minY,
+            boundBottom: maxY,
+        };
     }
     
     private applyInstruction(points: Point[][], instruction: Instruction): void {

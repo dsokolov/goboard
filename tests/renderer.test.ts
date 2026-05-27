@@ -305,6 +305,28 @@ describe('Renderer', () => {
       const fullLines = svgFull.querySelectorAll('line').length;
       expect(normalLines).toBeLessThan(fullLines); // fewer grid lines in a cropped viewport
     });
+
+    it('auto viewport should render smaller than full board with same stones', () => {
+      const autoSource = fs.readFileSync(path.join(__dirname, 'test-data', 'viewport-auto.txt'), 'utf-8');
+      const fullSource = `size 9x9\nB C4\nW E3`;
+
+      const autoParsed = parser.parse(autoSource) as ParseResult;
+      const fullParsed = parser.parse(fullSource) as ParseResult;
+
+      const autoBoard = mapper.map(autoParsed);
+      const fullBoard = mapper.map(fullParsed);
+
+      const svgAuto = renderer.render(autoBoard, createRenderParams());
+      const svgFull = renderer.render(fullBoard, createRenderParams());
+
+      const wAuto = parseInt(svgAuto.getAttribute('width') || '0');
+      const hAuto = parseInt(svgAuto.getAttribute('height') || '0');
+      const wFull = parseInt(svgFull.getAttribute('width') || '0');
+      const hFull = parseInt(svgFull.getAttribute('height') || '0');
+
+      expect(wAuto).toBeLessThan(wFull);
+      expect(hAuto).toBeLessThan(hFull);
+    });
   });
 
   describe('baseline comparison', () => {

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="110" viewBox="0 0 140 110" class="go-board-svg"><defs><style>/* Стили для рендеринга диаграмм Го - Тёмная тема */
+
+/* Стили для рендеринга диаграмм Го */
+
+
+
+
+
+
+
+
+
+/* CSS классы для элементов доски */
+.go-board-background {
+	fill: #2a2a2a;
+}
+
+.go-board-line {
+	stroke: #cccccc;
+	stroke-width: 1;
+}
+
+.go-board-hoshi {
+	fill: #cccccc;
+	r: 5
+}
+
+.go-board-coordinate {
+	font-size: 16px;
+	font-family: Arial, sans-serif;
+	fill: #cccccc;
+}
+
+/* Стили камней для светлой темы */
+
+
+
+
+/* Стили камней для тёмной темы */
+.go-stone-black {
+	fill: #2a2a2a;
+	stroke: #cccccc;
+	stroke-width: 1.5;
+}
+
+.go-stone-white {
+	fill: #cccccc;
+	stroke: none;
+}
+
+/* Стили меток */
+.go-board-mark {
+	font-size: 16px;
+	font-family: Arial, sans-serif;
+	font-weight: bold;
+	pointer-events: none;
+	user-select: none;
+}
+
+/* Белая метка (для черных камней) - светлая тема */
+
+
+/* Черная метка (для белых камней) - светлая тема */
+
+
+/* Белая метка (для черных камней) - темная тема */
+.go-board-mark-white {
+	fill: #cccccc;
+}
+
+/* Черная метка (для белых камней) - темная тема */
+.go-board-mark-black {
+	fill: #2a2a2a;
+}
+
+/* Метка на пустой клетке (использует цвет линий с контрастной обводкой) */
+.go-board-mark-empty {
+	fill: #cccccc;
+	stroke: #2a2a2a;
+	stroke-width: 2;
+	paint-order: stroke fill;
+}
+
+
+
+
+
+
+
+/* Mobile: use full settings panel width (issue #29) */
+.is-mobile 
+
+.is-mobile</style></defs><rect x="0" y="0" width="140" height="110" class="go-board-background"/><line x1="40" y1="31" x2="40" y2="79" class="go-board-line"/><line x1="70" y1="31" x2="70" y2="79" class="go-board-line"/><line x1="100" y1="31" x2="100" y2="79" class="go-board-line"/><line x1="31" y1="40" x2="109" y2="40" class="go-board-line"/><line x1="31" y1="70" x2="109" y2="70" class="go-board-line"/><circle cx="40" cy="70" r="1.5" class="go-board-hoshi"/><circle cx="100" cy="70" r="13.8" class="go-stone go-stone-white"/><circle cx="40" cy="40" r="13.8" class="go-stone go-stone-black"/><text x="20.8" y="70" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="20.8" y="40" font-size="16" text-anchor="end" dominant-baseline="middle" class="go-board-coordinate">4</text><text x="119.2" y="70" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">3</text><text x="119.2" y="40" font-size="16" text-anchor="start" dominant-baseline="middle" class="go-board-coordinate">4</text><text x="40" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">C</text><text x="70" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">D</text><text x="100" y="20.8" font-size="16" text-anchor="middle" dominant-baseline="bottom" class="go-board-coordinate">E</text><text x="40" y="89.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">C</text><text x="70" y="89.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">D</text><text x="100" y="89.2" font-size="16" text-anchor="middle" dominant-baseline="hanging" class="go-board-coordinate">E</text></svg>
