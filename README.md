@@ -5,6 +5,7 @@
 GoBoard is a plugin for [Obsidian](https://obsidian.md/) that renders [Go game](https://en.wikipedia.org/wiki/Go_(game)) diagrams (also known as Weiqi or Baduk).
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![CI](https://github.com/dsokolov/goboard/actions/workflows/ci.yml/badge.svg)](https://github.com/dsokolov/goboard/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/github/v/release/dsokolov/goboard)](https://github.com/dsokolov/goboard/releases/latest)
 [![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%230b7dbe&label=downloads&query=%24%5B%22goboard%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)](https://obsidian.md/plugins?id=goboard)
 
