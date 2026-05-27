@@ -13,7 +13,8 @@
 		"update-baseline": "npx jest --config jest.baseline.config.js",
 		"update-docs": "npx jest --config jest.docs.config.js",
 		"lint": "eslint src/**/*.ts --max-warnings 0",
-		"lint:fix": "eslint src/**/*.ts --fix --max-warnings 0"
+		"lint:fix": "eslint src/**/*.ts --fix --max-warnings 0",
+		"android:test-sync": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/android-test-sync.ps1"
 	},
 	"keywords": [],
 	"author": "Dmitry I. Sokolov",
