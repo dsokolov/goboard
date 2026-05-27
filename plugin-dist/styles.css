@@ -159,6 +159,16 @@
 	max-width: 100%;
 }
 
+/* Mobile: use full settings panel width (issue #29) */
+.is-mobile .go-board-settings-example {
+	width: 100%;
+	max-width: min(100%, 90vw);
+}
+
+.is-mobile .go-board-settings-example svg {
+	max-width: min(90vw, 100%);
+}
+
 .go-board-settings-github-link {
 	margin-top: 2em;
 	padding-top: 2em;
