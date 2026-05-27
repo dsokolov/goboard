@@ -167,7 +167,8 @@ describe('CoordinatesParser', () => {
         new Set([COORDINATE_SIDES.TOP, COORDINATE_SIDES.BOTTOM, COORDINATE_SIDES.LEFT, COORDINATE_SIDES.RIGHT]),
         [],
         null,
-        false
+        false,
+        null
       );
       const result = parser.parse('coordinates off', 1, initialResult);
 

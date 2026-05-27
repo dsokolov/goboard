@@ -1,4 +1,4 @@
-import { ParseError, ParseResult, Instruction, Position, StoneColor, StoneNone, Stone, Color, SinglePosition, IntervalPosition, Viewport, MarkNone, MarkNumber, MarkLetter, normalizeCoordinateSides } from "./models";
+import { ParseError, ParseResult, Instruction, Position, StoneColor, StoneNone, Stone, Color, SinglePosition, IntervalPosition, Viewport, MarkNone, MarkNumber, MarkLetter, normalizeCoordinateSides, parseHoshiValue } from "./models";
 import { parseCoordinate } from "./utils";
 import { GoBoardPluginSettings, DEFAULT_SETTINGS } from "./settings";
 
@@ -38,7 +38,8 @@ export class Parser {
                     result.coordinateSides,
                     [...result.errors, new ParseError(lineNumber, `Unknown format: ${trimmedLine}`)],
                     result.viewport,
-                    result.showHoshi
+                    result.showHoshi,
+                    result.customHoshiPoints
                 );
             }
         }
@@ -64,13 +65,13 @@ export class BoardSizeParser implements LineParser {
             const height = parseInt(sizeMatch[2], 10);
             if (isNaN(width) || isNaN(height) || width <= 0 || height <= 0) {
                 const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid board size: ${trimmedLine}`)];
-                return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi);
+                return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi, currentResult.customHoshiPoints);
             } else {
-                return new ParseResult(currentResult.instructions, { width, height }, currentResult.coordinateSides, currentResult.errors, currentResult.viewport, currentResult.showHoshi);
+                return new ParseResult(currentResult.instructions, { width, height }, currentResult.coordinateSides, currentResult.errors, currentResult.viewport, currentResult.showHoshi, currentResult.customHoshiPoints);
             }
         }
         const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid board size format: ${trimmedLine}`)];
-        return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi);
+        return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi, currentResult.customHoshiPoints);
     }
 }
 
@@ -102,17 +103,18 @@ export class CoordinatesParser implements LineParser {
                     coordinateSides,
                     currentResult.errors,
                     currentResult.viewport,
-                    currentResult.showHoshi
+                    currentResult.showHoshi,
+                    currentResult.customHoshiPoints
                 );
             }
             
             // Невалидное значение
             const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid coordinates format: ${trimmedLine}`)];
-            return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi);
+            return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi, currentResult.customHoshiPoints);
         }
         // This shouldn't happen if isApplicable is correct, but handle it anyway
         const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid coordinates format: ${trimmedLine}`)];
-        return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi);
+        return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi, currentResult.customHoshiPoints);
     }
 }
 
@@ -131,7 +133,8 @@ export class ViewportParser implements LineParser {
                 currentResult.coordinateSides,
                 errors,
                 currentResult.viewport,
-                currentResult.showHoshi
+                currentResult.showHoshi,
+                currentResult.customHoshiPoints
             );
         }
         const start = parseCoordinate(viewportMatch[1]);
@@ -144,7 +147,8 @@ export class ViewportParser implements LineParser {
                 currentResult.coordinateSides,
                 errors,
                 currentResult.viewport,
-                currentResult.showHoshi
+                currentResult.showHoshi,
+                currentResult.customHoshiPoints
             );
         }
         const viewport = new Viewport(new SinglePosition(start.x, start.y), new SinglePosition(end.x, end.y));
@@ -154,7 +158,8 @@ export class ViewportParser implements LineParser {
             currentResult.coordinateSides,
             currentResult.errors,
             viewport,
-            currentResult.showHoshi
+            currentResult.showHoshi,
+            currentResult.customHoshiPoints
         );
     }
 }
@@ -200,7 +205,8 @@ export class MoveParser implements LineParser {
                         currentResult.coordinateSides,
                         errors,
                         currentResult.viewport,
-                        currentResult.showHoshi
+                        currentResult.showHoshi,
+                        currentResult.customHoshiPoints
                     );
                 }
             } else {
@@ -224,7 +230,8 @@ export class MoveParser implements LineParser {
                     currentResult.coordinateSides,
                     errors,
                     currentResult.viewport,
-                    currentResult.showHoshi
+                    currentResult.showHoshi,
+                    currentResult.customHoshiPoints
                 );
             }
         }
@@ -238,7 +245,8 @@ export class MoveParser implements LineParser {
                 currentResult.coordinateSides,
                 parseResult.errors,
                 currentResult.viewport,
-                currentResult.showHoshi
+                currentResult.showHoshi,
+                currentResult.customHoshiPoints
             );
         } else {
             // If no positions but there were errors, update errors
@@ -249,7 +257,8 @@ export class MoveParser implements LineParser {
                     currentResult.coordinateSides,
                     parseResult.errors,
                     currentResult.viewport,
-                    currentResult.showHoshi
+                    currentResult.showHoshi,
+                    currentResult.customHoshiPoints
                 );
             }
             return currentResult;
@@ -318,24 +327,30 @@ export class MoveParser implements LineParser {
 
 export class HoshiParser implements LineParser {
     isApplicable(line: string): boolean {
-        return line.trim().match(/^hoshi\s+(on|off)$/i) !== null;
+        return line.trim().match(/^hoshi\s+.+/i) !== null;
     }
     parse(line: string, lineNumber: number, currentResult: ParseResult): ParseResult {
         const trimmedLine = line.trim();
-        const hoshiMatch = trimmedLine.match(/^hoshi\s+(on|off)$/i);
-        if (hoshiMatch) {
-            const showHoshi = hoshiMatch[1].toLowerCase() === 'on';
-            return new ParseResult(
-                currentResult.instructions,
-                currentResult.boardSize,
-                currentResult.coordinateSides,
-                currentResult.errors,
-                currentResult.viewport,
-                showHoshi
-            );
+        const hoshiMatch = trimmedLine.match(/^hoshi\s+(.+)$/i);
+        if (!hoshiMatch) {
+            const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid hoshi format: ${trimmedLine}`)];
+            return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi, currentResult.customHoshiPoints);
         }
-        // This shouldn't happen if isApplicable is correct, but handle it anyway
-        const errors = [...currentResult.errors, new ParseError(lineNumber, `Invalid hoshi format: ${trimmedLine}`)];
-        return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi);
+
+        const parsed = parseHoshiValue(hoshiMatch[1], currentResult.boardSize);
+        if ('error' in parsed) {
+            const errors = [...currentResult.errors, new ParseError(lineNumber, parsed.error)];
+            return new ParseResult(currentResult.instructions, currentResult.boardSize, currentResult.coordinateSides, errors, currentResult.viewport, currentResult.showHoshi, currentResult.customHoshiPoints);
+        }
+
+        return new ParseResult(
+            currentResult.instructions,
+            currentResult.boardSize,
+            currentResult.coordinateSides,
+            currentResult.errors,
+            currentResult.viewport,
+            parsed.showHoshi,
+            parsed.customHoshiPoints
+        );
     }
 }

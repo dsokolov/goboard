@@ -209,6 +209,28 @@ describe('Renderer', () => {
       
       expect(hoshiElements.length).toBe(0);
     });
+
+    it('should render custom hoshi points only', () => {
+      const source = 'size 9x9\nhoshi D4,E4,F4';
+      const parseResult = parser.parse(source);
+
+      expect(parseResult.showHoshi).toBe(true);
+      expect(parseResult.customHoshiPoints?.size).toBe(3);
+
+      const board = mapper.map(parseResult);
+      let hoshiCount = 0;
+      for (let i = 0; i < board.points.length; i++) {
+        for (let j = 0; j < board.points[i].length; j++) {
+          if (board.points[i][j].hasHoshi) hoshiCount++;
+        }
+      }
+      expect(hoshiCount).toBe(3);
+
+      const renderParams = createRenderParams();
+      const svg = renderer.render(board, renderParams);
+      const hoshiElements = svg.querySelectorAll('circle.go-board-hoshi');
+      expect(hoshiElements.length).toBe(3);
+    });
   });
 
   describe('viewport rendering', () => {

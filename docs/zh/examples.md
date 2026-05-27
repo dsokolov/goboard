@@ -139,6 +139,45 @@ coordinates left, bottom
 
 如果未指定 `coordinates` 值，坐标将根据插件设置中的默认设置显示。
 
+## 显示星位（hoshi）
+
+要控制星位（hoshi），请使用 `hoshi <on|off|坐标>` 参数。支持的别名：`on` / `yes` / `enabled` — 按棋盘尺寸的标准星位；`off` / `no` / `disabled` / `none` / `false` — 不显示星位；以逗号或空格分隔的坐标列表 — 仅显示指定点。例如：
+
+<!-- goboard: hoshi-on -->
+<pre>
+```goboard
+size 9x9
+hoshi on
+```
+</pre>
+
+![9×9 棋盘上的标准星位](/docs/images/hoshi-on-light.png#gh-light-mode-only)
+![9×9 棋盘上的标准星位](/docs/images/hoshi-on-dark.png#gh-dark-mode-only)
+
+<!-- goboard: hoshi-off -->
+<pre>
+```goboard
+size 9x9
+hoshi off
+```
+</pre>
+
+![星位已关闭](/docs/images/hoshi-off-light.png#gh-light-mode-only)
+![星位已关闭](/docs/images/hoshi-off-dark.png#gh-dark-mode-only)
+
+<!-- goboard: hoshi-custom -->
+<pre>
+```goboard
+size 19x19
+hoshi D4,E4,F4
+```
+</pre>
+
+![自定义星位](/docs/images/hoshi-custom-light.png#gh-light-mode-only)
+![自定义星位](/docs/images/hoshi-custom-dark.png#gh-dark-mode-only)
+
+如果未指定 `hoshi` 值，星位将根据插件的默认设置显示。
+
 ## 视口（可见区域）
 
 如果不需要显示整个棋盘图（例如，只考虑角落中的小位置），可以使用 `viewport <坐标1>-<坐标2>` 参数：

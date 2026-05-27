@@ -1,4 +1,4 @@
-import { BoardSize, ParseResult, Instruction, StoneColor, Stone, StoneNone, Color, SinglePosition, IntervalPosition, Board, Point, PointContent, Viewport } from "./models";
+import { BoardSize, ParseResult, Instruction, StoneColor, Stone, StoneNone, Color, SinglePosition, IntervalPosition, Board, Point, PointContent, Viewport, makeHoshiPointKey } from "./models";
 
 export class Mapper {
     map(source: ParseResult): Board {
@@ -7,7 +7,7 @@ export class Mapper {
             throw new Error(`Parse errors: ${source.errors.map(e => e.message).join(', ')}`);
         }
         
-        const { boardSize, instructions, coordinateSides, showHoshi } = source;
+        const { boardSize, instructions, coordinateSides } = source;
         const points: Point[][] = [];
         
         // Создаем пустую доску
@@ -16,7 +16,7 @@ export class Mapper {
             points[i] = [];
             for (let j = 0; j < boardSize.width; j++) {
                 // hasHoshi принимает (x, y) = (колонка, строка)
-                const hoshi = showHoshi && this.hasHoshi(boardSize, j, i);
+                const hoshi = this.shouldHaveHoshi(source, boardSize, j, i);
                 points[i][j] = new Point(PointContent.Empty, null, hoshi);
             }
         }
@@ -118,14 +118,24 @@ export class Mapper {
         return PointContent.Empty;
     }
 
+    private shouldHaveHoshi(source: ParseResult, boardSize: BoardSize, x: number, y: number): boolean {
+        if (source.customHoshiPoints !== null) {
+            return source.customHoshiPoints.has(makeHoshiPointKey(x, y));
+        }
+        if (!source.showHoshi) {
+            return false;
+        }
+        return this.hasStandardHoshi(boardSize, x, y);
+    }
+
     /**
-     * Проверяет, является ли позиция хоси (звездной точкой)
+     * Проверяет, является ли позиция стандартной хоси (звездной точкой) для 9/13/19
      * @param boardSize Размер доски
      * @param x Колонка (0-based, A=0, B=1, ..., J=8, ...)
      * @param y Строка (0-based, 1=0, 2=1, ..., 9=8, ...)
      * @returns true если позиция является хоси
      */
-    private hasHoshi(boardSize: BoardSize, x: number, y: number): boolean {
+    private hasStandardHoshi(boardSize: BoardSize, x: number, y: number): boolean {
         const key = `${boardSize.width}x${boardSize.height}`;
         
         // Стандартные позиции хоси для разных размеров досок

@@ -140,6 +140,45 @@ coordinates left, bottom
 
 If the `coordinates` value is not specified, coordinates will be displayed according to the default settings from the plugin settings.
 
+## Displaying hoshi (star points)
+
+To control star points (hoshi), use the `hoshi <on|off|coordinates>` parameter. Supported aliases: `on` / `yes` / `enabled` — standard layout for the board size; `off` / `no` / `disabled` / `none` / `false` — no hoshi; a comma- or space-separated list of coordinates — only the specified points. For example:
+
+<!-- goboard: hoshi-on -->
+<pre>
+```goboard
+size 9x9
+hoshi on
+```
+</pre>
+
+![Standard hoshi on a 9×9 board](/docs/images/hoshi-on-light.png#gh-light-mode-only)
+![Standard hoshi on a 9×9 board](/docs/images/hoshi-on-dark.png#gh-dark-mode-only)
+
+<!-- goboard: hoshi-off -->
+<pre>
+```goboard
+size 9x9
+hoshi off
+```
+</pre>
+
+![Hoshi disabled](/docs/images/hoshi-off-light.png#gh-light-mode-only)
+![Hoshi disabled](/docs/images/hoshi-off-dark.png#gh-dark-mode-only)
+
+<!-- goboard: hoshi-custom -->
+<pre>
+```goboard
+size 19x19
+hoshi D4,E4,F4
+```
+</pre>
+
+![Custom hoshi points](/docs/images/hoshi-custom-light.png#gh-light-mode-only)
+![Custom hoshi points](/docs/images/hoshi-custom-dark.png#gh-dark-mode-only)
+
+If the `hoshi` value is not specified, hoshi are displayed according to the default plugin settings.
+
 ## Viewport (visible area)
 
 If you don't need to display the entire goban diagram (for example, only a small position in the corner is being considered), you can use the `viewport <coordinate1>-<coordinate2>` parameter:

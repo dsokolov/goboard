@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* #17 Custom hoshi: `hoshi` DSL supports on/off aliases and comma-separated coordinate lists for star points
+
 ## 1.0.0
 
 * Initial stable release

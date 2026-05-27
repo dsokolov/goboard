@@ -140,6 +140,45 @@ coordinates left, bottom
 
 Если значение `coordinates` не указано, то координаты будут отображаться согласно настройкам по умолчанию из настроек плагина.
 
+## Отображение хоси (hoshi)
+
+Для управления звёздными точками (хоси) используйте параметр `hoshi <on|off|координаты>`. Поддерживаются синонимы: `on` / `yes` / `enabled` — стандартная раскладка для размера доски; `off` / `no` / `disabled` / `none` / `false` — без хоси; список координат через запятую или пробел — только указанные точки. Например:
+
+<!-- goboard: hoshi-on -->
+<pre>
+```goboard
+size 9x9
+hoshi on
+```
+</pre>
+
+![Стандартные хоси на доске 9×9](/docs/images/hoshi-on-light.png#gh-light-mode-only)
+![Стандартные хоси на доске 9×9](/docs/images/hoshi-on-dark.png#gh-dark-mode-only)
+
+<!-- goboard: hoshi-off -->
+<pre>
+```goboard
+size 9x9
+hoshi off
+```
+</pre>
+
+![Хоси отключены](/docs/images/hoshi-off-light.png#gh-light-mode-only)
+![Хоси отключены](/docs/images/hoshi-off-dark.png#gh-dark-mode-only)
+
+<!-- goboard: hoshi-custom -->
+<pre>
+```goboard
+size 19x19
+hoshi D4,E4,F4
+```
+</pre>
+
+![Пользовательские хоси](/docs/images/hoshi-custom-light.png#gh-light-mode-only)
+![Пользовательские хоси](/docs/images/hoshi-custom-dark.png#gh-dark-mode-only)
+
+Если значение `hoshi` не указано, хоси отображаются согласно настройкам плагина по умолчанию.
+
 ## Область видимости (viewport)
 
 Если нет необходимости отображать всю диаграмму гобана (например, рассматривается только небольшая позиция в углу), то можно использовать параметр `viewport <координата1>-<координата2>`:

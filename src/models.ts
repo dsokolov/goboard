@@ -1,4 +1,5 @@
 import { GoBoardPluginSettings, BOARD_SIZES, DEFAULT_SETTINGS } from './settings';
+import { parseCoordinate } from './utils';
 
 export const COORDINATE_SIDES = {
     TOP: 'top',
@@ -113,6 +114,61 @@ export class Viewport {
     ) {}
 }
 
+export type HoshiPointKey = `${number},${number}`;
+
+export function makeHoshiPointKey(x: number, y: number): HoshiPointKey {
+    return `${x},${y}`;
+}
+
+export type HoshiParseSuccess = {
+    showHoshi: boolean;
+    customHoshiPoints: Set<HoshiPointKey> | null;
+};
+
+/**
+ * Parses the value after `hoshi` in diagram DSL.
+ * Disabled aliases → showHoshi false; enabled aliases → standard layout;
+ * otherwise comma/space-separated board coordinates for custom hoshi points.
+ */
+export function parseHoshiValue(
+    value: string,
+    boardSize: BoardSize,
+): HoshiParseSuccess | { error: string } {
+    const normalized = value.trim().toLowerCase();
+
+    if (['none', 'off', 'no', 'false', 'disabled'].includes(normalized)) {
+        return { showHoshi: false, customHoshiPoints: null };
+    }
+
+    if (['yes', 'on', 'enabled'].includes(normalized)) {
+        return { showHoshi: true, customHoshiPoints: null };
+    }
+
+    const tokens = value
+        .trim()
+        .split(/[,\s]+/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+    if (tokens.length === 0) {
+        return { error: 'Invalid hoshi format: empty coordinate list' };
+    }
+
+    const customHoshiPoints = new Set<HoshiPointKey>();
+    for (const token of tokens) {
+        const coords = parseCoordinate(token);
+        if (!coords) {
+            return { error: `Invalid coordinate: ${token}` };
+        }
+        if (coords.x < 0 || coords.x >= boardSize.width || coords.y < 0 || coords.y >= boardSize.height) {
+            return { error: `Coordinate out of bounds: ${token}` };
+        }
+        customHoshiPoints.add(makeHoshiPointKey(coords.x, coords.y));
+    }
+
+    return { showHoshi: true, customHoshiPoints };
+}
+
 export class ParseResult {
     constructor(
         public readonly instructions: Instruction[],
@@ -120,7 +176,12 @@ export class ParseResult {
         public readonly coordinateSides: Set<string>,
         public readonly errors: ParseError[],
         public readonly viewport: Viewport | null,
-        public readonly showHoshi: boolean
+        public readonly showHoshi: boolean,
+        /**
+         * If set, hoshi marks are rendered only at these points (0-based x,y).
+         * If null, standard hoshi points are used when showHoshi is true.
+         */
+        public readonly customHoshiPoints: Set<HoshiPointKey> | null
     ) {}
 
     static create(settings: GoBoardPluginSettings | null = null): ParseResult {
@@ -146,7 +207,8 @@ export class ParseResult {
             coordinateSides,
             [],
             null,
-            settingsToUse.showHoshi
+            settingsToUse.showHoshi,
+            null
         );
     }
 }

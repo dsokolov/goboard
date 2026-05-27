@@ -74,11 +74,20 @@ describe('Update Docs Images', () => {
  */
 function getMarkdownFiles(dir: string): string[] {
     try {
-        const files = fs.readdirSync(dir);
-        return files
-            .filter(file => file.endsWith('.md'))
-            .map(file => path.join(dir, file));
-    } catch (error) {
+        const result: string[] = [];
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+            const fullPath = path.join(dir, entry.name);
+            if (entry.isDirectory()) {
+                if (entry.name === 'node_modules' || entry.name === '.git') {
+                    continue;
+                }
+                result.push(...getMarkdownFiles(fullPath));
+            } else if (entry.name.endsWith('.md')) {
+                result.push(fullPath);
+            }
+        }
+        return result;
+    } catch {
         return [];
     }
 }

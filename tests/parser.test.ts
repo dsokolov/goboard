@@ -78,6 +78,35 @@ describe('Parser', () => {
         expect(result.errors.length).toBe(0);
       });
 
+      it('hoshi enabled alias should parse without Unknown format error', () => {
+        const source = testDataLoader.loadTestData('hoshi-on-aliases.txt');
+        const result = parser.parse(source);
+
+        expect(result.errors).toEqual([]);
+        expect(result.boardSize).toEqual({ width: 9, height: 9 });
+        expect(result.showHoshi).toBe(true);
+        expect(result.customHoshiPoints).toBeNull();
+      });
+
+      it('hoshi disabled alias should parse without errors', () => {
+        const source = testDataLoader.loadTestData('hoshi-off-aliases.txt');
+        const result = parser.parse(source);
+
+        expect(result.errors).toEqual([]);
+        expect(result.showHoshi).toBe(false);
+        expect(result.customHoshiPoints).toBeNull();
+      });
+
+      it('custom hoshi coordinate list should parse without errors', () => {
+        const source = testDataLoader.loadTestData('hoshi-custom.txt');
+        const result = parser.parse(source);
+
+        expect(result.errors).toEqual([]);
+        expect(result.boardSize).toEqual({ width: 19, height: 19 });
+        expect(result.showHoshi).toBe(true);
+        expect(result.customHoshiPoints?.size).toBe(3);
+      });
+
   });
 
   describe('parse moves', () => {
