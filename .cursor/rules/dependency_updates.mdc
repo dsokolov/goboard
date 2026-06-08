@@ -1,0 +1,81 @@
+---
+description: Обновление npm-зависимостей до последних стабильных версий
+globs: package.json,package-lock.json
+alwaysApply: false
+---
+
+# Обновление зависимостей
+
+Цель: все прямые и транзитивные зависимости на последних **стабильных** версиях, проект собирается и проходит проверки.
+
+## Подготовка
+
+1. `npm ci` — чистая установка из lock-файла.
+2. Базовая проверка: `npm run build && npm run lint && npm test`.
+3. `npm outdated` — список устаревших прямых зависимостей.
+
+## Порядок обновлений
+
+Обновляй **группами**, после каждой группы — проверка. Не обновляй всё одной командой без промежуточных тестов.
+
+| Группа | Пакеты | Почему |
+|--------|--------|--------|
+| 1. Production | `dependencies` (сейчас: `i18next`) | Единственный runtime-риск |
+| 2. Типы | `obsidian`, `@types/*` | Влияют на type-check, не на bundle |
+| 3. Lint-патчи | `typescript-eslint` | Перед мажорным ESLint |
+| 4. Lint major | `eslint` | Проверить peer deps: `eslint-plugin-obsidianmd`, `typescript-eslint` |
+| 5. Tooling | `jest`, `ts-jest`, `esbuild`, `sharp`, `typescript` и остальные devDeps | Независимые инструменты |
+| 6. Транзитивные | `npm update` + актуализировать `overrides` (`glob`, `test-exclude`) | Lock-файл в пределах semver |
+
+Команда для группы:
+```bash
+npm install [--save|--save-dev] <pkg>@^<latest>
+```
+
+## Проверка после каждой группы
+
+```bash
+npm run build && npm run lint && npm test
+```
+
+Финально:
+```bash
+npm outdated          # пустой вывод
+npm audit             # 0 high/critical
+```
+
+Сравни установленные и последние версии прямых зависимостей:
+```bash
+npm view <pkg> version
+```
+
+## Исправление предупреждений
+
+После обновлений устраняй **новые и всплывшие старые** предупреждения:
+
+- **TypeScript**: `npx tsc -noEmit` без `-skipLibCheck`. Не маскируй `ignoreDeprecations` — мигрируй `tsconfig.json` (например, `moduleResolution: "bundler"` вместо `"node"`).
+- **Отсутствующие типы**: добавь `@types/*`, если `tsc` ругается на `node_modules`.
+- **ESLint**: `npm run lint` с `--max-warnings 0` — ноль предупреждений.
+- **Build**: не возвращай `-skipLibCheck` в `build`, если проблема решена типами.
+
+`npm warn Unknown env config "devdir"` — артефакт среды Cursor, не проекта.
+
+## Версия Node
+
+После обновлений проверь `engines` зависимостей (`npm view <pkg> engines`, `npm ls --depth=0`).
+
+Если минимальная требуемая версия Node выросла выше текущего `engines.node` в `package.json`:
+- **Сообщи** пользователю и **предложи** обновить согласованно: `package.json` (`engines.node`), `.nvmrc`, CI (`.github/workflows/*.yml`, `node-version-file: .nvmrc`).
+- **Не меняй** эти файлы без явного запроса — это политика проекта, а не часть обновления пакетов.
+
+## Ограничения
+
+- Только **стабильные** версии (без `-beta`, `-rc`, `-alpha`).
+- Не коммить и не пушить без запроса пользователя.
+- Не меняй `manifest.json` / `plugin-dist/` при проверке build (кроме осознанного релиза).
+
+## Структура проекта
+
+- Менеджер: **npm** (`package.json`, `package-lock.json`)
+- Сборка: `tsc -noEmit` + `esbuild` → `plugin-dist/main.js`
+- CI: lint → test → `npm audit --omit=dev --audit-level=high`
